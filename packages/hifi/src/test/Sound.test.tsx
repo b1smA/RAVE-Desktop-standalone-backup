@@ -12,6 +12,20 @@ import {
 const httpSource: AudioSource = { url: '/a.mp3', protocol: 'http' };
 
 describe('Sound', () => {
+  it('routes audio to the selected output device', async () => {
+    const setSinkId = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(HTMLMediaElement.prototype, 'setSinkId', {
+      configurable: true,
+      value: setSinkId,
+    });
+
+    render(<Sound src={httpSource} status="paused" sinkId="hdmi-device" />);
+
+    await vi.waitFor(() => {
+      expect(setSinkId).toHaveBeenCalledWith('hdmi-device');
+    });
+  });
+
   it('sets currentTime on the active audio element when seek changes', () => {
     const { restore } = setupAudioContextMock();
 
@@ -144,6 +158,19 @@ describe('Sound', () => {
 
     const audio = document.querySelector('audio') as HTMLAudioElement;
     expect(audio.volume).toBe(0.5);
+
+    restore();
+  });
+
+  it('applies cached ReplayGain together with the user volume', () => {
+    const { restore } = setupAudioContextMock();
+
+    render(
+      <Sound src={httpSource} status="paused" volume={100} replayGainDb={-6} />,
+    );
+
+    const audio = document.querySelector('audio') as HTMLAudioElement;
+    expect(audio.volume).toBeCloseTo(0.501, 3);
 
     restore();
   });

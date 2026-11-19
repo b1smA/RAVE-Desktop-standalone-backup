@@ -1,7 +1,7 @@
 {
   "common": {
     "app": {
-      "name": "Nuclear",
+      "name": "RAVE",
       "description": "桌面音乐流媒体应用"
     },
     "actions": {
@@ -244,7 +244,7 @@
   },
   "dashboard": {
     "title": "仪表盘",
-    "empty-state": "欢迎使用 Nuclear",
+    "empty-state": "欢迎使用 RAVE",
     "empty-state-description": "安装插件以在此查看热门歌曲、新发行和推荐。",
     "empty-state-action": "浏览插件",
     "top-tracks": "热门歌曲",
@@ -311,7 +311,7 @@
     "clickToRestart": "点击重启"
   },
   "flatpak": {
-    "sandboxWarning": "您正在 Flatpak 沙箱中运行 Nuclear。部分功能可能无法正常工作。如果遇到问题，请尝试使用 .deb 或 AppImage 版本。",
+    "sandboxWarning": "您正在 Flatpak 沙箱中运行 RAVE。部分功能可能无法正常工作。如果遇到问题，请尝试使用 .deb 或 AppImage 版本。",
     "dismiss": "知道了"
   },
   "preferences": {
@@ -406,11 +406,11 @@
       },
       "streamVerification": {
         "title": "Stream verification",
-        "description": "Nuclear plays the streams that you verified and shows the verification bar. When this setting is off, Nuclear ignores all verifications."
+        "description": "RAVE plays the streams that you verified and shows the verification bar. When this setting is off, RAVE ignores all verifications."
       },
       "streamVerificationService": {
         "title": "Online verification",
-        "description": "Nuclear sends your verifications to the verification service and gets the streams that other users verified. This setting has no effect when stream verification is off."
+        "description": "RAVE sends your verifications to the verification service and gets the streams that other users verified. This setting has no effect when stream verification is off."
       }
     },
     "history": {
@@ -438,12 +438,12 @@
       "title": "集成",
       "jam": {
         "enabled": {
-          "title": "Nuclear Jam",
-          "description": "启动本地 Web 服务器，让您可以通过网络中的其他设备控制 Nuclear。"
+          "title": "RAVE Jam",
+          "description": "启动本地 Web 服务器，让您可以通过网络中的其他设备控制 RAVE。"
         },
         "remoteUrl": {
           "title": "远程 URL",
-          "description": "在其他设备上打开此 URL 以控制 Nuclear。"
+          "description": "在其他设备上打开此 URL 以控制 RAVE。"
         },
         "apiUrl": {
           "title": "API URL",
@@ -453,21 +453,21 @@
       "mcp": {
         "enabled": {
           "title": "启用 MCP 服务器",
-          "description": "启动本地 MCP 服务器，允许 AI 工具控制 Nuclear。"
+          "description": "启动本地 MCP 服务器，允许 AI 工具控制 RAVE。"
         },
         "serverUrl": {
           "title": "MCP 服务器 URL",
-          "description": "将您的 AI 工具指向此 URL 以连接到 Nuclear。"
+          "description": "将您的 AI 工具指向此 URL 以连接到 RAVE。"
         }
       },
       "mpd": {
         "enabled": {
           "title": "启用 MPD 服务器",
-          "description": "启动本地兼容 MPD 的服务器，以便 MPD 客户端控制 Nuclear。"
+          "description": "启动本地兼容 MPD 的服务器，以便 MPD 客户端控制 RAVE。"
         },
         "serverUrl": {
           "title": "MPD 服务器 URL",
-          "description": "将您的 MPD 客户端指向此地址以连接到 Nuclear。"
+          "description": "将您的 MPD 客户端指向此地址以连接到 RAVE。"
         }
       },
       "discord": {
@@ -504,9 +504,9 @@
       "verify": "Verify",
       "unverify": "Unverify",
       "failed": "Failed to verify stream",
-      "notShared": "Stream was verified locally, but Nuclear couldn't reach the verification service.",
+      "notShared": "Stream was verified locally, but RAVE couldn't reach the verification service.",
       "help": "How stream verification works",
-      "explanation": "Nuclear may sometimes play the wrong version of a song. To fix it, right-click the queue item and pick the right stream, then click Verify. Nuclear saves your verification on your computer and always plays that stream for the track.\n\nIf Online verification is on, Nuclear also shares your verification with other users, so they get that stream first. For each track you didn't verify, Nuclear asks the verification service for the stream with the most votes. It sends the artist, the title, and a random ID.",
+      "explanation": "RAVE may sometimes play the wrong version of a song. To fix it, right-click the queue item and pick the right stream, then click Verify. RAVE saves your verification on your computer and always plays that stream for the track.\n\nIf Online verification is on, RAVE also shares your verification with other users, so they get that stream first. For each track you didn't verify, RAVE asks the verification service for the stream with the most votes. It sends the artist, the title, and a random ID.",
       "learnMore": "Learn more"
     }
   },
@@ -516,7 +516,9 @@
       "playNext": "下一首播放",
       "addToQueue": "添加到队列",
       "addToFavorites": "添加到喜欢",
-      "removeFromFavorites": "从喜欢中移除"
+      "removeFromFavorites": "从喜欢中移除",
+      "blockArtistRecommendations": "不再推荐此艺术家",
+      "allowArtistRecommendations": "重新推荐此艺术家"
     }
   },
   "trackTable": {
@@ -582,12 +584,12 @@
   },
   "remote": {
     "connecting": {
-      "title": "正在连接到 Nuclear...",
-      "subtitle": "请确保 Nuclear 正在运行且已启用 Nuclear Jam"
+      "title": "正在连接到 RAVE...",
+      "subtitle": "请确保 RAVE 正在运行且已启用 RAVE Jam"
     },
     "error": {
-      "title": "无法连接到 Nuclear",
-      "subtitle": "请确保 Nuclear 正在运行，并在设置中启用了 Nuclear Jam"
+      "title": "无法连接到 RAVE",
+      "subtitle": "请确保 RAVE 正在运行，并在设置中启用了 RAVE Jam"
     },
     "connection": {
       "connecting": "连接中",
@@ -598,22 +600,22 @@
     "queue": {
       "upNext": "接下来播放",
       "emptyTitle": "队列为空",
-      "emptySubtitle": "在 Nuclear 中添加歌曲后会显示在这里"
+      "emptySubtitle": "在 RAVE 中添加歌曲后会显示在这里"
     },
     "search": {
       "placeholder": "搜索音乐",
       "emptyTitle": "无结果",
       "emptyDescription": "未找到与您的搜索词匹配的内容",
       "errorTitle": "搜索失败",
-      "errorDescription": "请检查与 Nuclear 的连接并重试"
+      "errorDescription": "请检查与 RAVE 的连接并重试"
     },
     "qrCode": {
-      "tooltip": "Nuclear Jam 远程控制",
-      "instructions": "扫描二维码或复制下方地址以连接到 Nuclear Jam"
+      "tooltip": "RAVE Jam 远程控制",
+      "instructions": "扫描二维码或复制下方地址以连接到 RAVE Jam"
     }
   },
   "titleBar": {
-    "title": "Nuclear 音乐播放器",
+    "title": "RAVE 音乐播放器",
     "minimize": "最小化",
     "maximize": "最大化",
     "close": "关闭"

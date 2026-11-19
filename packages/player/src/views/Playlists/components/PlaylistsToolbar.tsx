@@ -1,4 +1,4 @@
-import { FilterIcon, Plus } from 'lucide-react';
+import { FilterIcon, Plus, SparklesIcon } from 'lucide-react';
 import { type FC } from 'react';
 
 import { useTranslation } from '@nuclearplayer/i18n';
@@ -17,6 +17,7 @@ type PlaylistsToolbarProps = {
   onSortByChange: (sortBy: PlaylistSortBy) => void;
   sortDirection: SortDirection;
   onToggleSortDirection: () => void;
+  onOpenPromptedPlaylist: () => void;
 };
 
 export const PlaylistsToolbar: FC<PlaylistsToolbarProps> = ({
@@ -27,6 +28,7 @@ export const PlaylistsToolbar: FC<PlaylistsToolbarProps> = ({
   onSortByChange,
   sortDirection,
   onToggleSortDirection,
+  onOpenPromptedPlaylist,
 }) => {
   const { t } = useTranslation('playlists');
   const { openCreateDialog } = useCreatePlaylistContext();
@@ -38,6 +40,14 @@ export const PlaylistsToolbar: FC<PlaylistsToolbarProps> = ({
         {t('create')}
       </Button>
       <ImportPlaylistMenu />
+      <Button
+        variant="tertiary"
+        data-testid="open-prompted-playlist"
+        onClick={onOpenPromptedPlaylist}
+      >
+        <SparklesIcon size={16} />
+        {t('prompted.open')}
+      </Button>
       {hasPlaylists && (
         <div className="ml-auto flex items-center gap-2">
           <PlaylistSortSelect

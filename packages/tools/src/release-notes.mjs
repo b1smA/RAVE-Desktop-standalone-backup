@@ -8,7 +8,7 @@ const TYPE_LABELS = {
 };
 
 const MACOS_GATEKEEPER_NOTE =
-  "> **macOS:** If the app won't open, run `sudo xattr -r -d com.apple.quarantine /Applications/Nuclear.app` in Terminal.";
+  "> **macOS:** If the app won't open, run `sudo xattr -r -d com.apple.quarantine /Applications/RAVE.app` in Terminal.";
 
 function formatTags(tags = []) {
   return tags.map((tag) => `\`${tag.label}\``).join(' ');
@@ -32,7 +32,7 @@ function formatEntry(entry) {
 
 function describeEntries(version, entries) {
   if (entries.length === 0) {
-    return `Nuclear Player release v${version}`;
+    return `RAVE release v${version}`;
   }
 
   return [`## What's New in v${version}`, '', ...entries.map(formatEntry)].join(

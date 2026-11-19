@@ -6,6 +6,7 @@ import { eventBus } from '../../services/eventBus';
 import { favoritesHost } from '../../services/favoritesHost';
 import { httpHost } from '../../services/httpHost';
 import { createLoggerHost } from '../../services/loggerHost';
+import { lyricsHost } from '../../services/lyricsHost';
 import { metadataHost } from '../../services/metadataHost';
 import { playbackHost } from '../../services/playbackHost';
 import { playlistsHost } from '../../services/playlistsHost';
@@ -39,5 +40,6 @@ export const createPluginAPI = (
     widgetRegistry,
     pluginId,
     loggerHost: createLoggerHost(pluginId),
+    lyricsHost,
   });
 };

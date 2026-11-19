@@ -27,6 +27,7 @@ vi.mock('@tauri-apps/plugin-log', () => ({
   info: () => Promise.resolve(),
 }));
 vi.mock('sonner', () => ({
+  Toaster: () => null,
   toast: { error: (...args: unknown[]) => toastError(...args) },
 }));
 
@@ -173,7 +174,7 @@ describe('Themes view', async () => {
 
     it("doesn't reload when a basic theme is active", async () => {
       await mountWithActiveAdvancedTheme();
-      await ThemesWrapper.selectBasicTheme('Default');
+      await ThemesWrapper.selectBasicTheme('RAVE');
 
       await emitWatchEventsAndFlush([['/appdata/themes/my.json']]);
 
@@ -225,11 +226,11 @@ describe('Themes view', async () => {
   describe('Theme selection', () => {
     it('selects a basic theme', async () => {
       await ThemesWrapper.mount();
-      await ThemesWrapper.selectBasicTheme('Ember');
+      await ThemesWrapper.selectBasicTheme('RAVE');
       expect(
         useThemeStore
           .getState()
-          .isSelected({ type: 'basic', id: 'nuclear:ember' }),
+          .isSelected({ type: 'basic', id: 'rave:default' }),
       ).toBe(true);
     });
 
@@ -322,7 +323,7 @@ describe('Themes view', async () => {
       ).toEqual(['Current']);
     });
 
-    it('resets to default when the Default basic theme is clicked', async () => {
+    it('resets to default when the RAVE basic theme is clicked', async () => {
       PluginFsMock.setReadTextFile(
         JSON.stringify({
           version: 2,
@@ -336,7 +337,7 @@ describe('Themes view', async () => {
       });
 
       await ThemesWrapper.advancedThemeSelect.select('My Theme');
-      await ThemesWrapper.selectBasicTheme('Default');
+      await ThemesWrapper.selectBasicTheme('RAVE');
 
       expect(useThemeStore.getState().isBasicThemeSelected()).toBe(true);
     });
@@ -351,8 +352,8 @@ describe('Themes view', async () => {
       );
 
       await ThemesWrapper.mount({ advancedThemes });
-      await ThemesWrapper.selectBasicTheme('Ember');
-      expect(ThemesWrapper.activeBasicTheme).toBe('Ember');
+      await ThemesWrapper.selectBasicTheme('RAVE');
+      expect(ThemesWrapper.activeBasicTheme).toBe('RAVE');
 
       await ThemesWrapper.advancedThemeSelect.select('My Theme');
       expect(ThemesWrapper.activeBasicTheme).toBeNull();
@@ -379,8 +380,8 @@ describe('Themes view', async () => {
 
     it('unhighlights basic themes when a marketplace theme is selected', async () => {
       await ThemesWrapper.mountWithMarketplaceTheme();
-      await ThemesWrapper.selectBasicTheme('Ember');
-      expect(ThemesWrapper.activeBasicTheme).toBe('Ember');
+      await ThemesWrapper.selectBasicTheme('RAVE');
+      expect(ThemesWrapper.activeBasicTheme).toBe('RAVE');
 
       await ThemesWrapper.marketplaceThemeSelect!.select('Sakura');
       expect(ThemesWrapper.activeBasicTheme).toBeNull();
@@ -391,8 +392,8 @@ describe('Themes view', async () => {
       await ThemesWrapper.marketplaceThemeSelect!.select('Sakura');
       expect(ThemesWrapper.marketplaceThemeSelect!.selected()).toBe('Sakura');
 
-      await ThemesWrapper.selectBasicTheme('Ember');
-      expect(ThemesWrapper.activeBasicTheme).toBe('Ember');
+      await ThemesWrapper.selectBasicTheme('RAVE');
+      expect(ThemesWrapper.activeBasicTheme).toBe('RAVE');
       expect(ThemesWrapper.marketplaceThemeSelect!.selected()).toBe(
         'Select a theme',
       );
@@ -632,7 +633,7 @@ describe('Themes view', async () => {
       });
 
       await ThemesWrapper.goToMyThemesTab();
-      expect(ThemesWrapper.activeBasicTheme).toBe('Default');
+      expect(ThemesWrapper.activeBasicTheme).toBe('RAVE');
     });
   });
 
@@ -685,12 +686,12 @@ describe('Themes view', async () => {
 
     it('does not inject a style element when a basic theme is active', async () => {
       await ThemesWrapper.mount({
-        activeTheme: { type: 'basic', id: 'nuclear:default' },
+        activeTheme: { type: 'basic', id: 'rave:default' },
       });
       await applyThemeFromSettingsIfAny();
 
       expect(document.getElementById('advanced-theme')).toBeNull();
-      expect(ThemesWrapper.activeBasicTheme).toBe('Default');
+      expect(ThemesWrapper.activeBasicTheme).toBe('RAVE');
     });
 
     it('does nothing when a marketplace theme id is not found in installed themes', async () => {

@@ -17,7 +17,11 @@ export const DevTools: FC = () => {
 
   return (
     <TanStackDevtools
-      config={{ hideUntilHover: true }}
+      config={{
+        defaultOpen: false,
+        triggerHidden: true,
+        openHotkey: ['CtrlOrMeta', 'Shift', 'D'],
+      }}
       plugins={[
         {
           name: 'React Query',

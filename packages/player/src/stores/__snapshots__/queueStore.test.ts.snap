@@ -5,6 +5,7 @@ exports[`useQueueStore > addToQueue > appends tracks to the end 1`] = `
   {
     "addedAtIso": "2025-02-01T00:00:00.000Z",
     "id": "mock-uuid-0",
+    "selectionReason": undefined,
     "status": "idle",
     "track": {
       "artists": [
@@ -25,6 +26,7 @@ exports[`useQueueStore > addToQueue > appends tracks to the end 1`] = `
   {
     "addedAtIso": "2025-02-01T00:00:00.000Z",
     "id": "mock-uuid-1",
+    "selectionReason": undefined,
     "status": "idle",
     "track": {
       "artists": [
@@ -50,6 +52,7 @@ exports[`useQueueStore > addToQueue > creates items with default status and meta
   {
     "addedAtIso": "2025-02-01T00:00:00.000Z",
     "id": "mock-uuid-2",
+    "selectionReason": undefined,
     "status": "idle",
     "track": {
       "artists": [

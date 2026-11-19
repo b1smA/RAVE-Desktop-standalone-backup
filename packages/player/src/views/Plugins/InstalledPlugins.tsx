@@ -36,13 +36,13 @@ export const InstalledPlugins: FC<InstalledPluginsProps> = ({
   onGoToStore,
 }) => {
   const { t } = useTranslation('plugins');
-  const store = usePluginStore();
-  const plugins = store.getAllPlugins();
+  const pluginsById = usePluginStore((state) => state.plugins);
+  const plugins = Object.values(pluginsById);
 
   const handleAdd = async () => {
     const path = await open({ directory: true, multiple: false });
     if (isString(path)) {
-      await store.loadPluginFromPath(path);
+      await usePluginStore.getState().loadPluginFromPath(path);
     }
   };
 

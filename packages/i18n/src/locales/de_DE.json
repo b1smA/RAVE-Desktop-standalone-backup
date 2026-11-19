@@ -1,7 +1,7 @@
 {
   "common": {
     "app": {
-      "name": "Nuclear",
+      "name": "RAVE",
       "description": "Kostenlose Musik-Streaming-App"
     },
     "actions": {
@@ -311,7 +311,7 @@
     "clickToRestart": "Click to restart"
   },
   "flatpak": {
-    "sandboxWarning": "Du verwendest Nuclear in einer Flatpak Sandbox. Einige Funktionen funktionieren möglicherweise nicht richtig. Wenn du Probleme hast, versuche stattdessen mit der .deb oder AppImage.",
+    "sandboxWarning": "Du verwendest RAVE in einer Flatpak Sandbox. Einige Funktionen funktionieren möglicherweise nicht richtig. Wenn du Probleme hast, versuche stattdessen mit der .deb oder AppImage.",
     "dismiss": "Verstanden."
   },
   "preferences": {
@@ -406,11 +406,11 @@
       },
       "streamVerification": {
         "title": "Stream verification",
-        "description": "Nuclear plays the streams that you verified and shows the verification bar. When this setting is off, Nuclear ignores all verifications."
+        "description": "RAVE plays the streams that you verified and shows the verification bar. When this setting is off, RAVE ignores all verifications."
       },
       "streamVerificationService": {
         "title": "Online verification",
-        "description": "Nuclear sends your verifications to the verification service and gets the streams that other users verified. This setting has no effect when stream verification is off."
+        "description": "RAVE sends your verifications to the verification service and gets the streams that other users verified. This setting has no effect when stream verification is off."
       }
     },
     "history": {
@@ -438,12 +438,12 @@
       "title": "Integrationen",
       "jam": {
         "enabled": {
-          "title": "Nuclear Jam",
-          "description": "Start a local web server that lets you control Nuclear from other devices on your network."
+          "title": "RAVE Jam",
+          "description": "Start a local web server that lets you control RAVE from other devices on your network."
         },
         "remoteUrl": {
           "title": "Remote URL",
-          "description": "Open this URL on another device to control Nuclear."
+          "description": "Open this URL on another device to control RAVE."
         },
         "apiUrl": {
           "title": "API URL",
@@ -453,21 +453,21 @@
       "mcp": {
         "enabled": {
           "title": "MCP-Server aktivieren",
-          "description": "Starte einen lokalen MCP-Server, über den KI-Tools „Nuclear“ steuern können."
+          "description": "Starte einen lokalen MCP-Server, über den KI-Tools „RAVE“ steuern können."
         },
         "serverUrl": {
           "title": "MCP-Server-URL",
-          "description": "Richte dein KI-Tool auf diese URL aus, um eine Verbindung zu Nuclear herzustellen."
+          "description": "Richte dein KI-Tool auf diese URL aus, um eine Verbindung zu RAVE herzustellen."
         }
       },
       "mpd": {
         "enabled": {
           "title": "Enable MPD Server",
-          "description": "Start a local MPD-compatible server so MPD clients can control Nuclear."
+          "description": "Start a local MPD-compatible server so MPD clients can control RAVE."
         },
         "serverUrl": {
           "title": "MPD Server URL",
-          "description": "Point your MPD client to this address to connect to Nuclear."
+          "description": "Point your MPD client to this address to connect to RAVE."
         }
       },
       "discord": {
@@ -504,9 +504,9 @@
       "verify": "Verify",
       "unverify": "Unverify",
       "failed": "Failed to verify stream",
-      "notShared": "Stream was verified locally, but Nuclear couldn't reach the verification service.",
+      "notShared": "Stream was verified locally, but RAVE couldn't reach the verification service.",
       "help": "How stream verification works",
-      "explanation": "Nuclear may sometimes play the wrong version of a song. To fix it, right-click the queue item and pick the right stream, then click Verify. Nuclear saves your verification on your computer and always plays that stream for the track.\n\nIf Online verification is on, Nuclear also shares your verification with other users, so they get that stream first. For each track you didn't verify, Nuclear asks the verification service for the stream with the most votes. It sends the artist, the title, and a random ID.",
+      "explanation": "RAVE may sometimes play the wrong version of a song. To fix it, right-click the queue item and pick the right stream, then click Verify. RAVE saves your verification on your computer and always plays that stream for the track.\n\nIf Online verification is on, RAVE also shares your verification with other users, so they get that stream first. For each track you didn't verify, RAVE asks the verification service for the stream with the most votes. It sends the artist, the title, and a random ID.",
       "learnMore": "Learn more"
     }
   },
@@ -516,7 +516,9 @@
       "playNext": "Nächstes abspielen",
       "addToQueue": "Zur Warteschlange hinzufügen",
       "addToFavorites": "Zu den Favoriten hinzufügen",
-      "removeFromFavorites": "Aus Favoriten entfernen"
+      "removeFromFavorites": "Aus Favoriten entfernen",
+      "blockArtistRecommendations": "Diesen Künstler nicht empfehlen",
+      "allowArtistRecommendations": "Diesen Künstler wieder empfehlen"
     }
   },
   "trackTable": {
@@ -582,12 +584,12 @@
   },
   "remote": {
     "connecting": {
-      "title": "Connecting to Nuclear...",
-      "subtitle": "Make sure Nuclear is running and Nuclear Jam is enabled"
+      "title": "Connecting to RAVE...",
+      "subtitle": "Make sure RAVE is running and RAVE Jam is enabled"
     },
     "error": {
-      "title": "Could not connect to Nuclear",
-      "subtitle": "Make sure Nuclear is running and Nuclear Jam is enabled in Settings"
+      "title": "Could not connect to RAVE",
+      "subtitle": "Make sure RAVE is running and RAVE Jam is enabled in Settings"
     },
     "connection": {
       "connecting": "Connecting",
@@ -598,22 +600,22 @@
     "queue": {
       "upNext": "Up next",
       "emptyTitle": "Queue is empty",
-      "emptySubtitle": "Add tracks in Nuclear to see them here"
+      "emptySubtitle": "Add tracks in RAVE to see them here"
     },
     "search": {
       "placeholder": "Search for music",
       "emptyTitle": "No results",
       "emptyDescription": "Nothing found for your search terms",
       "errorTitle": "Search failed",
-      "errorDescription": "Check the connection to Nuclear and try again"
+      "errorDescription": "Check the connection to RAVE and try again"
     },
     "qrCode": {
-      "tooltip": "Nuclear Jam remote control",
-      "instructions": "Scan the QR code or copy the address below to connect to Nuclear Jam"
+      "tooltip": "RAVE Jam remote control",
+      "instructions": "Scan the QR code or copy the address below to connect to RAVE Jam"
     }
   },
   "titleBar": {
-    "title": "Nuclear Music Player",
+    "title": "RAVE Music Player",
     "minimize": "Minimize",
     "maximize": "Maximize",
     "close": "Close"

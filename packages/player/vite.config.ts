@@ -17,12 +17,12 @@ const commitHash = (() => {
   }
 })();
 
-export default defineConfig(() => ({
+export default defineConfig(({ mode }) => ({
   define: {
     __COMMIT_HASH__: JSON.stringify(commitHash),
   },
   plugins: [
-    devtools(),
+    ...(mode === 'development' ? [devtools()] : []),
     react(),
     tanstackRouter(),
     tailwindcss(),
@@ -34,6 +34,9 @@ export default defineConfig(() => ({
     }),
   ],
   clearScreen: false,
+  build: {
+    chunkSizeWarningLimit: 600,
+  },
   server: {
     host: process.env.VITE_HOST ?? 'localhost',
     port: 5173,

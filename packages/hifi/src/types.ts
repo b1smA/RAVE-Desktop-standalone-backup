@@ -20,7 +20,10 @@ export type SoundProps = {
   status: SoundStatus;
   seek?: number;
   volume?: number;
+  replayGainDb?: number;
+  sinkId?: string;
   preload?: HTMLAudioElement['preload'];
+  crossfadeMs?: number;
   crossOrigin?: ScriptHTMLAttributes<HTMLAudioElement>['crossOrigin'];
   onTimeUpdate?: (args: { position: number; duration: number }) => void;
   onEnd?: () => void;

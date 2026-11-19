@@ -374,10 +374,7 @@ not json
                 creators: Some(vec!["Performer 1".into(), "Performer 2".into()]),
                 ..empty_json()
             };
-            assert_eq!(
-                normalize_artists(&json),
-                vec!["Performer 1", "Performer 2"]
-            );
+            assert_eq!(normalize_artists(&json), vec!["Performer 1", "Performer 2"]);
         }
 
         #[test]
@@ -405,10 +402,7 @@ not json
                 album_artist: Some("Ignored".into()),
                 ..empty_json()
             };
-            assert_eq!(
-                normalize_album_artists(&json),
-                vec!["Group A", "Group B"]
-            );
+            assert_eq!(normalize_album_artists(&json), vec!["Group A", "Group B"]);
         }
 
         #[test]

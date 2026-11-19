@@ -85,9 +85,6 @@ describe('Repeat mode behavior when a track ends', () => {
       status: 'stopped',
       seek: 0,
       duration: 0,
-      crossfadeMs: 0,
-      preload: 'auto',
-      crossOrigin: '',
     });
     useSettingsStore.setState({ values: {} });
   });

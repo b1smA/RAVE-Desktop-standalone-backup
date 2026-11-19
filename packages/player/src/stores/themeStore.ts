@@ -2,6 +2,7 @@ import isEqual from 'lodash-es/isEqual';
 import { create } from 'zustand';
 
 import {
+  BUILTIN_BASIC_THEME_IDS,
   clearAdvancedTheme,
   DEFAULT_THEME_ID,
   setThemeId,
@@ -110,8 +111,17 @@ export const useThemeStore = create<ThemeStoreState>((set, get) => ({
       .getValue('core.theme.active.id') as string;
 
     if (type === 'basic' && id) {
-      set({ activeTheme: { type: 'basic', id } });
-      setThemeId(id);
+      const builtInId = BUILTIN_BASIC_THEME_IDS.includes(
+        id as (typeof BUILTIN_BASIC_THEME_IDS)[number],
+      )
+        ? id
+        : DEFAULT_THEME_ID;
+      const theme: BasicTheme = { type: 'basic', id: builtInId };
+      set({ activeTheme: theme });
+      setThemeId(builtInId);
+      if (builtInId !== id) {
+        void persistActiveTheme(theme);
+      }
     } else if (type === 'advanced' && id) {
       set({ activeTheme: { type: 'advanced', path: id } });
     } else if (type === 'marketplace' && id) {

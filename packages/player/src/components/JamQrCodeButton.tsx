@@ -15,6 +15,7 @@ export const JamQrCodeButton: FC = () => {
   const { t } = useTranslation('remote');
   const [jamEnabled] = useCoreSetting<boolean>('integrations.jam.enabled');
   const [remoteUrl] = useCoreSetting<string>('integrations.jam.remoteUrl');
+  const [pairingCode] = useCoreSetting<string>('integrations.jam.pairingCode');
 
   if (!jamEnabled) {
     return null;
@@ -43,6 +44,9 @@ export const JamQrCodeButton: FC = () => {
           }}
         />
         <InfoField label={t('qrCode.instructions')} value={remoteUrl} />
+        {pairingCode && (
+          <InfoField label={t('qrCode.pairingCode')} value={pairingCode} />
+        )}
       </Popover>
     </Tooltip>
   );

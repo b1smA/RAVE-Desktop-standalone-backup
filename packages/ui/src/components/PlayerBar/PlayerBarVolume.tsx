@@ -1,5 +1,5 @@
 import { Volume2 } from 'lucide-react';
-import { FC } from 'react';
+import { FC, ReactNode } from 'react';
 
 import { Button, Slider } from '..';
 import { cn } from '../../utils';
@@ -10,6 +10,7 @@ type PlayerBarVolumeProps = {
   onValueChange?: (value: number) => void;
   disabled?: boolean;
   className?: string;
+  control?: ReactNode;
 };
 
 export const PlayerBarVolume: FC<PlayerBarVolumeProps> = ({
@@ -18,12 +19,15 @@ export const PlayerBarVolume: FC<PlayerBarVolumeProps> = ({
   onValueChange,
   disabled,
   className = '',
+  control,
 }) => {
   return (
     <div className={cn('flex items-center gap-2', className)}>
-      <Button size="icon" variant="text" disabled={disabled}>
-        <Volume2 size={16} />
-      </Button>
+      {control ?? (
+        <Button size="icon" variant="text" disabled={disabled}>
+          <Volume2 size={16} />
+        </Button>
+      )}
       <div className="w-24" data-testid="player-volume-slider">
         <Slider
           value={value}

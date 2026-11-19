@@ -1,5 +1,4 @@
 import { Duration } from 'luxon';
-import { v4 as uuid } from 'uuid';
 import { z } from 'zod';
 
 import type { Track } from '@nuclearplayer/model';
@@ -7,6 +6,7 @@ import type { Track } from '@nuclearplayer/model';
 import { Logger } from '../services/logger';
 import { providersHost } from '../services/providersHost';
 import { getSetting, useSettingsStore } from '../stores/settingsStore';
+import { createRandomId } from '../utils/randomId';
 
 const TopStreamSchema = z
   .object({
@@ -115,7 +115,6 @@ class StreamVerificationApi {
     body: MappingRequest,
   ): Promise<Response> {
     const url = `${this.baseUrl}${path}`;
-    Logger.http.debug(`${method} ${url}`);
 
     const response = await fetch(url, {
       method,
@@ -124,7 +123,7 @@ class StreamVerificationApi {
     });
 
     if (response.ok || response.status === 404) {
-      Logger.http.debug(`${method} ${url} -> ${response.status}`);
+      Logger.http.trace(`${method} ${url} -> ${response.status}`);
     } else {
       Logger.http.warn(`${method} ${url} -> ${response.status}`);
     }
@@ -157,7 +156,7 @@ class StreamVerificationApi {
       return stored;
     }
 
-    const generated = uuid();
+    const generated = createRandomId();
     useSettingsStore
       .getState()
       .setValue('core.playback.streamVerificationAuthorId', generated);

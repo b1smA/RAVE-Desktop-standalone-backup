@@ -185,8 +185,8 @@ A complete template with Nuclear's default values. Copy this and change what you
     "shadow-blur": "0px",
 
     "font-size-base": "16px",
-    "font-family": "'DM Sans', system-ui, -apple-system, sans-serif",
-    "font-family-heading": "'Bricolage Grotesque', var(--default-font-family)",
+    "font-family": "'Manrope', system-ui, -apple-system, sans-serif",
+    "font-family-heading": "'Unbounded', var(--default-font-family)",
     "font-family-mono": "'Space Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
     "font-weight-normal": "400",
     "font-weight-bold": "700",

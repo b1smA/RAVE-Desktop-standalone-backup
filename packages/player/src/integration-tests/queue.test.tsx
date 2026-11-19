@@ -66,6 +66,21 @@ describe('Queue', () => {
     ).toBeInTheDocument();
   });
 
+  it('explains why Smart Queue selected the next track', async () => {
+    const current = createQueueItem('Current');
+    const recommended = {
+      ...createQueueItem('Recommended'),
+      selectionReason: 'autoradio' as const,
+    };
+    QueueWrapper.initQueue([current, recommended]);
+
+    await QueueWrapper.mount();
+
+    expect(QueueWrapper.selectionReason).toHaveTextContent(
+      'Auto-radio picked a related track so playback keeps going.',
+    );
+  });
+
   it('should add album tracks to the queue', async () => {
     await AlbumWrapper.mountDirectly();
     await AlbumWrapper.addTrackToQueueByTitle('Countdown');

@@ -1,6 +1,7 @@
 import { NuclearPluginAPI } from '@nuclearplayer/plugin-sdk';
 import { apiMeta, ParamMeta } from '@nuclearplayer/plugin-sdk/mcp';
 
+import { exportLanSyncSnapshot } from '../lanSyncService';
 import { createPluginAPI } from '../plugins/createPluginAPI';
 
 const bridgeApi: NuclearPluginAPI = createPluginAPI('bridge', 'Bridge');
@@ -27,6 +28,9 @@ export const dispatch = async (
   method: string,
   params: Record<string, unknown>,
 ): Promise<unknown> => {
+  if (method === 'Sync.exportSnapshot') {
+    return exportLanSyncSnapshot();
+  }
   const [domain, methodName] = method.split('.', 2);
   return dispatchPluginApi(domain, methodName, params);
 };

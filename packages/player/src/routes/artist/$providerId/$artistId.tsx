@@ -1,8 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import z from 'zod';
 
-import { Artist } from '../../../views/Artist/Artist';
-
 export const Route = createFileRoute('/artist/$providerId/$artistId')({
   params: {
     parse: (params) => ({
@@ -14,5 +12,4 @@ export const Route = createFileRoute('/artist/$providerId/$artistId')({
       artistId: `${artistId}`,
     }),
   },
-  component: Artist,
 });

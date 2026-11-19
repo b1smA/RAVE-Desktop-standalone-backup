@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 
 import { useTranslation } from '@nuclearplayer/i18n';
 import type { AlbumRef, ArtistRef, ProviderRef } from '@nuclearplayer/model';
@@ -25,7 +26,16 @@ export const ConnectedFavoriteButton: FC<ConnectedFavoriteButtonProps> = (
     addArtist,
     removeAlbum,
     removeArtist,
-  } = useFavoritesStore();
+  } = useFavoritesStore(
+    useShallow((state) => ({
+      isAlbumFavorite: state.isAlbumFavorite,
+      isArtistFavorite: state.isArtistFavorite,
+      addAlbum: state.addAlbum,
+      addArtist: state.addArtist,
+      removeAlbum: state.removeAlbum,
+      removeArtist: state.removeArtist,
+    })),
+  );
 
   const { type, source, data, className, 'data-testid': testId } = props;
 

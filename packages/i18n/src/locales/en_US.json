@@ -1,7 +1,7 @@
 {
   "common": {
     "app": {
-      "name": "Nuclear",
+      "name": "RAVE",
       "description": "Music streaming app for your desktop"
     },
     "actions": {
@@ -38,6 +38,14 @@
   },
   "history": {
     "title": "History",
+    "weekly": {
+      "title": "RAVE Weekly",
+      "minutes": "minutes listened",
+      "tracks": "unique tracks",
+      "artists": "artists",
+      "newArtists": "new artists",
+      "topArtist": "Your top artist this week: {{artist}}"
+    },
     "empty": "Nothing played yet",
     "emptyDescription": "Tracks you play will appear here",
     "today": "Today",
@@ -71,6 +79,10 @@
         "last12Months": "Last 12 months",
         "allTime": "All time"
       }
+    },
+    "replay": {
+      "createPlaylist": "Create RAVE Replay playlist",
+      "playlistName": "RAVE Replay"
     }
   },
   "sources": {
@@ -94,6 +106,23 @@
     "recommendationError": "Failed to get recommendations"
   },
   "favorites": {
+    "filters": {
+      "all": "All",
+      "offline": "Available offline",
+      "untagged": "Needs organization",
+      "mood": {
+        "focus": "Focus",
+        "calm": "Calm",
+        "energy": "Energy",
+        "sleep": "Sleep",
+        "party": "Party"
+      }
+    },
+    "sort": {
+      "dateAdded": "Date added",
+      "name": "Name",
+      "direction": "Change sort direction"
+    },
     "albums": {
       "title": "Favorite albums",
       "empty": "No favorite albums yet",
@@ -111,6 +140,23 @@
     }
   },
   "playlists": {
+    "prompted": {
+      "open": "Build from a prompt",
+      "title": "Prompted Playlist",
+      "name": "Playlist name",
+      "placeholder": "For example: energetic offline music from 2000 to 2010, without Artist, for 60 minutes",
+      "noRules": "Describe the playlist to see the local rules RAVE recognizes.",
+      "preview": "{{count}} matching track",
+      "preview_other": "{{count}} matching tracks",
+      "create": "Create playlist",
+      "rules": {
+        "mood": "Mood: {{value}}",
+        "offline": "Offline only",
+        "years": "Years: {{from}}–{{to}}",
+        "duration": "Target: {{count}} minutes",
+        "exclude": "Without: {{artist}}"
+      }
+    },
     "title": "Playlists",
     "empty": "No playlists yet",
     "emptyDescription": "Create a playlist or import one to get started",
@@ -123,13 +169,20 @@
     "delete": "Delete playlist",
     "deleteConfirm": "Are you sure you want to delete this playlist?",
     "play": "Play",
+    "shufflePlay": "Shuffle play",
+    "smartShuffle": "RAVE smart shuffle",
     "addToQueue": "Add to queue",
+    "downloadTracks": "Download available tracks",
+    "pin": "Pin playlist",
+    "unpin": "Unpin playlist",
     "saveLocally": "Save locally",
     "readOnlyBadge": "{{source}}",
     "readOnlyTooltip": "This playlist is from {{source}} and is read-only. Save a local copy to edit it.",
     "trackCount": "{{count}} track",
     "trackCount_other": "{{count}} tracks",
     "addToPlaylist": "Add to playlist",
+    "addSelectedTitle": "Add selected tracks to playlist",
+    "selectPlaylist": "Select a playlist",
     "filterPlaylists": "Filter playlists...",
     "sortBy": {
       "name": "Name",
@@ -167,6 +220,7 @@
     "clearRecentSearches": "Clear recent searches",
     "recentSearches": "Recent searches",
     "results": {
+      "all": "All",
       "tracks": "Tracks",
       "albums": "Albums",
       "artists": "Artists",
@@ -186,6 +240,21 @@
   "artist": {
     "title": "Artist",
     "albums": "Albums",
+    "singlesAndEps": "Singles & EPs",
+    "versions": "{{count}} versions",
+    "versionLabel": "Version {{number}} · {{provider}} · {{year}}",
+    "unknownYear": "Unknown year",
+    "filters": {
+      "all": "All",
+      "compilations": "Compilations",
+      "live": "Live"
+    },
+    "sort": {
+      "yearDesc": "Year: newest first",
+      "yearAsc": "Year: oldest first",
+      "titleAsc": "Title: A–Z",
+      "titleDesc": "Title: Z–A"
+    },
     "tracks": "Tracks",
     "similar": "Similar artists",
     "popularTracks": "Popular tracks",
@@ -243,8 +312,11 @@
     }
   },
   "dashboard": {
+    "forYou": "For you",
+    "forgottenFavorites": "Forgotten favorites",
+    "releaseRadar": "Release Radar",
     "title": "Dashboard",
-    "empty-state": "Welcome to Nuclear",
+    "empty-state": "Welcome to RAVE",
     "empty-state-description": "Install a plugin to see top tracks, new releases, and recommendations here.",
     "empty-state-action": "Browse plugins",
     "top-tracks": "Top Tracks",
@@ -311,7 +383,7 @@
     "clickToRestart": "Click to restart"
   },
   "flatpak": {
-    "sandboxWarning": "You're running Nuclear in a Flatpak sandbox. Some features may not work correctly. If you experience issues, try the .deb or AppImage instead.",
+    "sandboxWarning": "You're running RAVE in a Flatpak sandbox. Some features may not work correctly. If you experience issues, try the .deb or AppImage instead.",
     "dismiss": "Got it"
   },
   "preferences": {
@@ -325,6 +397,15 @@
       "language": {
         "title": "Language",
         "description": "Select your preferred language"
+      },
+      "startPage": {
+        "title": "Start page",
+        "description": "Choose the page RAVE opens after launch",
+        "dashboard": "Dashboard",
+        "favorites": "Favorite tracks",
+        "playlists": "Playlists",
+        "history": "History",
+        "sources": "Sources"
       }
     },
     "plugins": {
@@ -358,6 +439,7 @@
         "playback.volumeUp": "Volume up",
         "playback.volumeDown": "Volume down",
         "playback.mute": "Mute / Unmute",
+        "playback.dislike": "Dislike and skip track",
         "general.toggleSettings": "Open settings"
       },
       "recording": "Press a key combination...",
@@ -398,19 +480,79 @@
         "title": "Stream resolution retries",
         "description": "Number of times to retry resolving a stream URL before moving to the next candidate"
       },
+      "preloadBackupStream": {
+        "title": "Prepare a backup source",
+        "description": "Resolve a second source in advance for faster recovery when the current stream fails"
+      },
+      "reservedSourceCount": {
+        "title": "Reserved sources per track",
+        "description": "Resolve two or three ranked sources ahead of time so playback can recover quickly when the active source fails. Disabled automatically in data saver mode."
+      },
+      "dataSaver": {
+        "title": "Data saver",
+        "description": "Reduce network use by limiting source bitrate, skipping artwork downloads, disabling backup-source preloading, and loading audio metadata only."
+      },
+      "dataSaverMaxBitrate": {
+        "title": "Data saver bitrate limit",
+        "description": "Prefer sources at or below this bitrate while keeping a higher-quality source as a last resort."
+      },
+      "smartSourceSelection": {
+        "title": "Smart source selection",
+        "description": "Automatically rank sources by match, quality, speed, reliability, and your preferences"
+      },
+      "smartSourceQualityWeight": {
+        "title": "Source quality priority",
+        "description": "How strongly bitrate and quality influence automatic source selection"
+      },
+      "smartSourceSpeedWeight": {
+        "title": "Source speed priority",
+        "description": "How strongly provider response time influences automatic source selection"
+      },
+      "smartSourcePreferredProviders": {
+        "title": "Preferred source order",
+        "description": "Comma-separated provider IDs in preferred order"
+      },
+      "autoSkipRejectedVersions": {
+        "title": "Skip rejected versions",
+        "description": "Avoid live, remix, and slowed versions you previously rejected when a suitable alternative is available"
+      },
       "discoveryVariety": {
         "title": "Discovery variety",
         "description": "How far recommendations deviate from your current listening. Lower is closer.",
         "startLabel": "Less crazy",
         "endLabel": "More crazy"
       },
+      "raveMixMode": {
+        "title": "RAVE Mix mode",
+        "description": "Choose how RAVE balances familiar and exploratory recommendations",
+        "focus": "Focus",
+        "balanced": "Balanced",
+        "explore": "Explore",
+        "energy": "Energy"
+      },
+      "preventQueueDuplicates": {
+        "title": "Prevent queue duplicates",
+        "description": "Do not add a track when it is already in the queue"
+      },
+      "autoCleanQueue": {
+        "title": "Automatically clean the queue",
+        "description": "Remove old played items while keeping recent listening history"
+      },
+      "queueHistoryLimit": {
+        "title": "Played tracks to keep",
+        "description": "Number of recently played queue items retained during automatic cleanup"
+      },
+      "familyMode": {
+        "title": "Family mode",
+        "description": "Exclude tracks marked explicit or uncensored from automatic recommendations"
+      },
       "streamVerification": {
         "title": "Stream verification",
-        "description": "Nuclear plays the streams that you verified and shows the verification bar. When this setting is off, Nuclear ignores all verifications."
+        "description": "RAVE plays the streams that you verified and shows the verification bar. When this setting is off, RAVE ignores all verifications."
       },
       "streamVerificationService": {
         "title": "Online verification",
-        "description": "Nuclear sends your verifications to the verification service and gets the streams that other users verified. This setting has no effect when stream verification is off."
+        "description": "RAVE sends your verifications to the verification service and gets the streams that other users verified. This setting has no effect when stream verification is off."
       }
     },
     "history": {
@@ -438,36 +580,60 @@
       "title": "Integrations",
       "jam": {
         "enabled": {
-          "title": "Nuclear Jam",
-          "description": "Start a local web server that lets you control Nuclear from other devices on your network."
+          "title": "RAVE Jam",
+          "description": "Start a local web server that lets you control RAVE from other devices on your network."
         },
         "remoteUrl": {
           "title": "Remote URL",
-          "description": "Open this URL on another device to control Nuclear."
+          "description": "Open this URL on another device to control RAVE."
         },
         "apiUrl": {
           "title": "API URL",
           "description": "HTTP API base URL for programmatic access."
+        },
+        "sessionsEnabled": {
+          "title": "RAVE Sessions",
+          "description": "Require guests to join a protected collaborative listening session. Restart RAVE Jam after changing this option."
+        },
+        "guestCanAddTracks": {
+          "title": "Guests can add tracks",
+          "description": "Allow session participants to search for music and add it to the queue."
+        },
+        "guestCanVote": {
+          "title": "Guests can vote",
+          "description": "Allow session participants to vote tracks up or down."
+        },
+        "guestCanControlPlayback": {
+          "title": "Guests can control playback",
+          "description": "Allow session participants to play, pause, skip, seek, and change playback modes."
+        },
+        "guestCanManageQueue": {
+          "title": "Guests can manage the queue",
+          "description": "Allow session participants to remove tracks and change the current queue position."
+        },
+        "pairingCode": {
+          "title": "Session pairing code",
+          "description": "Share this temporary code with guests you want to invite."
         }
       },
       "mcp": {
         "enabled": {
           "title": "Enable MCP Server",
-          "description": "Start a local MCP server that allows AI tools to control Nuclear."
+          "description": "Start a local MCP server that allows AI tools to control RAVE."
         },
         "serverUrl": {
           "title": "MCP Server URL",
-          "description": "Point your AI tool to this URL to connect to Nuclear."
+          "description": "Point your AI tool to this URL to connect to RAVE."
         }
       },
       "mpd": {
         "enabled": {
           "title": "Enable MPD Server",
-          "description": "Start a local MPD-compatible server so MPD clients can control Nuclear."
+          "description": "Start a local MPD-compatible server so MPD clients can control RAVE."
         },
         "serverUrl": {
           "title": "MPD Server URL",
-          "description": "Point your MPD client to this address to connect to Nuclear."
+          "description": "Point your MPD client to this address to connect to RAVE."
         }
       },
       "discord": {
@@ -475,7 +641,64 @@
           "title": "Discord Rich Presence",
           "description": "Show what you're listening to on your Discord profile."
         }
+      },
+      "librefm": {
+        "enabled": {
+          "title": "Libre.fm scrobbling",
+          "description": "Send qualified listens to your Libre.fm profile and retry them after temporary network failures."
+        },
+        "apiKey": {
+          "title": "Libre.fm API key",
+          "description": "API key used to sign Scrobbling 2.0 requests."
+        },
+        "apiSecret": {
+          "title": "Libre.fm API secret",
+          "description": "Secret used only on this device to sign requests."
+        },
+        "sessionKey": {
+          "title": "Libre.fm session key",
+          "description": "Authorized session key for the Libre.fm account receiving scrobbles."
+        },
+        "endpoint": {
+          "title": "Libre.fm API endpoint",
+          "description": "Scrobbling 2.0 endpoint. Change this only for a compatible self-hosted server."
+        }
+      },
+      "lanSync": {
+        "shareLibrary": {
+          "title": "Share library over LAN",
+          "description": "Allow paired RAVE devices on your local network to read a safe snapshot of playlists, listening history, and non-sensitive preferences."
+        },
+        "deviceId": {
+          "title": "LAN sync device ID"
+        },
+        "sourceUrl": {
+          "title": "LAN sync source",
+          "description": "Address of another RAVE instance to import from."
+        }
       }
+    },
+    "lanSync": {
+      "title": "LAN Sync",
+      "description": "Import playlists, listening history, and safe preferences directly from another RAVE device on the same network. Nothing is uploaded to a cloud service.",
+      "sourceUrl": "Source RAVE address",
+      "pairingCode": "Session pairing code",
+      "preview": "Connect and preview",
+      "previewTitle": "Snapshot ready",
+      "previewCounts": "{{playlists}} playlists, {{history}} history entries, and {{settings}} preferences are available.",
+      "import": "Import into this device",
+      "connectionFailed": "LAN sync connection failed: {{error}}",
+      "importComplete": "Imported {{playlists}} playlists, {{history}} history entries, and {{settings}} preferences.",
+      "importFailed": "LAN sync import failed: {{error}}"
+    },
+    "loudnessAnalysis": {
+      "title": "Library loudness",
+      "description": "Analyze favorite tracks ahead of playback and cache a clipping-safe ReplayGain adjustment. Audio is fetched only when you start the analysis.",
+      "status": "{{analyzed}} cached analyses; {{total}} favorite tracks in the library.",
+      "start": "Analyze favorite tracks",
+      "running": "Analyzing library…",
+      "complete": "Analyzed {{analyzed}} tracks.",
+      "partial": "Analyzed {{analyzed}} tracks; {{failed}} sources could not be analyzed."
     }
   },
   "queue": {
@@ -484,10 +707,27 @@
       "title": "Queue is empty",
       "subtitle": "Add tracks to start playing"
     },
+    "sections": {
+      "history": "History",
+      "nowPlaying": "Now playing",
+      "upNext": "Up next"
+    },
+    "reasons": {
+      "autoradio": "Auto-radio picked a related track so playback keeps going.",
+      "taste-match": "Smart Queue placed this track next because it matches your listening profile.",
+      "variety": "Smart Queue placed this track next to add variety and avoid repetition."
+    },
     "actions": {
       "remove": "Remove from queue",
       "clear": "Clear queue",
-      "saveAsPlaylist": "Save queue as playlist"
+      "saveAsPlaylist": "Save queue as playlist",
+      "undo": "Undo queue change",
+      "playListenLater": "Play Listen Later ({{count}})"
+    },
+    "sleep": {
+      "afterTrack": "Sleep after this track",
+      "inMinutes": "Sleep in {{count}} minutes",
+      "cancel": "Cancel sleep timer"
     },
     "errors": {
       "playback": "Playback error"
@@ -495,6 +735,14 @@
     "candidates": {
       "empty": "No stream candidates",
       "failed": "failed"
+    },
+    "sourceInspector": {
+      "title": "RAVE Source Inspector",
+      "selected": "Selected {{provider}} · score {{score}}",
+      "factors": "Title {{title}} · duration {{duration}} · quality {{quality}} · speed {{speed}} · reliability {{reliability}}",
+      "copyDiagnostics": "Copy source diagnostics",
+      "copied": "Source diagnostics copied",
+      "copyFailed": "Couldn't copy source diagnostics"
     },
     "streamVerification": {
       "unverified": "Unverified",
@@ -504,19 +752,58 @@
       "verify": "Verify",
       "unverify": "Unverify",
       "failed": "Failed to verify stream",
-      "notShared": "Stream was verified locally, but Nuclear couldn't reach the verification service.",
+      "notShared": "Stream was verified locally, but RAVE couldn't reach the verification service.",
       "help": "How stream verification works",
-      "explanation": "Nuclear may sometimes play the wrong version of a song. To fix it, right-click the queue item and pick the right stream, then click Verify. Nuclear saves your verification on your computer and always plays that stream for the track.\n\nIf Online verification is on, Nuclear also shares your verification with other users, so they get that stream first. For each track you didn't verify, Nuclear asks the verification service for the stream with the most votes. It sends the artist, the title, and a random ID.",
+      "explanation": "RAVE may sometimes play the wrong version of a song. To fix it, right-click the queue item and pick the right stream, then click Verify. RAVE saves your verification on your computer and always plays that stream for the track.\n\nIf Online verification is on, RAVE also shares your verification with other users, so they get that stream first. For each track you didn't verify, RAVE asks the verification service for the stream with the most votes. It sends the artist, the title, and a random ID.",
       "learnMore": "Learn more"
     }
   },
   "track": {
     "actions": {
       "playNow": "Play now",
+      "changeSource": "Change source",
+      "wrongVersion": "Wrong version",
+      "startRadio": "Start track radio",
       "playNext": "Play next",
       "addToQueue": "Add to queue",
       "addToFavorites": "Add to favorites",
-      "removeFromFavorites": "Remove from favorites"
+      "removeFromFavorites": "Remove from favorites",
+      "blockArtistRecommendations": "Don't recommend this artist",
+      "allowArtistRecommendations": "Recommend this artist again",
+      "listenLater": "Listen later",
+      "blockTrackRecommendations": "Don't recommend this track",
+      "snoozeRecommendations": "Pause recommendations",
+      "snoozeDays": "For {{count}} days",
+      "clearSnooze": "Recommend again now",
+      "excludeFromTasteProfile": "Exclude from taste profile",
+      "includeInTasteProfile": "Include in taste profile",
+      "allowTrackRecommendations": "Recommend this track again",
+      "setMood": "Set mood",
+      "editTagsAndNote": "Tags and note"
+    },
+    "sourceFeedback": {
+      "title": "What is wrong with this version?",
+      "description": "RAVE will avoid this source and similar unwanted versions next time.",
+      "wrongArtist": "Wrong artist",
+      "live": "Live instead of studio",
+      "remix": "Remix instead of original",
+      "slowed": "Slowed, sped up, or reverb version",
+      "truncated": "Track is cut short",
+      "insertions": "Contains intros or extra inserts",
+      "poorQuality": "Poor audio quality"
+    },
+    "moods": {
+      "focus": "Focus",
+      "calm": "Calm",
+      "energy": "Energy",
+      "sleep": "Sleep",
+      "party": "Party"
+    },
+    "profile": {
+      "title": "Track details",
+      "tags": "Tags",
+      "tagsPlaceholder": "work, road, evening",
+      "notePlaceholder": "Your private note about this track"
     }
   },
   "trackTable": {
@@ -530,6 +817,11 @@
     "unfavorite": "Remove from favorites",
     "playAll": "Play all",
     "addAllToQueue": "Add all to queue",
+    "playSelected": "Play selected",
+    "addSelectedToQueue": "Add selected to queue",
+    "addSelectedToPlaylist": "Add selected to playlist",
+    "selectAll": "Select all tracks",
+    "selectTrack": "Select track",
     "addToQueue": "Add to queue",
     "trackOptions": "Track options",
     "remove": "Remove from list",
@@ -540,6 +832,10 @@
     "previous": "Previous page",
     "next": "Next page",
     "page": "Page {{pageNumber}}"
+  },
+  "downloads": {
+    "complete": "Downloaded {{count}} tracks",
+    "failed": "Track download failed"
   },
   "streaming": {
     "errors": {
@@ -563,7 +859,32 @@
     "repeatAll": "Repeat: all",
     "repeatOne": "Repeat: one",
     "discoveryOn": "Discovery: on",
-    "discoveryOff": "Discovery: off"
+    "discoveryOff": "Discovery: off",
+    "miniPlayer": {
+      "title": "RAVE Mini Player",
+      "enter": "Open mini player",
+      "exit": "Return to full player",
+      "upNext": "Up next",
+      "queueEmpty": "Nothing else is queued",
+      "lyrics": "Lyrics",
+      "closeLyrics": "Close lyrics",
+      "lyricsLoading": "Loading lyrics…",
+      "lyricsUnavailable": "No lyrics provider returned text for this track",
+      "minimize": "Minimize mini player",
+      "close": "Close RAVE",
+      "seek": "Seek through track",
+      "previous": "Previous track",
+      "play": "Play",
+      "pause": "Pause",
+      "next": "Next track"
+    },
+    "audioOutput": {
+      "title": "Audio output",
+      "volume": "Volume",
+      "systemDefault": "System default",
+      "device": "Audio device {{number}}",
+      "unavailable": "No additional audio devices found"
+    }
   },
   "logs": {
     "title": "Logs",
@@ -582,12 +903,12 @@
   },
   "remote": {
     "connecting": {
-      "title": "Connecting to Nuclear...",
-      "subtitle": "Make sure Nuclear is running and Nuclear Jam is enabled"
+      "title": "Connecting to RAVE...",
+      "subtitle": "Make sure RAVE is running and RAVE Jam is enabled"
     },
     "error": {
-      "title": "Could not connect to Nuclear",
-      "subtitle": "Make sure Nuclear is running and Nuclear Jam is enabled in Settings"
+      "title": "Could not connect to RAVE",
+      "subtitle": "Make sure RAVE is running and RAVE Jam is enabled in Settings"
     },
     "connection": {
       "connecting": "Connecting",
@@ -598,22 +919,40 @@
     "queue": {
       "upNext": "Up next",
       "emptyTitle": "Queue is empty",
-      "emptySubtitle": "Add tracks in Nuclear to see them here"
+      "emptySubtitle": "Add tracks in RAVE to see them here"
     },
     "search": {
       "placeholder": "Search for music",
       "emptyTitle": "No results",
       "emptyDescription": "Nothing found for your search terms",
       "errorTitle": "Search failed",
-      "errorDescription": "Check the connection to Nuclear and try again"
+      "errorDescription": "Check the connection to RAVE and try again"
     },
     "qrCode": {
-      "tooltip": "Nuclear Jam remote control",
-      "instructions": "Scan the QR code or copy the address below to connect to Nuclear Jam"
+      "tooltip": "RAVE Jam remote control",
+      "instructions": "Scan the QR code or copy the address below to connect to RAVE Jam",
+      "pairingCode": "Pairing code"
+    },
+    "session": {
+      "checking": "Checking the RAVE Session...",
+      "title": "Join the RAVE Session",
+      "subtitle": "Enter your name and the pairing code shown on the host's screen.",
+      "name": "Your name",
+      "code": "Pairing code",
+      "invalidCode": "The pairing code is incorrect or the session has ended.",
+      "join": "Join session",
+      "participants": "{{count}} participant",
+      "participants_other": "{{count}} participants",
+      "upvote": "Vote up",
+      "downvote": "Vote down",
+      "history": "Session history",
+      "actions": {
+        "joined": "joined the session"
+      }
     }
   },
   "titleBar": {
-    "title": "Nuclear Music Player",
+    "title": "RAVE Music Player",
     "minimize": "Minimize",
     "maximize": "Maximize",
     "close": "Close"

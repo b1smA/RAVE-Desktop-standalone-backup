@@ -32,6 +32,9 @@ export const ArtistWrapper = {
     async findSkeleton() {
       return screen.findByTestId('artist-header-skeleton');
     },
+    get biography() {
+      return screen.getByTestId('artist-biography');
+    },
   },
 
   socialHeader: {
@@ -92,6 +95,38 @@ export const ArtistWrapper = {
     },
     async findSkeleton() {
       return screen.findByTestId('artist-albums-skeleton');
+    },
+    get section() {
+      return screen.queryByTestId('artist-albums');
+    },
+  },
+
+  discography: {
+    get section() {
+      return screen.queryByTestId('artist-discography');
+    },
+    async selectFilter(label: string) {
+      await user.click(screen.getByRole('radio', { name: label }));
+    },
+    get titles() {
+      return within(screen.getByTestId('artist-discography'))
+        .getAllByTestId('card-title')
+        .map((element) => element.textContent);
+    },
+    get versionLabels() {
+      return screen.queryAllByText(/versions$/i);
+    },
+    async selectSort(label: string) {
+      const sort = screen.getByTestId('artist-discography-sort');
+      await user.click(within(sort).getByRole('button'));
+      const options = await screen.findAllByText(label);
+      await user.click(options[options.length - 1]);
+    },
+  },
+
+  singles: {
+    get section() {
+      return screen.queryByTestId('artist-singles');
     },
   },
 

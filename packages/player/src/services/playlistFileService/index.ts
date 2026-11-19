@@ -17,6 +17,22 @@ const toIndexEntry = (playlist: Playlist): PlaylistIndexEntry => ({
     0,
   ),
   thumbnails: buildThumbnails(playlist),
+  searchTerms: Array.from(
+    new Set(
+      [
+        playlist.description,
+        ...(playlist.tags ?? []),
+        ...playlist.items.flatMap(({ track, note }) => [
+          track.title,
+          track.album?.title,
+          ...track.artists.map((artist) => artist.name),
+          note,
+        ]),
+      ]
+        .filter((value): value is string => Boolean(value))
+        .map((value) => value.toLocaleLowerCase()),
+    ),
+  ),
 });
 
 export class PlaylistFileService {

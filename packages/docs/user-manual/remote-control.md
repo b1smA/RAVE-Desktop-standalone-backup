@@ -1,44 +1,44 @@
 ---
-description: Control Nuclear from your phone or any other device on your network.
+description: Control RAVE from a phone or another device on your local network
 ---
 
-# Remote control
+# Remote control and sessions
 
-Nuclear Jam turns any device with a web browser into a remote for Nuclear. Pull out your phone, scan a QR code, and you can control playback and see the queue. Handy for parties, cooking, your housemates, and so on.
+RAVE Jam turns any device with a web browser into a remote for RAVE. Scan a QR code to control playback, search for tracks, and manage the queue without a cloud service.
 
-How does it work? Nuclear can start a small web server that can be accessed on your local network. Your phone (or other devices) connects to your computer directly - no data ever leaves your grasp.
+RAVE starts a small web server on your local network. Other devices connect directly to the desktop application, so the session does not require a remote account.
 
-## Enable Nuclear Jam
+## Enable RAVE Jam
 
-1. Open Nuclear, then go to Settings, then Integrations.
-2. Toggle **Nuclear Jam** on.
+1. Open RAVE, then go to **Settings → Integrations**.
+2. Enable **RAVE Jam**.
 3. Two read-only fields appear below the toggle: **Remote URL** and **API URL**. The Remote URL is what you open in a browser to use the remote. The API URL is for scripts and other integrations. See [HTTP API](../integrations/http-api.md) if you want to use it. Intended for programmers.
 
-<figure><img src="../.gitbook/assets/jam-settings.png" alt="The Integrations section of Settings with the Nuclear Jam toggle on, showing Remote URL and API URL fields" width="450"><figcaption><p>Enabling Nuclear Jam in Settings</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/jam-settings.png" alt="The Integrations section of Settings with RAVE Jam enabled" width="450"><figcaption><p>Enabling RAVE Jam in Settings</p></figcaption></figure>
 
 The server binds to your LAN address on a port in the 4120-4129 range. If your computer's address is `192.168.1.42`, the Remote URL looks like `http://192.168.1.42:4120`.
 
 {% hint style="info" %}
-Nuclear Jam only listens on your local network. Devices need to be on the same Wi-Fi (or wired LAN) to connect.
+RAVE Jam only listens on your local network. Devices need to be on the same Wi-Fi or wired LAN to connect. Pairing protection should remain enabled on shared networks.
 {% endhint %}
 
 ## Connect from your phone
 
-Once Jam is on, a small QR code icon appears in the top bar of Nuclear, next to the theme switcher.
+Once Jam is on, a QR code icon appears in the top bar of RAVE.
 
-<figure><img src="../.gitbook/assets/jam-qr-button.png" alt="The top bar of Nuclear with the QR code icon highlighted" width="500"><figcaption><p>The QR code button in the top bar</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/jam-qr-button.png" alt="The RAVE top bar with the QR code icon highlighted" width="500"><figcaption><p>The QR code button in the top bar</p></figcaption></figure>
 
 Click it to open a popover with the QR code and the Remote URL.
 
 <figure><img src="../.gitbook/assets/jam-qr-popover.png" alt="QR code popover showing the QR and the Remote URL below it" width="300"><figcaption><p>The QR code popover</p></figcaption></figure>
 
-Scan the QR with your phone's camera, or just type the Remote URL into a browser on any device on the same network to load Nuclear Jam.
+Scan the QR with your phone's camera, or enter the Remote URL in a browser on the same network to load RAVE Jam.
 
 ## What the remote does
 
 The remote UI is a single screen with four sections: a search bar in the header, now playing, controls, and the queue.
 
-<figure><img src="../.gitbook/assets/jam-remote.png" alt="Nuclear Jam remote control UI on a phone showing now playing, controls, and queue" width="300"><figcaption><p>Nuclear Jam on a phone</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/jam-remote.png" alt="RAVE Jam remote control on a phone showing now playing, controls, and queue" width="300"><figcaption><p>RAVE Jam on a phone</p></figcaption></figure>
 
 - **Now playing** at the top, with cover art, track title, and artist.
 - **Controls** in the middle: previous, play/pause, next, plus a seek bar, shuffle, repeat, and discovery toggle.
@@ -46,7 +46,7 @@ The remote UI is a single screen with four sections: a search bar in the header,
 
 A badge in the header shows the connection status: **Connecting**, **Connected**, **Reconnecting**, or **Disconnected**.
 
-Anything you do on the remote happens in Nuclear immediately, and vice versa: skipping a track on the desktop updates every connected remote. Multiple devices can connect at the same time and they all stay in sync.
+Anything you do on the remote happens in RAVE immediately, and vice versa. Multiple devices can connect at the same time and stay synchronized.
 
 ### Searching for music
 

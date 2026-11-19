@@ -5,6 +5,7 @@ import type { Track } from '@nuclearplayer/model';
 import { NuclearJam } from '@nuclearplayer/ui';
 
 import { SearchDrawerContent } from './SearchDrawerContent';
+import { SessionPanel } from './sessions/SessionPanel';
 import { useRemoteActions } from './useRemoteActions';
 import { useRemoteSearch } from './useRemoteSearch';
 import { useRemoteState } from './useRemoteState';
@@ -59,6 +60,9 @@ const RemoteControl: FC = () => {
         />
       </NuclearJam.Header>
       <NuclearJam.Content>
+        {new URLSearchParams(window.location.search).get('session') === '1' && (
+          <SessionPanel items={state.queue.items} />
+        )}
         {state.hasQueue && state.currentTrack && (
           <NuclearJam.NowPlaying
             title={state.currentTrack.title}

@@ -13,6 +13,11 @@ export type TrackTableLabels = {
   unfavorite: string;
   playAll: string;
   addAllToQueue: string;
+  playSelected: string;
+  addSelectedToQueue: string;
+  addSelectedToPlaylist: string;
+  selectAll: string;
+  selectTrack: string;
   addToQueue: string;
   trackOptions: string;
   remove: string;
@@ -34,6 +39,9 @@ export type TrackTableActions<T extends Track = Track> = {
   onRemove?: (track: T, index: number) => void;
   onPlayAll?: () => void;
   onAddAllToQueue?: () => void;
+  onPlaySelected?: (tracks: T[]) => void;
+  onAddSelectedToQueue?: (tracks: T[]) => void;
+  onAddSelectedToPlaylist?: (tracks: T[]) => void;
 };
 
 export type ContextMenuWrapperProps<T extends Track = Track> = {

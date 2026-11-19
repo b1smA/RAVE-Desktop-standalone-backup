@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { i18n } from '@nuclearplayer/i18n';
+import { i18n, loadLanguage } from '@nuclearplayer/i18n';
 import type { Queue } from '@nuclearplayer/model';
 import { pickArtwork } from '@nuclearplayer/model';
 import { setThemeId } from '@nuclearplayer/themes';
@@ -8,6 +8,7 @@ import type { ConnectionStatus } from '@nuclearplayer/ui';
 
 import type { PlaybackState, SettingsState } from './remoteStore';
 import { useRemoteStore } from './remoteStore';
+import { sessionEventUrl } from './sessions/sessionClient';
 import { useEventSource } from './useEventSource';
 import { useInitialSync } from './useInitialSync';
 import { useSSESync } from './useSSESync';
@@ -67,7 +68,9 @@ type RemoteState = {
 };
 
 export const useRemoteState = (): RemoteState => {
-  const [source, connectionStatus] = useEventSource('/api/events');
+  const [source, connectionStatus] = useEventSource(
+    sessionEventUrl('/api/events'),
+  );
 
   const setConnectionStatus = useRemoteStore(
     (state) => state.setConnectionStatus,
@@ -85,7 +88,9 @@ export const useRemoteState = (): RemoteState => {
   const synced = useRemoteStore((state) => state.synced);
 
   useEffect(() => {
-    void i18n.changeLanguage(settings.language);
+    void loadLanguage(settings.language).then((locale) =>
+      i18n.changeLanguage(locale),
+    );
   }, [settings.language]);
 
   useEffect(() => {

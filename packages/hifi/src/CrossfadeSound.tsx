@@ -25,12 +25,16 @@ export const CrossfadeSound: React.FC<
   src,
   status,
   seek,
+  volume = 100,
+  replayGainDb = 0,
+  sinkId,
   crossfadeMs = DEFAULT_CROSSFADE_MS,
   preload = 'auto',
   crossOrigin = '',
   onTimeUpdate,
   onEnd,
   onLoadStart,
+  onCanPlay,
   onError,
   children,
 }) => {
@@ -44,6 +48,35 @@ export const CrossfadeSound: React.FC<
   const isReady = !!sourceA && !!sourceB;
 
   const prevSrc = useRef<AudioSource>(src);
+  const fadeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const fadeInterval = useRef<ReturnType<typeof setInterval> | null>(null);
+  const targetVolume = Math.max(
+    0,
+    Math.min(1, (volume / 100) * 10 ** (replayGainDb / 20)),
+  );
+
+  useEffect(() => {
+    [audioRefA.current, audioRefB.current].forEach((audio) => {
+      if (audio && sinkId && typeof audio.setSinkId === 'function') {
+        void audio.setSinkId(sinkId).catch(onError);
+      }
+    });
+    const outputContext = context as
+      | (AudioContext & {
+          setSinkId?: (outputDeviceId: string) => Promise<void>;
+        })
+      | null;
+    if (outputContext?.setSinkId && sinkId) {
+      void outputContext.setSinkId(sinkId).catch(onError);
+    }
+  }, [context, onError, sinkId]);
+
+  useEffect(() => {
+    const activeAudio = current.ref.current;
+    if (activeAudio && fadeTimer.current === null) {
+      activeAudio.volume = targetVolume;
+    }
+  }, [targetVolume, activeIndex]);
 
   const adapters = useMemo(
     () =>
@@ -134,15 +167,42 @@ export const CrossfadeSound: React.FC<
     if (!currentAudio || !nextAudio || !context) {
       return;
     }
+    const startedAt = performance.now();
+    nextAudio.volume = 0;
     nextAudio.load();
-    nextAudio.play();
-    setTimeout(() => {
-      setActiveIndex(nextIndex);
-      if (currentAudio) {
-        currentAudio.pause();
+    void nextAudio.play();
+    const fade = () => {
+      const progress = Math.min(
+        1,
+        (performance.now() - startedAt) / crossfadeMs,
+      );
+      currentAudio.volume = targetVolume * (1 - progress);
+      nextAudio.volume = targetVolume * progress;
+    };
+    fadeInterval.current = setInterval(fade, 16);
+    fadeTimer.current = setTimeout(() => {
+      if (fadeInterval.current !== null) {
+        clearInterval(fadeInterval.current);
+        fadeInterval.current = null;
       }
+      fade();
+      currentAudio.pause();
+      currentAudio.volume = targetVolume;
+      nextAudio.volume = targetVolume;
+      setActiveIndex(nextIndex);
       prevSrc.current = src;
+      fadeTimer.current = null;
     }, crossfadeMs);
+    return () => {
+      if (fadeTimer.current !== null) {
+        clearTimeout(fadeTimer.current);
+        fadeTimer.current = null;
+      }
+      if (fadeInterval.current !== null) {
+        clearInterval(fadeInterval.current);
+        fadeInterval.current = null;
+      }
+    };
   }, [src, crossfadeMs, isReady, activeIndex, context]);
 
   const handleTimeUpdate = useCallback(
@@ -180,6 +240,7 @@ export const CrossfadeSound: React.FC<
           onTimeUpdate={handleTimeUpdate}
           onEnded={onEnd}
           onLoadStart={onLoadStart}
+          onCanPlay={onCanPlay}
           onError={handleError}
         >
           <source

@@ -13,6 +13,10 @@ impl HistoryDb {
              JOIN tracks t ON t.id = e.track_id \
              LEFT JOIN play_listening_time p ON p.play_id = e.play_id \
              WHERE e.kind = 'started' \
+             AND e.at = ( \
+               SELECT MAX(latest.at) FROM play_events latest \
+               WHERE latest.kind = 'started' AND latest.track_id = e.track_id \
+             ) \
              ORDER BY e.at DESC LIMIT ? OFFSET ?",
         )
         .bind(limit)
@@ -26,10 +30,12 @@ impl HistoryDb {
     }
 
     pub async fn count_plays(&self) -> Result<i64, String> {
-        sqlx::query_scalar("SELECT COUNT(*) FROM play_events WHERE kind = 'started'")
-            .fetch_one(self.pool())
-            .await
-            .map_err(|err| format!("Failed to count plays: {err}"))
+        sqlx::query_scalar(
+            "SELECT COUNT(DISTINCT track_id) FROM play_events WHERE kind = 'started'",
+        )
+        .fetch_one(self.pool())
+        .await
+        .map_err(|err| format!("Failed to count plays: {err}"))
     }
 }
 
@@ -110,6 +116,19 @@ mod tests {
         let entries = db.entries(10, 0).await.unwrap();
 
         assert_eq!(play_ids(&entries), ["play-3", "play-2", "play-1"]);
+    }
+
+    #[tokio::test]
+    async fn entries_keeps_only_the_latest_play_for_each_track() {
+        let db = HistoryDb(fixtures::pool().await);
+        fixtures::seed_finished_play(&db, "play-1", "Repeated", 1000).await;
+        fixtures::seed_finished_play(&db, "play-2", "Other", 5000).await;
+        fixtures::seed_finished_play(&db, "play-3", "Repeated", 9000).await;
+
+        let entries = db.entries(10, 0).await.unwrap();
+
+        assert_eq!(play_ids(&entries), ["play-3", "play-2"]);
+        assert_eq!(db.count_plays().await.unwrap(), 2);
     }
 
     #[tokio::test]

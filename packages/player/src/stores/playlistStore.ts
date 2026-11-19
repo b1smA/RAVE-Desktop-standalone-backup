@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 import { create } from 'zustand';
 
 import type {
@@ -10,6 +9,7 @@ import type {
 import { stripResolutionState } from '@nuclearplayer/model';
 
 import { playlistFileService } from '../services/playlistFileService';
+import { createRandomId } from '../utils/randomId';
 import { useQueueStore } from './queueStore';
 
 type PlaylistStore = {
@@ -25,6 +25,11 @@ type PlaylistStore = {
   removeTracks: (playlistId: string, itemIds: string[]) => Promise<void>;
   importPlaylist: (playlist: Playlist) => Promise<string>;
   saveQueueAsPlaylist: (name: string) => Promise<string>;
+  createSmartPlaylist: (
+    name: string,
+    tracks: Track[],
+    tags: string[],
+  ) => Promise<string>;
   reorderTracks: (
     playlistId: string,
     from: number,
@@ -66,7 +71,7 @@ export const usePlaylistStore = create<PlaylistStore>((set, get) => ({
   createPlaylist: async (name: string) => {
     const now = new Date().toISOString();
     const playlist: Playlist = {
-      id: uuidv4(),
+      id: createRandomId(),
       name,
       createdAtIso: now,
       lastModifiedIso: now,
@@ -88,7 +93,7 @@ export const usePlaylistStore = create<PlaylistStore>((set, get) => ({
     const now = new Date().toISOString();
     const imported: Playlist = {
       ...playlist,
-      id: uuidv4(),
+      id: createRandomId(),
       createdAtIso: now,
       lastModifiedIso: now,
       isReadOnly: false,
@@ -112,7 +117,7 @@ export const usePlaylistStore = create<PlaylistStore>((set, get) => ({
 
     const now = new Date().toISOString();
     const newItems: PlaylistItem[] = tracks.map((track) => ({
-      id: uuidv4(),
+      id: createRandomId(),
       track,
       addedAtIso: now,
     }));
@@ -185,13 +190,13 @@ export const usePlaylistStore = create<PlaylistStore>((set, get) => ({
     const now = new Date().toISOString();
 
     const playlist: Playlist = {
-      id: uuidv4(),
+      id: createRandomId(),
       name,
       createdAtIso: now,
       lastModifiedIso: now,
       isReadOnly: false,
       items: tracks.map((track) => ({
-        id: uuidv4(),
+        id: createRandomId(),
         track,
         addedAtIso: now,
       })),
@@ -204,6 +209,29 @@ export const usePlaylistStore = create<PlaylistStore>((set, get) => ({
       index,
     }));
 
+    return playlist.id;
+  },
+
+  createSmartPlaylist: async (name, tracks, tags) => {
+    const now = new Date().toISOString();
+    const playlist: Playlist = {
+      id: createRandomId(),
+      name,
+      tags,
+      createdAtIso: now,
+      lastModifiedIso: now,
+      isReadOnly: false,
+      items: tracks.map((track) => ({
+        id: createRandomId(),
+        track: stripResolutionState(track),
+        addedAtIso: now,
+      })),
+    };
+    const index = await playlistFileService.savePlaylist(playlist);
+    set((state) => ({
+      playlists: new Map(state.playlists).set(playlist.id, playlist),
+      index,
+    }));
     return playlist.id;
   },
 

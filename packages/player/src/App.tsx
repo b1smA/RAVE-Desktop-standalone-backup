@@ -10,7 +10,17 @@ import { Platform, PlatformProvider } from '@nuclearplayer/ui';
 import { routeTree } from './routeTree.gen';
 
 const router = createRouter({ routeTree });
-const defaultQueryClient = new QueryClient();
+const QUERY_STALE_TIME_MS = 30_000;
+const QUERY_GC_TIME_MS = 10 * 60_000;
+const defaultQueryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: QUERY_STALE_TIME_MS,
+      gcTime: QUERY_GC_TIME_MS,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 declare module '@tanstack/react-router' {
   interface Register {

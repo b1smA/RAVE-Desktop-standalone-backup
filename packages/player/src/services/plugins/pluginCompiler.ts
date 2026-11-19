@@ -21,8 +21,11 @@
  */
 import { dirname, extname, isAbsolute, resolve } from '@tauri-apps/api/path';
 import { readTextFile } from '@tauri-apps/plugin-fs';
+import { LazyStore } from '@tauri-apps/plugin-store';
 import type * as EsbuildTypes from 'esbuild-wasm';
 import wasmUrl from 'esbuild-wasm/esbuild.wasm?url';
+
+import { Logger } from '../logger';
 
 type EsbuildModule = typeof EsbuildTypes & { stop?: () => void };
 
@@ -84,7 +87,16 @@ type CompileCacheEntry = {
   code: string;
 };
 
+type PersistentCompileCacheEntry = {
+  version: number;
+  entryPath: string;
+  inputHashes: [string, string][];
+  code: string;
+};
+
 const cache = new Map<string, CompileCacheEntry>();
+const persistentCache = new LazyStore('plugin-compile-cache.json');
+const COMPILE_CACHE_VERSION = 1;
 
 const isTs = (p: string) => p.endsWith('.ts') || p.endsWith('.tsx');
 
@@ -131,7 +143,7 @@ async function getEsbuild(): Promise<EsbuildModule> {
   return es.mod!;
 }
 
-const simpleHash = (str: string) => {
+const simpleHash = (str: string): string => {
   let h = 0;
   for (let i = 0; i < str.length; i++) {
     h = (h * 31 + str.charCodeAt(i)) | 0;
@@ -139,16 +151,66 @@ const simpleHash = (str: string) => {
   return h.toString(16);
 };
 
+const contentHash = async (contents: string): Promise<string> => {
+  const bytes = new TextEncoder().encode(contents);
+  const digest = await crypto.subtle.digest('SHA-256', bytes);
+  return Array.from(new Uint8Array(digest), (byte) =>
+    byte.toString(16).padStart(2, '0'),
+  ).join('');
+};
+
+const persistentCacheKey = (entryPath: string): string =>
+  `compiled.${simpleHash(entryPath)}`;
+
 const isCacheEntryFresh = async (
   entry: CompileCacheEntry,
 ): Promise<boolean> => {
   for (const [path, hash] of entry.inputHashes) {
     const contents = await tryRead(path);
-    if (contents === null || simpleHash(contents) !== hash) {
+    if (contents === null || (await contentHash(contents)) !== hash) {
       return false;
     }
   }
   return true;
+};
+
+const readPersistentCache = async (
+  entryPath: string,
+): Promise<CompileCacheEntry | undefined> => {
+  try {
+    const stored = await persistentCache.get<PersistentCompileCacheEntry>(
+      persistentCacheKey(entryPath),
+    );
+    if (
+      !stored ||
+      stored.version !== COMPILE_CACHE_VERSION ||
+      stored.entryPath !== entryPath
+    ) {
+      return undefined;
+    }
+    return { inputHashes: new Map(stored.inputHashes), code: stored.code };
+  } catch {
+    return undefined;
+  }
+};
+
+const writePersistentCache = async (
+  entryPath: string,
+  entry: CompileCacheEntry,
+): Promise<void> => {
+  try {
+    await persistentCache.set(persistentCacheKey(entryPath), {
+      version: COMPILE_CACHE_VERSION,
+      entryPath,
+      inputHashes: Array.from(entry.inputHashes.entries()),
+      code: entry.code,
+    } satisfies PersistentCompileCacheEntry);
+    await persistentCache.save();
+  } catch (error) {
+    await Logger.plugins.warn(
+      `Could not persist plugin compile cache: ${error}`,
+    );
+  }
 };
 
 export async function compilePlugin(
@@ -160,13 +222,25 @@ export async function compilePlugin(
 
   const cached = cache.get(entryPath);
   if (cached && (await isCacheEntryFresh(cached))) {
+    await Logger.plugins.debug(
+      `Using in-memory compile cache for ${entryPath}`,
+    );
     return cached.code;
+  }
+
+  const persisted = await readPersistentCache(entryPath);
+  if (persisted && (await isCacheEntryFresh(persisted))) {
+    cache.set(entryPath, persisted);
+    await Logger.plugins.debug(
+      `Using persistent compile cache for ${entryPath}`,
+    );
+    return persisted.code;
   }
 
   const entrySource = await readTextFile(entryPath);
 
   const inputHashes = new Map<string, string>([
-    [entryPath, simpleHash(entrySource)],
+    [entryPath, await contentHash(entrySource)],
   ]);
 
   const mod = await getEsbuild();
@@ -287,7 +361,7 @@ export async function compilePlugin(
                   // Record the resolved file in the freshness manifest so the
                   // cache invalidates when this import changes, not just when
                   // the entry does.
-                  inputHashes.set(p, simpleHash(contents));
+                  inputHashes.set(p, await contentHash(contents));
                   const loader: EsbuildTypes.Loader = p.endsWith('.tsx')
                     ? 'tsx'
                     : p.endsWith('.ts')
@@ -309,6 +383,8 @@ export async function compilePlugin(
     throw new Error('Plugin compile failed');
   }
   const code = result.outputFiles[0].text;
-  cache.set(entryPath, { inputHashes, code });
+  const cacheEntry = { inputHashes, code };
+  cache.set(entryPath, cacheEntry);
+  await writePersistentCache(entryPath, cacheEntry);
   return code;
 }

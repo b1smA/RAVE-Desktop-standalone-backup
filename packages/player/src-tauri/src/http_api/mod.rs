@@ -2,6 +2,7 @@ mod actions;
 mod frontend;
 mod routes;
 mod search;
+mod sessions;
 
 use std::sync::Arc;
 
@@ -68,6 +69,7 @@ impl HttpApiState {
 pub struct HttpApiStartResult {
     pub port: u16,
     pub lan_address: Option<String>,
+    pub pairing_code: Option<String>,
 }
 
 async fn start_server(
@@ -75,8 +77,9 @@ async fn start_server(
     events_tx: broadcast::Sender<RemoteEvent>,
     ct: CancellationToken,
     ready: oneshot::Sender<Result<HttpApiStartResult, String>>,
+    session_manager: sessions::SessionManager,
 ) {
-    let router = routes::router(bridge, events_tx);
+    let router = routes::router(bridge, events_tx, session_manager.clone());
 
     let tcp_listener =
         match crate::net::bind_first_available_port("0.0.0.0", REMOTE_PORT_START, REMOTE_PORT_END)
@@ -96,6 +99,7 @@ async fn start_server(
     let _ = ready.send(Ok(HttpApiStartResult {
         port: bound_port,
         lan_address,
+        pairing_code: session_manager.pairing_code().await,
     }));
 
     let _ = axum::serve(tcp_listener, router)
@@ -136,6 +140,7 @@ pub fn init_http_api(app_handle: AppHandle) {
 pub async fn http_api_start(
     state: tauri::State<'_, HttpApiState>,
     bridge: tauri::State<'_, crate::bridge::bridge::Bridge>,
+    config: Option<sessions::SessionConfig>,
 ) -> Result<HttpApiStartResult, String> {
     let mut guard = state.running.lock().await;
     if let Some(server) = guard.as_ref() {
@@ -144,6 +149,7 @@ pub async fn http_api_start(
         return Ok(HttpApiStartResult {
             port: server.port,
             lan_address,
+            pairing_code: None,
         });
     }
 
@@ -155,6 +161,15 @@ pub async fn http_api_start(
         state.events_tx.clone(),
         ct.clone(),
         ready_tx,
+        sessions::SessionManager::new(config.unwrap_or(sessions::SessionConfig {
+            enabled: false,
+            permissions: sessions::SessionPermissions {
+                can_add_tracks: true,
+                can_vote: true,
+                can_control_playback: true,
+                can_manage_queue: true,
+            },
+        })),
     ));
 
     match ready_rx.await {

@@ -2,9 +2,33 @@ import type { Playlist, Track } from '@nuclearplayer/model';
 import type {
   PlaylistsHost,
   PlaylistsListener,
+  PlaylistProvider,
 } from '@nuclearplayer/plugin-sdk';
 
 import { usePlaylistStore } from '../stores/playlistStore';
+import { providersHost } from './providersHost';
+
+export const getPlaylistProvidersForUrl = (
+  url: string,
+  preferredProviderId?: string,
+): PlaylistProvider[] =>
+  (providersHost.list('playlists') as PlaylistProvider[])
+    .filter((provider) => {
+      try {
+        return provider.matchesUrl(url);
+      } catch {
+        return false;
+      }
+    })
+    .sort((left, right) => {
+      if (left.id === preferredProviderId) {
+        return -1;
+      }
+      if (right.id === preferredProviderId) {
+        return 1;
+      }
+      return 0;
+    });
 
 export const createPlaylistsHost = (): PlaylistsHost => ({
   getIndex: async () => usePlaylistStore.getState().index,

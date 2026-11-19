@@ -4,6 +4,7 @@ import type { QueueItem, StreamCandidate } from '@nuclearplayer/model';
 import { stripResolutionState } from '@nuclearplayer/model';
 
 import { useQueueStore } from '../../stores/queueStore';
+import { getSetting } from '../../stores/settingsStore';
 import { useSoundStore } from '../../stores/soundStore';
 import { playbackManager } from '../playback';
 import { hasActiveStreamingProvider, streamingHost } from '../streamingHost';
@@ -14,6 +15,8 @@ export type ResolveOptions = {
   autoPlay: boolean;
   startPositionSeconds?: number;
 };
+
+const DEFAULT_RESERVED_SOURCE_COUNT = 3;
 
 export class StreamResolution {
   private activeController: AbortController | null = null;
@@ -39,7 +42,7 @@ export class StreamResolution {
     if (signal.aborted) {
       return;
     }
-    if (!candidates) {
+    if (!candidates?.length) {
       this.failItem(item.id, 'streaming:errors.noCandidatesFound');
       return;
     }
@@ -90,16 +93,60 @@ export class StreamResolution {
     }
 
     if (resolved.failed) {
-      useQueueStore.getState().removeCandidate(item.id, candidate.id);
+      useQueueStore
+        .getState()
+        .removeCandidate(item.id, candidate.id, candidate.source.provider);
       const remaining = candidates.filter(
-        (current) => current.id !== candidate.id,
+        (current) =>
+          current.id !== candidate.id ||
+          current.source.provider !== candidate.source.provider,
       );
       await this.tryCandidatesInOrder(item, remaining, signal, options);
       return;
     }
 
     useQueueStore.getState().updateCandidate(item.id, resolved);
+    this.prepareReserveCandidates(item, candidates, resolved);
     await this.startPlayback(item, resolved, signal, options);
+  }
+
+  private prepareReserveCandidates(
+    item: QueueItem,
+    candidates: StreamCandidate[],
+    primary: StreamCandidate,
+  ): void {
+    if (
+      getSetting('core.playback.preloadBackupStream') === false ||
+      getSetting('core.playback.dataSaver') === true
+    ) {
+      return;
+    }
+    const reserveCount = Math.max(
+      1,
+      Number(
+        getSetting('core.playback.reservedSourceCount') ??
+          DEFAULT_RESERVED_SOURCE_COUNT,
+      ),
+    );
+    const backups = candidates
+      .filter(
+        (candidate) =>
+          !candidate.failed &&
+          !candidate.stream &&
+          (candidate.id !== primary.id ||
+            candidate.source.provider !== primary.source.provider),
+      )
+      .slice(0, reserveCount - 1);
+    backups.forEach((backup) => {
+      void streamingHost
+        .resolveStreamForCandidate(backup)
+        .then((resolved) => {
+          if (resolved && !resolved.failed) {
+            useQueueStore.getState().updateCandidate(item.id, resolved);
+          }
+        })
+        .catch(() => undefined);
+    });
   }
 
   private async startPlayback(

@@ -26,7 +26,10 @@ const comparePlaylists = (
   }
 };
 
-export const usePlaylistSort = (playlists: PlaylistIndexEntry[]) => {
+export const usePlaylistSort = (
+  playlists: PlaylistIndexEntry[],
+  pinnedIds: string[] = [],
+) => {
   const [sortBy, setSortBy] = useState<PlaylistSortBy>('dateAdded');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
 
@@ -40,16 +43,16 @@ export const usePlaylistSort = (playlists: PlaylistIndexEntry[]) => {
   };
 
   const sortedPlaylists = useMemo(() => {
+    const pinned = new Set(pinnedIds);
     const ascending = [...playlists].sort((left, right) =>
       comparePlaylists(left, right, sortBy),
     );
-
-    if (sortDirection === 'desc') {
-      return ascending.reverse();
-    }
-
-    return ascending;
-  }, [playlists, sortBy, sortDirection]);
+    const directed = sortDirection === 'desc' ? ascending.reverse() : ascending;
+    return directed.sort(
+      (left, right) =>
+        Number(pinned.has(right.id)) - Number(pinned.has(left.id)),
+    );
+  }, [pinnedIds, playlists, sortBy, sortDirection]);
 
   return {
     sortBy,

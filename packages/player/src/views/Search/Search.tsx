@@ -18,21 +18,21 @@ import {
 } from '@nuclearplayer/ui';
 
 import { ConnectedTrackTable } from '../../components/ConnectedTrackTable';
-import { useActiveProvider } from '../../hooks/useActiveProvider';
-import { metadataHost } from '../../services/metadataHost';
+import { useProviders } from '../../hooks/useProviders';
+import { searchAllMetadataProviders } from '../../services/metadataHost';
 import { SearchEmptyState } from './SearchEmptyState';
 
 const SearchContent: FC<{
-  provider: MetadataProvider | undefined;
+  hasProviders: boolean;
   isLoading: boolean;
   isError: boolean;
   results: SearchResults | undefined;
   refetch: () => void;
-}> = ({ provider, isLoading, isError, results, refetch }) => {
+}> = ({ hasProviders, isLoading, isError, results, refetch }) => {
   const { t } = useTranslation(['search', 'common']);
   const navigate = useNavigate();
 
-  if (!provider) {
+  if (!hasProviders) {
     return <SearchEmptyState />;
   }
 
@@ -55,7 +55,48 @@ const SearchContent: FC<{
     );
   }
 
+  const artistCards = results?.artists?.map((item) => (
+    <div key={`${item.source.provider}:${item.source.id}`} data-testid="search-result-heading">
+      <Card
+        title={item.name}
+        src={pickArtwork(item.artwork, 'cover', 300)?.url}
+        onClick={() =>
+          navigate({
+            to: `/artist/${item.source.provider}/${item.source.id}`,
+          })
+        }
+      />
+    </div>
+  ));
+  const albumCards = results?.albums?.map((item) => (
+    <Card
+      key={`${item.source.provider}:${item.source.id}`}
+      title={item.title}
+      src={pickArtwork(item.artwork, 'cover', 300)?.url}
+      onClick={() =>
+        navigate({ to: `/album/${item.source.provider}/${item.source.id}` })
+      }
+    />
+  ));
+
   const tabsItems = [
+    {
+      id: 'all',
+      label: t('search:results.all'),
+      content: (
+        <div className="flex flex-col gap-8" data-testid="search-unified-results">
+          {artistCards && artistCards.length > 0 && (
+            <CardGrid>{artistCards}</CardGrid>
+          )}
+          {results?.tracks && results.tracks.length > 0 && (
+            <ConnectedTrackTable tracks={results.tracks.slice(0, 8)} />
+          )}
+          {albumCards && albumCards.length > 0 && (
+            <CardGrid>{albumCards}</CardGrid>
+          )}
+        </div>
+      ),
+    },
     results?.albums && {
       id: 'albums',
       label: t('search:results.albums'),
@@ -63,11 +104,13 @@ const SearchContent: FC<{
         <CardGrid>
           {results.albums.map((item) => (
             <Card
-              key={item.source.id}
+              key={`${item.source.provider}:${item.source.id}`}
               title={item.title}
               src={pickArtwork(item.artwork, 'cover', 300)?.url}
               onClick={() =>
-                navigate({ to: `/album/${provider.id}/${item.source.id}` })
+                navigate({
+                  to: `/album/${item.source.provider}/${item.source.id}`,
+                })
               }
             />
           ))}
@@ -81,11 +124,13 @@ const SearchContent: FC<{
         <CardGrid>
           {results.artists.map((item) => (
             <Card
-              key={item.source.id}
+              key={`${item.source.provider}:${item.source.id}`}
               title={item.name}
               src={pickArtwork(item.artwork, 'cover', 300)?.url}
               onClick={() =>
-                navigate({ to: `/artist/${provider.id}/${item.source.id}` })
+                navigate({
+                  to: `/artist/${item.source.provider}/${item.source.id}`,
+                })
               }
             />
           ))}
@@ -113,8 +158,8 @@ export const Search: FC = () => {
   const { t } = useTranslation(['search', 'common']);
   const { q } = useSearch({ from: '/search' });
 
-  const provider = useActiveProvider('metadata') as
-    MetadataProvider | undefined;
+  const providers = useProviders('metadata') as MetadataProvider[];
+  const providerIds = providers.map((provider) => provider.id).sort().join(',');
 
   const {
     data: results,
@@ -122,12 +167,12 @@ export const Search: FC = () => {
     isError,
     refetch,
   } = useQuery<SearchResults>({
-    queryKey: ['metadata-search', provider?.id, q],
+    queryKey: ['metadata-search', providerIds, q],
     queryFn: () =>
-      metadataHost.search({
+      searchAllMetadataProviders({
         query: q,
       }),
-    enabled: Boolean(provider && q),
+    enabled: Boolean(providers.length > 0 && q),
   });
 
   return (
@@ -137,7 +182,7 @@ export const Search: FC = () => {
       subtitle={`${t('search:query')}: "${q}"`}
     >
       <SearchContent
-        provider={provider}
+        hasProviders={providers.length > 0}
         isLoading={isLoading}
         isError={isError}
         results={results}

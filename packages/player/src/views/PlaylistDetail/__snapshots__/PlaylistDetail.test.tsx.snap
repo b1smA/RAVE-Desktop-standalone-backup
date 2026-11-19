@@ -259,6 +259,15 @@ exports[`PlaylistDetail view > (Snapshot) renders playlist detail with tracks 1`
                         role="row"
                       >
                         <th
+                          class="w-10 p-2 text-center"
+                        >
+                          <input
+                            aria-label="Select all tracks"
+                            class="accent-primary size-4"
+                            type="checkbox"
+                          />
+                        </th>
+                        <th
                           class="w-10 text-center"
                           role="columnheader"
                         >
@@ -404,6 +413,15 @@ exports[`PlaylistDetail view > (Snapshot) renders playlist detail with tracks 1`
                         style="height: 42px;"
                         tabindex="0"
                       >
+                        <td
+                          class="w-10 p-2 text-center"
+                        >
+                          <input
+                            aria-label="Select track: Giant Steps"
+                            class="accent-primary size-4"
+                            type="checkbox"
+                          />
+                        </td>
                         <td
                           class="w-10 text-center"
                         >
@@ -600,6 +618,15 @@ exports[`PlaylistDetail view > (Snapshot) renders playlist detail with tracks 1`
                         style="height: 42px;"
                         tabindex="0"
                       >
+                        <td
+                          class="w-10 p-2 text-center"
+                        >
+                          <input
+                            aria-label="Select track: So What"
+                            class="accent-primary size-4"
+                            type="checkbox"
+                          />
+                        </td>
                         <td
                           class="w-10 text-center"
                         >

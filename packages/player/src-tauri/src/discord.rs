@@ -10,9 +10,7 @@ pub struct DiscordState {
     pub client: Mutex<Option<DiscordIpcClient>>,
 }
 
-fn try_reconnect(
-    client_guard: &mut Option<DiscordIpcClient>,
-) -> Option<&mut DiscordIpcClient> {
+fn try_reconnect(client_guard: &mut Option<DiscordIpcClient>) -> Option<&mut DiscordIpcClient> {
     if let Some(mut old) = client_guard.take() {
         let _ = old.close();
     }

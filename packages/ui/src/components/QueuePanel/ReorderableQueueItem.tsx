@@ -1,6 +1,6 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { FC } from 'react';
+import { FC, memo } from 'react';
 
 import type { QueueItem as QueueItemType } from '@nuclearplayer/model';
 
@@ -23,7 +23,7 @@ export type ReorderableQueueItemProps = {
   };
 };
 
-export const ReorderableQueueItem: FC<ReorderableQueueItemProps> = ({
+const ReorderableQueueItemComponent: FC<ReorderableQueueItemProps> = ({
   item,
   isCurrent,
   isCollapsed = false,
@@ -86,3 +86,5 @@ export const ReorderableQueueItem: FC<ReorderableQueueItemProps> = ({
     </div>
   );
 };
+
+export const ReorderableQueueItem = memo(ReorderableQueueItemComponent);

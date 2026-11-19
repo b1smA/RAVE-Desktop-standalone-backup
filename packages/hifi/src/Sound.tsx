@@ -14,6 +14,8 @@ export const Sound: React.FC<SoundProps> = ({
   status,
   seek,
   volume,
+  replayGainDb = 0,
+  sinkId,
   preload = 'auto',
   crossOrigin = '',
   onTimeUpdate,
@@ -34,12 +36,24 @@ export const Sound: React.FC<SoundProps> = ({
 
   useEffect(() => {
     const audio = audioRef.current;
+    if (!audio || !sinkId || typeof audio.setSinkId !== 'function') {
+      return;
+    }
+    void audio.setSinkId(sinkId).catch(onError);
+  }, [onError, sinkId]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
     if (!audio || volume === undefined) {
       return;
     }
 
-    audio.volume = Math.max(0, Math.min(1, volume / 100));
-  }, [volume]);
+    const replayGainMultiplier = 10 ** (replayGainDb / 20);
+    audio.volume = Math.max(
+      0,
+      Math.min(1, (volume / 100) * replayGainMultiplier),
+    );
+  }, [replayGainDb, volume]);
 
   const handleCanPlay = useCallback(() => {
     onCanPlay?.();

@@ -73,6 +73,7 @@ export const playlistIndexEntrySchema = z.object({
   itemCount: z.number(),
   totalDurationMs: z.number(),
   thumbnails: z.array(z.string()).default([]),
+  searchTerms: z.array(z.string()).optional(),
 });
 
 export const playlistIndexSchema = z.array(playlistIndexEntrySchema);

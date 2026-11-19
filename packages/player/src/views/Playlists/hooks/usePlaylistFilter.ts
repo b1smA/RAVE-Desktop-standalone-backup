@@ -11,7 +11,9 @@ export const usePlaylistFilter = (playlists: PlaylistIndexEntry[]) => {
       return playlists;
     }
     return playlists.filter((playlist) =>
-      playlist.name.toLowerCase().includes(query),
+      [playlist.name, ...(playlist.searchTerms ?? [])].some((value) =>
+        value.toLocaleLowerCase().includes(query),
+      ),
     );
   }, [playlists, query]);
 

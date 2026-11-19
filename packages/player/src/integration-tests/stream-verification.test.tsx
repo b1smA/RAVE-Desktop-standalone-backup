@@ -44,9 +44,6 @@ describe('Stream verification', () => {
     useSoundStore.setState({
       src: null,
       status: 'stopped',
-      crossfadeMs: 0,
-      preload: 'auto',
-      crossOrigin: '',
     });
 
     resetInMemoryTauriStore();
@@ -491,7 +488,7 @@ describe('Stream verification', () => {
 
       expect(
         await QueueWrapper.toast.find(
-          "Stream was verified locally, but Nuclear couldn't reach the verification service.",
+          "Stream was verified locally, but RAVE couldn't reach the verification service.",
         ),
       ).toBeInTheDocument();
       expect(

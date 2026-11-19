@@ -1,8 +1,8 @@
-# Nuclear Music Player - Copilot Instructions
+# RAVE Music Player - Copilot Instructions
 
 ## Project overview
 
-Nuclear is a free, open-source music player without ads or tracking. Search for any song or artist, build playlists, and start listening.
+RAVE is an independent fork of Nuclear. It is a free, open-source music player without ads or tracking, with RAVE-specific source intelligence, personalization, collaborative sessions, and desktop playback improvements.
 
 It's a monorepo managed with pnpm and turbo.
 

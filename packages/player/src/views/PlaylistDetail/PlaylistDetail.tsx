@@ -47,7 +47,12 @@ export const PlaylistDetail: FC = () => {
           <ConnectedTrackTable
             tracks={tracks}
             getItemId={editing.getItemId}
-            features={{ header: true, reorderable: editing.isEditable }}
+            features={{
+              header: true,
+              filterable: true,
+              selectable: true,
+              reorderable: editing.isEditable,
+            }}
             display={{
               displayThumbnail: true,
               displayArtist: true,

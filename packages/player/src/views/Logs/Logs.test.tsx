@@ -55,10 +55,14 @@ describe('Logs view', () => {
     await LogsWrapper.mount();
     await LogsWrapper.exportButton.click();
 
-    expect(dialog.save).toHaveBeenCalled();
+    expect(dialog.save).toHaveBeenCalledWith(
+      expect.objectContaining({
+        defaultPath: expect.stringMatching(/^rave-logs-/),
+      }),
+    );
     expect(fs.writeTextFile).toHaveBeenCalledWith(
       '/path/to/logs.txt',
-      expect.stringContaining('Nuclear'),
+      expect.stringContaining('# RAVE Music Player - Log Export'),
     );
   });
 

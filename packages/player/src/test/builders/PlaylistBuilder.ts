@@ -1,5 +1,4 @@
 import cloneDeep from 'lodash-es/cloneDeep';
-import { v4 as uuidv4 } from 'uuid';
 
 import type {
   Playlist,
@@ -9,23 +8,25 @@ import type {
   Track,
 } from '@nuclearplayer/model';
 
+import { createRandomId } from '../../utils/randomId';
+
 const now = () => new Date().toISOString();
 
 const defaultTrack = (): Track => ({
-  title: `Track ${uuidv4()}`,
+  title: `Track ${createRandomId()}`,
   artists: [
     {
       name: 'Test Artist',
       roles: [],
-      source: { provider: 'test', id: uuidv4() },
+      source: { provider: 'test', id: createRandomId() },
     },
   ],
   durationMs: 180000,
-  source: { provider: 'test', id: uuidv4() },
+  source: { provider: 'test', id: createRandomId() },
 });
 
 const defaultItem = (): PlaylistItem => ({
-  id: uuidv4(),
+  id: createRandomId(),
   track: defaultTrack(),
   addedAtIso: now(),
 });
@@ -36,7 +37,7 @@ export class PlaylistBuilder {
 
   constructor() {
     this.playlist = {
-      id: uuidv4(),
+      id: createRandomId(),
       name: 'Test Playlist',
       createdAtIso: now(),
       lastModifiedIso: now(),
@@ -77,7 +78,7 @@ export class PlaylistBuilder {
 
   withTrackDurations(durationsMs: number[]): this {
     this.playlist.items = durationsMs.map((durationMs) => ({
-      id: uuidv4(),
+      id: createRandomId(),
       track: { ...defaultTrack(), durationMs },
       addedAtIso: now(),
     }));
@@ -86,7 +87,7 @@ export class PlaylistBuilder {
 
   withTrackNames(names: string[]): this {
     this.playlist.items = names.map((title) => ({
-      id: uuidv4(),
+      id: createRandomId(),
       track: { ...defaultTrack(), title },
       addedAtIso: now(),
     }));
@@ -95,7 +96,7 @@ export class PlaylistBuilder {
 
   withTrackArtworks(artworkUrls: string[]): this {
     this.playlist.items = artworkUrls.map((url, index) => ({
-      id: uuidv4(),
+      id: createRandomId(),
       track: {
         ...defaultTrack(),
         title: `Track ${index + 1}`,

@@ -117,142 +117,227 @@ exports[`FavoriteArtists view > (Snapshot) renders with artists 1`] = `
             class="scrollbar-hide flex h-full w-full flex-col overflow-auto"
             style="scrollbar-width: none;"
           >
-            <div
-              class="grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] gap-4 pr-2 pb-4"
-              role="grid"
-            >
-              <button
-                class="cursor-pointer rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-auto surface-card flex w-42 flex-col items-stretch gap-2 p-2 text-left"
-                data-headlessui-state=""
-                data-testid="card"
-                type="button"
+            <div>
+              <div
+                class="border-border mb-3 inline-flex w-fit items-stretch overflow-hidden rounded-md border-(length:--border-width)"
               >
                 <div
-                  class="border-border flex h-full rounded-md border-(length:--border-width) shadow-none surface-card relative aspect-square w-full items-center justify-center overflow-hidden p-0"
+                  class="w-48"
                 >
                   <div
-                    class="overflow-hidden absolute inset-0"
+                    class="relative flex w-full flex-col gap-2"
                   >
-                    <div
-                      class="pointer-events-none absolute inset-0 flex items-center justify-center"
+                    <button
+                      aria-expanded="false"
+                      aria-haspopup="listbox"
+                      class="border-border surface-primary focus-visible:ring-ring focus-visible:ring-offset-muted relative flex w-full items-center justify-between text-left transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 px-3 py-2 text-sm rounded-none border-0"
+                      data-headlessui-state=""
+                      id="select-:r7:"
+                      type="button"
                     >
-                      <svg
-                        aria-hidden="true"
-                        class="lucide lucide-cassette-tape opacity-20"
-                        fill="none"
-                        height="96"
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="0.5"
-                        viewBox="0 0 24 24"
-                        width="96"
-                        xmlns="http://www.w3.org/2000/svg"
+                      <span
+                        class="block truncate"
                       >
-                        <rect
+                        Date added
+                      </span>
+                      <span
+                        class="flex items-center"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="lucide lucide-chevron-down text-foreground transition-transform"
+                          fill="none"
                           height="16"
-                          rx="2"
-                          width="20"
-                          x="2"
-                          y="4"
-                        />
-                        <circle
-                          cx="8"
-                          cy="10"
-                          r="2"
-                        />
-                        <path
-                          d="M8 12h8"
-                        />
-                        <circle
-                          cx="16"
-                          cy="10"
-                          r="2"
-                        />
-                        <path
-                          d="m6 20 .7-2.9A1.4 1.4 0 0 1 8.1 16h7.8a1.4 1.4 0 0 1 1.4 1l.7 3"
-                        />
-                      </svg>
-                    </div>
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          viewBox="0 0 24 24"
+                          width="16"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="m6 9 6 6 6-6"
+                          />
+                        </svg>
+                      </span>
+                    </button>
                   </div>
                 </div>
-                <div
-                  class="min-w-0"
+                <button
+                  aria-label="Change sort direction"
+                  class="inline-flex cursor-pointer items-center whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 surface-primary h-auto border-border rounded-none border-0 border-l-(length:--border-width) px-3"
+                  data-headlessui-state=""
+                  type="button"
                 >
-                  <div
-                    class="text-card-foreground truncate text-sm font-bold"
-                    data-testid="card-title"
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-arrow-down-wide-narrow"
+                    fill="none"
+                    height="16"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="16"
+                    xmlns="http://www.w3.org/2000/svg"
                   >
-                    Artist artist-1
-                  </div>
-                </div>
-              </button>
-              <button
-                class="cursor-pointer rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-auto surface-card flex w-42 flex-col items-stretch gap-2 p-2 text-left"
-                data-headlessui-state=""
-                data-testid="card"
-                type="button"
+                    <path
+                      d="m3 16 4 4 4-4"
+                    />
+                    <path
+                      d="M7 20V4"
+                    />
+                    <path
+                      d="M11 4h10"
+                    />
+                    <path
+                      d="M11 8h7"
+                    />
+                    <path
+                      d="M11 12h4"
+                    />
+                  </svg>
+                </button>
+              </div>
+              <div
+                class="grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] gap-4 pr-2 pb-4"
+                role="grid"
               >
-                <div
-                  class="border-border flex h-full rounded-md border-(length:--border-width) shadow-none surface-card relative aspect-square w-full items-center justify-center overflow-hidden p-0"
+                <button
+                  class="cursor-pointer rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-auto surface-card flex w-42 flex-col items-stretch gap-2 p-2 text-left"
+                  data-headlessui-state=""
+                  data-testid="card"
+                  type="button"
                 >
                   <div
-                    class="overflow-hidden absolute inset-0"
+                    class="border-border flex h-full rounded-md border-(length:--border-width) shadow-none surface-card relative aspect-square w-full items-center justify-center overflow-hidden p-0"
                   >
                     <div
-                      class="pointer-events-none absolute inset-0 flex items-center justify-center"
+                      class="overflow-hidden absolute inset-0"
                     >
-                      <svg
-                        aria-hidden="true"
-                        class="lucide lucide-cassette-tape opacity-20"
-                        fill="none"
-                        height="96"
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="0.5"
-                        viewBox="0 0 24 24"
-                        width="96"
-                        xmlns="http://www.w3.org/2000/svg"
+                      <div
+                        class="pointer-events-none absolute inset-0 flex items-center justify-center"
                       >
-                        <rect
-                          height="16"
-                          rx="2"
-                          width="20"
-                          x="2"
-                          y="4"
-                        />
-                        <circle
-                          cx="8"
-                          cy="10"
-                          r="2"
-                        />
-                        <path
-                          d="M8 12h8"
-                        />
-                        <circle
-                          cx="16"
-                          cy="10"
-                          r="2"
-                        />
-                        <path
-                          d="m6 20 .7-2.9A1.4 1.4 0 0 1 8.1 16h7.8a1.4 1.4 0 0 1 1.4 1l.7 3"
-                        />
-                      </svg>
+                        <svg
+                          aria-hidden="true"
+                          class="lucide lucide-cassette-tape opacity-20"
+                          fill="none"
+                          height="96"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="0.5"
+                          viewBox="0 0 24 24"
+                          width="96"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <rect
+                            height="16"
+                            rx="2"
+                            width="20"
+                            x="2"
+                            y="4"
+                          />
+                          <circle
+                            cx="8"
+                            cy="10"
+                            r="2"
+                          />
+                          <path
+                            d="M8 12h8"
+                          />
+                          <circle
+                            cx="16"
+                            cy="10"
+                            r="2"
+                          />
+                          <path
+                            d="m6 20 .7-2.9A1.4 1.4 0 0 1 8.1 16h7.8a1.4 1.4 0 0 1 1.4 1l.7 3"
+                          />
+                        </svg>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div
-                  class="min-w-0"
+                  <div
+                    class="min-w-0"
+                  >
+                    <div
+                      class="text-card-foreground truncate text-sm font-bold"
+                      data-testid="card-title"
+                    >
+                      Artist artist-1
+                    </div>
+                  </div>
+                </button>
+                <button
+                  class="cursor-pointer rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-auto surface-card flex w-42 flex-col items-stretch gap-2 p-2 text-left"
+                  data-headlessui-state=""
+                  data-testid="card"
+                  type="button"
                 >
                   <div
-                    class="text-card-foreground truncate text-sm font-bold"
-                    data-testid="card-title"
+                    class="border-border flex h-full rounded-md border-(length:--border-width) shadow-none surface-card relative aspect-square w-full items-center justify-center overflow-hidden p-0"
                   >
-                    Artist artist-2
+                    <div
+                      class="overflow-hidden absolute inset-0"
+                    >
+                      <div
+                        class="pointer-events-none absolute inset-0 flex items-center justify-center"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="lucide lucide-cassette-tape opacity-20"
+                          fill="none"
+                          height="96"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="0.5"
+                          viewBox="0 0 24 24"
+                          width="96"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <rect
+                            height="16"
+                            rx="2"
+                            width="20"
+                            x="2"
+                            y="4"
+                          />
+                          <circle
+                            cx="8"
+                            cy="10"
+                            r="2"
+                          />
+                          <path
+                            d="M8 12h8"
+                          />
+                          <circle
+                            cx="16"
+                            cy="10"
+                            r="2"
+                          />
+                          <path
+                            d="m6 20 .7-2.9A1.4 1.4 0 0 1 8.1 16h7.8a1.4 1.4 0 0 1 1.4 1l.7 3"
+                          />
+                        </svg>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </button>
+                  <div
+                    class="min-w-0"
+                  >
+                    <div
+                      class="text-card-foreground truncate text-sm font-bold"
+                      data-testid="card-title"
+                    >
+                      Artist artist-2
+                    </div>
+                  </div>
+                </button>
+              </div>
             </div>
           </div>
         </div>

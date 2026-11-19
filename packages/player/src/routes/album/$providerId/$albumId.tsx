@@ -1,8 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import z from 'zod';
 
-import { Album } from '../../../views/Album/Album';
-
 export const Route = createFileRoute('/album/$providerId/$albumId')({
   params: {
     parse: (params) => ({
@@ -14,5 +12,4 @@ export const Route = createFileRoute('/album/$providerId/$albumId')({
       albumId: `${albumId}`,
     }),
   },
-  component: Album,
 });

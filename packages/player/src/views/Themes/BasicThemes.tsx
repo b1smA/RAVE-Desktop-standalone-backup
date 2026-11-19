@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 
 import { useTranslation } from '@nuclearplayer/i18n';
 import { listBasicThemes } from '@nuclearplayer/themes';
@@ -9,13 +10,19 @@ import { useThemeStore } from '../../stores/themeStore';
 export const BasicThemes = () => {
   const { t } = useTranslation('themes');
   const basicThemes = useMemo(() => listBasicThemes(), []);
-  const { isSelected, selectBasicTheme } = useThemeStore();
+  const { activeTheme, selectBasicTheme } = useThemeStore(
+    useShallow((state) => ({
+      activeTheme: state.activeTheme,
+      selectBasicTheme: state.selectBasicTheme,
+    })),
+  );
 
   return (
     <SectionShell data-testid="basic-themes" title={t('basic')}>
       <div className="flex flex-wrap gap-4 p-1">
         {basicThemes.map((theme) => {
-          const isActive = isSelected({ type: 'basic', id: theme.id });
+          const isActive =
+            activeTheme.type === 'basic' && activeTheme.id === theme.id;
           return (
             <Button
               key={theme.id}

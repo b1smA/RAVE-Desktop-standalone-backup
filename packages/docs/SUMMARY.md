@@ -1,16 +1,18 @@
 # Table of contents
 
-* [Nuclear Documentation](README.md)
+* [RAVE Documentation](README.md)
 
 ## User Manual
 
 * [Getting started](user-manual/getting-started.md)
 * [Installation](user-manual/installation.md)
-* [Remote control](user-manual/remote-control.md)
+* [RAVE features](user-manual/rave-features.md)
+* [Known limitations](user-manual/known-limitations.md)
+* [Remote control and sessions](user-manual/remote-control.md)
 
 ## Core Concepts
 
-* [How Nuclear works](core-concepts/how-nuclear-works.md)
+* [How RAVE works](core-concepts/how-nuclear-works.md)
 * [Plugins and providers](core-concepts/plugins-and-providers.md)
 * [The queue](core-concepts/the-queue.md)
 * [Stream verification](core-concepts/stream-verification.md)

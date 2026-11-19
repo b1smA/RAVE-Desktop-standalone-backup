@@ -11,7 +11,11 @@ const mapTrackRefs = (refs: TrackRef[]): Track[] => {
   }));
 };
 
-export const useArtistTopTracks = (providerId: string, artistId: string) => {
+export const useArtistTopTracks = (
+  providerId: string,
+  artistId: string,
+  enabled = true,
+) => {
   return useQuery<Track[]>({
     queryKey: ['artist-top-tracks', providerId, artistId],
     queryFn: async () => {
@@ -21,6 +25,6 @@ export const useArtistTopTracks = (providerId: string, artistId: string) => {
       );
       return mapTrackRefs(refs);
     },
-    enabled: Boolean(providerId && artistId),
+    enabled: enabled && Boolean(providerId && artistId),
   });
 };

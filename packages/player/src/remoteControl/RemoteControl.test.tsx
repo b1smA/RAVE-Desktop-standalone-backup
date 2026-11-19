@@ -8,7 +8,7 @@ import { RemoteControlWrapper } from './RemoteControl.test-wrapper';
 
 vi.mock('@nuclearplayer/themes', () => ({
   setThemeId: vi.fn(),
-  DEFAULT_THEME_ID: 'nuclear:default',
+  DEFAULT_THEME_ID: 'rave:default',
 }));
 
 describe('RemoteControl', () => {
@@ -21,7 +21,7 @@ describe('RemoteControl', () => {
 
     expect(RemoteControlWrapper.connectingState).toBeInTheDocument();
     expect(RemoteControlWrapper.connectingState).toHaveTextContent(
-      'Connecting to Nuclear...',
+      'Connecting to RAVE...',
     );
   });
 
@@ -33,7 +33,7 @@ describe('RemoteControl', () => {
       expect(RemoteControlWrapper.errorState).toBeInTheDocument();
     });
     expect(RemoteControlWrapper.errorState).toHaveTextContent(
-      'Could not connect to Nuclear',
+      'Could not connect to RAVE',
     );
   });
 

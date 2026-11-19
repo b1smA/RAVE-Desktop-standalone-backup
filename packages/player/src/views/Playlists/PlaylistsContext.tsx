@@ -11,9 +11,7 @@ import {
 import { toast } from 'sonner';
 
 import { useTranslation } from '@nuclearplayer/i18n';
-import type { PlaylistProvider } from '@nuclearplayer/plugin-sdk';
-
-import { providersHost } from '../../services/providersHost';
+import { getPlaylistProvidersForUrl } from '../../services/playlistsHost';
 import { usePlaylistStore } from '../../stores/playlistStore';
 
 type CreatePlaylistContextValue = {
@@ -100,10 +98,7 @@ const ImportFromUrlProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const importFromUrl = useCallback(
     async (url: string) => {
-      const providers = providersHost.list('playlists') as PlaylistProvider[];
-      const matchingProvider = providers.find((provider) =>
-        provider.matchesUrl(url),
-      );
+      const [matchingProvider] = getPlaylistProvidersForUrl(url);
 
       if (!matchingProvider) {
         toast.error(t('importUrlNoProvider'));

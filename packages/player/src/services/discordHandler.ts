@@ -11,6 +11,7 @@ import { errorMessage } from '../utils/errorMessage';
 import { Logger } from './logger';
 
 const DISCORD_ENABLED_SETTING = 'core.integrations.discord.enabled';
+const HEARTBEAT_INTERVAL_MS = 30_000;
 
 type TrackPresence = {
   title: string;
@@ -22,6 +23,7 @@ type TrackPresence = {
 };
 
 let discordAvailable = true;
+let heartbeatId: ReturnType<typeof setInterval> | undefined;
 
 const onDiscordUnavailable = (err: unknown) => {
   if (!discordAvailable) {
@@ -93,6 +95,21 @@ const updatePresence = () => {
   setActivity(presence).catch((err) => onDiscordUnavailable(err));
 };
 
+const startHeartbeat = () => {
+  if (heartbeatId !== undefined) {
+    return;
+  }
+  heartbeatId = setInterval(updatePresence, HEARTBEAT_INTERVAL_MS);
+};
+
+const stopHeartbeat = () => {
+  if (heartbeatId === undefined) {
+    return;
+  }
+  clearInterval(heartbeatId);
+  heartbeatId = undefined;
+};
+
 const watchPlayback = () => {
   let previousItemId: string | undefined;
   let previousStatus: SoundStatus = 'stopped';
@@ -131,10 +148,12 @@ const watchSettings = () => {
     previouslyEnabled = enabled;
 
     if (enabled) {
+      startHeartbeat();
       connect()
         .then(() => updatePresence())
         .catch((err) => onDiscordUnavailable(err));
     } else {
+      stopHeartbeat();
       disconnect().catch((err) =>
         Logger.discord.error(
           `Failed to disconnect from Discord: ${errorMessage(err)}`,
@@ -144,17 +163,12 @@ const watchSettings = () => {
   });
 };
 
-const HEARTBEAT_INTERVAL_MS = 30_000;
-
-const startHeartbeat = () =>
-  setInterval(() => updatePresence(), HEARTBEAT_INTERVAL_MS);
-
 export const initDiscordHandler = () => {
   watchSettings();
   watchPlayback();
-  startHeartbeat();
 
   if (getSetting(DISCORD_ENABLED_SETTING)) {
+    startHeartbeat();
     connect().catch((err) => onDiscordUnavailable(err));
   }
 };

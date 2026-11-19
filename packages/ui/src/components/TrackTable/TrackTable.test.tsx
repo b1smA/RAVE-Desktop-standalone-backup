@@ -1,4 +1,5 @@
 import { render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 
 import type { Track } from '@nuclearplayer/model';
@@ -16,6 +17,11 @@ const labels: TrackTableLabels = {
   unfavorite: 'Remove from favorites',
   playAll: 'Play all',
   addAllToQueue: 'Add all to queue',
+  playSelected: 'Play selected',
+  addSelectedToQueue: 'Add selected to queue',
+  addSelectedToPlaylist: 'Add selected to playlist',
+  selectAll: 'Select all tracks',
+  selectTrack: 'Select track',
   addToQueue: 'Add to queue',
   trackOptions: 'Track options',
   remove: 'Remove from list',
@@ -159,5 +165,36 @@ describe('TrackTable', () => {
     );
     await findByTestId('add-all-to-queue-button');
     expect(asFragment()).toMatchSnapshot();
+  });
+
+  it('runs a bulk action with selected tracks', async () => {
+    const onPlaySelected = vi.fn();
+    const tracks = makeTracks(3);
+    const { getByLabelText, getByText } = render(
+      <TrackTable
+        tracks={tracks}
+        labels={labels}
+        features={{ selectable: true }}
+        actions={{ onPlaySelected }}
+      />,
+    );
+
+    await userEvent.click(getByLabelText('Select track: Track 2'));
+    await userEvent.click(getByText('Play selected (1)'));
+
+    expect(onPlaySelected).toHaveBeenCalledWith([tracks[1]]);
+  });
+
+  it('plays a track on row double click', async () => {
+    const onPlayNow = vi.fn();
+    const tracks = makeTracks(2);
+    const { findAllByTestId } = render(
+      <TrackTable tracks={tracks} labels={labels} actions={{ onPlayNow }} />,
+    );
+
+    const rows = await findAllByTestId('track-row');
+    await userEvent.dblClick(rows[1]);
+
+    expect(onPlayNow).toHaveBeenCalledWith(tracks[1]);
   });
 });

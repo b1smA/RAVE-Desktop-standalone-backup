@@ -16,7 +16,10 @@ export const commands = {
 	getStartupLogs: () => __TAURI_INVOKE<StartupLogEntry[]>("get_startup_logs"),
 	mcpStart: () => typedError<number, string>(__TAURI_INVOKE("mcp_start")),
 	mcpStop: () => typedError<null, string>(__TAURI_INVOKE("mcp_stop")),
-	httpApiStart: () => typedError<HttpApiStartResult, string>(__TAURI_INVOKE("http_api_start")),
+	httpApiStart: (config: {
+	enabled: boolean,
+	permissions: SessionPermissions,
+} | null) => typedError<HttpApiStartResult, string>(__TAURI_INVOKE("http_api_start", { config })),
 	httpApiStop: () => typedError<null, string>(__TAURI_INVOKE("http_api_stop")),
 	mpdStart: () => typedError<number, string>(__TAURI_INVOKE("mpd_start")),
 	mpdStop: () => typedError<null, string>(__TAURI_INVOKE("mpd_stop")),
@@ -83,6 +86,7 @@ export type HourlyListeningTime = {
 export type HttpApiStartResult = {
 	port: number,
 	lan_address: string | null,
+	pairing_code: string | null,
 };
 
 export type HttpRequest = {
@@ -120,6 +124,18 @@ export type PlayEvent = {
 };
 
 export type PlayEventKind = "started" | "paused" | "resumed" | "seeked" | "finished" | "skipped" | "stopped";
+
+export type SessionConfig = {
+	enabled: boolean,
+	permissions: SessionPermissions,
+};
+
+export type SessionPermissions = {
+	canAddTracks: boolean,
+	canVote: boolean,
+	canControlPlayback: boolean,
+	canManageQueue: boolean,
+};
 
 export type StartupLogEntry = {
 	timestamp: string,

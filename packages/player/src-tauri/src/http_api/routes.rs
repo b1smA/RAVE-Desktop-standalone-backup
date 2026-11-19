@@ -3,6 +3,7 @@ use std::convert::Infallible;
 use axum::{
     extract::{Path, State},
     http::StatusCode,
+    middleware,
     response::{
         sse::{Event, KeepAlive, Sse},
         IntoResponse, Response,
@@ -14,13 +15,14 @@ use futures::Stream;
 use serde_json::{json, Value};
 use tokio::sync::broadcast;
 
-use super::{actions, search, RemoteEvent};
+use super::{actions, search, sessions, RemoteEvent};
 use crate::bridge::{bridge::Bridge, types::BridgeError};
 
 #[derive(Clone)]
 pub struct AppState {
     pub(super) bridge: Bridge,
     events_tx: broadcast::Sender<RemoteEvent>,
+    pub(super) sessions: sessions::SessionManager,
 }
 
 pub(super) struct BridgeErrorResponse(pub(super) BridgeError);
@@ -117,6 +119,17 @@ async fn set_setting(
         .map_err(BridgeErrorResponse)
 }
 
+async fn get_sync_snapshot(
+    State(state): State<AppState>,
+) -> Result<Json<Value>, BridgeErrorResponse> {
+    state
+        .bridge
+        .call("Sync.exportSnapshot", json!({}))
+        .await
+        .map(Json)
+        .map_err(BridgeErrorResponse)
+}
+
 fn events_stream(
     mut receiver: broadcast::Receiver<RemoteEvent>,
 ) -> impl Stream<Item = Result<Event, Infallible>> {
@@ -148,15 +161,23 @@ async fn get_events(
     Sse::new(events_stream(receiver)).keep_alive(KeepAlive::default())
 }
 
-pub fn router(bridge: Bridge, events_tx: broadcast::Sender<RemoteEvent>) -> Router {
-    let state = AppState { bridge, events_tx };
+pub fn router(
+    bridge: Bridge,
+    events_tx: broadcast::Sender<RemoteEvent>,
+    session_manager: sessions::SessionManager,
+) -> Router {
+    let state = AppState {
+        bridge,
+        events_tx,
+        sessions: session_manager,
+    };
 
-    Router::new()
-        .route("/api/health", get(health))
+    let protected = Router::new()
         .route("/api/queue", get(get_queue))
         .route("/api/playback", get(get_playback))
         .route("/api/settings", get(get_settings))
         .route("/api/settings/{id}", get(get_setting).post(set_setting))
+        .route("/api/sync/snapshot", get(get_sync_snapshot))
         .route("/api/events", get(get_events))
         .route("/api/playback/play", post(actions::play))
         .route("/api/playback/pause", post(actions::pause))
@@ -187,6 +208,18 @@ pub fn router(bridge: Bridge, events_tx: broadcast::Sender<RemoteEvent>) -> Rout
             post(actions::save_queue_as_playlist),
         )
         .route("/api/search", post(search::search))
+        .route_layer(middleware::from_fn_with_state(
+            state.clone(),
+            sessions::authorize,
+        ));
+
+    Router::new()
+        .route("/api/health", get(health))
+        .route("/api/session/status", get(sessions::status))
+        .route("/api/session/join", post(sessions::join))
+        .route("/api/session", get(sessions::snapshot))
+        .route("/api/session/vote", post(sessions::vote))
+        .merge(protected)
         .fallback(super::frontend::serve_frontend)
         .with_state(state)
 }

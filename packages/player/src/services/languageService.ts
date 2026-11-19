@@ -1,12 +1,13 @@
 import { Settings } from 'luxon';
 
-import { i18n } from '@nuclearplayer/i18n';
+import { i18n, loadLanguage } from '@nuclearplayer/i18n';
 
 import { coreSettingsHost } from './settingsHost';
 
 export const changeLanguage = async (locale: string) => {
-  await i18n.changeLanguage(locale);
-  Settings.defaultLocale = locale.replaceAll('_', '-');
+  const loadedLocale = await loadLanguage(locale);
+  await i18n.changeLanguage(loadedLocale);
+  Settings.defaultLocale = loadedLocale.replaceAll('_', '-');
 };
 
 export const applyLanguageFromSettings = async () => {

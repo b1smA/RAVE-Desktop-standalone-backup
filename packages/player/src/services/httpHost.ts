@@ -14,7 +14,6 @@ export const httpHost: HttpHost = {
     init?: HttpRequestInit,
   ): Promise<HttpResponseData> => {
     const method = init?.method ?? 'GET';
-    Logger.http.debug(`${method} ${url}`);
 
     const response = await invoke<HttpResponseData>('http_fetch', {
       request: {
@@ -25,7 +24,7 @@ export const httpHost: HttpHost = {
       },
     });
 
-    Logger.http.debug(`${method} ${url} -> ${response.status}`);
+    Logger.http.trace(`${method} ${url} -> ${response.status}`);
 
     return response;
   },

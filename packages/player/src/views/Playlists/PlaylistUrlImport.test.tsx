@@ -19,6 +19,7 @@ import { PlaylistsWrapper } from './Playlists.test-wrapper';
 const toastError = vi.fn();
 const toastSuccess = vi.fn();
 vi.mock('sonner', () => ({
+  Toaster: () => null,
   toast: {
     error: (...args: unknown[]) => toastError(...args),
     success: (...args: unknown[]) => toastSuccess(...args),
@@ -211,5 +212,37 @@ describe('import from URL', () => {
         expect.objectContaining({ description: 'API rate limited' }),
       );
     });
+  });
+
+  it('falls back to another matching provider when the first one fails', async () => {
+    PlaylistsWrapper.registerPlaylistProvider(
+      new PlaylistProviderBuilder()
+        .withId('unavailable-playlists')
+        .withName('Unavailable Music')
+        .thatMatchesUrl('music.example.com/playlist/')
+        .withFetchPlaylistByUrl(async () => {
+          throw new Error('Service unavailable');
+        })
+        .build(),
+    );
+    PlaylistsWrapper.registerPlaylistProvider(
+      new PlaylistProviderBuilder()
+        .withId('backup-playlists')
+        .withName('Backup Music')
+        .thatMatchesUrl('music.example.com/playlist/')
+        .thatReturnsPlaylist(importedPlaylist)
+        .build(),
+    );
+
+    await PlaylistsWrapper.mount();
+    await importPlaylistFromUrl();
+
+    expect(screen.getByTestId('playlist-detail-title')).toHaveTextContent(
+      'Summer Hits 2025',
+    );
+    expect(screen.getByTestId('read-only-badge')).toHaveTextContent(
+      'Backup Music',
+    );
+    expect(toastError).not.toHaveBeenCalled();
   });
 });

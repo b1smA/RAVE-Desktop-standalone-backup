@@ -1,6 +1,5 @@
-import { v4 as uuidv4 } from 'uuid';
-
 import type { HistoryEntry } from '../../services/tauri/bindings';
+import { createRandomId } from '../../utils/randomId';
 
 const THREE_MINUTES_MS = 3 * 60 * 1000;
 
@@ -9,14 +8,14 @@ export class HistoryEntryBuilder {
 
   constructor() {
     this.entry = {
-      playId: uuidv4(),
+      playId: createRandomId(),
       title: 'Test Track',
       artists: ['Test Artist'],
       albumTitle: 'Test Album',
       durationMs: THREE_MINUTES_MS,
       artworkUrl: null,
       provider: 'test',
-      providerId: uuidv4(),
+      providerId: createRandomId(),
       startedAt: Date.now(),
       msPlayed: THREE_MINUTES_MS,
       endReason: 'finished',

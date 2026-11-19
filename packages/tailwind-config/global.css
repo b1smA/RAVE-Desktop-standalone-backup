@@ -7,10 +7,7 @@
 @custom-variant tall (@media (height > 740px));
 @custom-variant narrow (@media (width < 1080px));
 
-@source '../player';
 @source '../ui';
-@source '../storybook';
-@source '../videos';
 
 @theme {
   --color-background: var(--background);
@@ -66,11 +63,11 @@
   --font-heading: var(--font-family-heading);
   --font-mono: var(--font-family-mono);
 
-  --shadow: var(--shadow-x) var(--shadow-y) 0px 0px var(--border);
-  --shadow-shadow: var(--shadow);
-  --shadow-nav: 4px 4px 0px 0px var(--border);
-  --spacing-shadow-x: var(--shadow-x);
-  --spacing-shadow-y: var(--shadow-y);
+  --shadow: none;
+  --shadow-shadow: none;
+  --shadow-nav: none;
+  --spacing-shadow-x: 0px;
+  --spacing-shadow-y: 0px;
 }
 
 :root {
@@ -135,16 +132,16 @@
   --wallpaper: none;
 
   /* Shadows */
-  --shadow-color: oklch(0% 0 0);
-  --shadow-x: 2px;
-  --shadow-y: 2px;
+  --shadow-color: transparent;
+  --shadow-x: 0px;
+  --shadow-y: 0px;
   --shadow-blur: 0px;
 
   /* Typography */
   --font-size-base: 16px;
-  --font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
-  --default-font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
-  --font-family-heading: 'Bricolage Grotesque', var(--default-font-family);
+  --font-family: 'Manrope', system-ui, -apple-system, sans-serif;
+  --default-font-family: 'Manrope', system-ui, -apple-system, sans-serif;
+  --font-family-heading: 'Unbounded', var(--default-font-family);
   --font-family-mono:
     'Space Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
     monospace;

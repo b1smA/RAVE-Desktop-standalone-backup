@@ -1,18 +1,23 @@
 import {
+  ActivityIcon,
   BlocksIcon,
   KeyboardIcon,
   PaletteIcon,
+  RefreshCwIcon,
   ScrollTextIcon,
   SparklesIcon,
 } from 'lucide-react';
 import { ReactNode } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 
 import { useTranslation } from '@nuclearplayer/i18n';
 import { SettingsNavigationSection } from '@nuclearplayer/ui';
 
 import { useSettingsModalStore } from '../stores/settingsModalStore';
 import { KeyboardShortcuts } from '../views/KeyboardShortcuts';
+import { LanSync } from '../views/LanSync';
 import { Logs } from '../views/Logs/Logs';
+import { LoudnessAnalysis } from '../views/LoudnessAnalysis';
 import { Plugins } from '../views/Plugins/Plugins';
 import { Settings } from '../views/Settings/Settings';
 import { useSettingsGroups } from '../views/Settings/useSettingsGroups';
@@ -20,6 +25,18 @@ import { Themes } from '../views/Themes/Themes';
 import { WhatsNew } from '../views/WhatsNew';
 
 const APP_TABS = [
+  {
+    id: 'loudness-analysis',
+    labelKey: 'loudnessAnalysis.title',
+    icon: <ActivityIcon />,
+    view: <LoudnessAnalysis />,
+  },
+  {
+    id: 'lan-sync',
+    labelKey: 'lanSync.title',
+    icon: <RefreshCwIcon />,
+    view: <LanSync />,
+  },
   {
     id: 'shortcuts',
     labelKey: 'shortcuts.title',
@@ -59,7 +76,12 @@ type SettingsNavigation = {
 
 export const useSettingsNavigation = (): SettingsNavigation => {
   const { t } = useTranslation('preferences');
-  const { activeItemId, selectItem } = useSettingsModalStore();
+  const { activeItemId, selectItem } = useSettingsModalStore(
+    useShallow((state) => ({
+      activeItemId: state.activeItemId,
+      selectItem: state.selectItem,
+    })),
+  );
   const settingsGroups = useSettingsGroups();
 
   const activeTab = APP_TABS.find((tab) => tab.id === activeItemId);

@@ -1,6 +1,6 @@
 import { DragEndEvent } from '@dnd-kit/core';
 import { Music } from 'lucide-react';
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 
 import type { QueueItem as QueueItemType } from '@nuclearplayer/model';
 
@@ -24,6 +24,9 @@ export type QueuePanelProps = {
     emptySubtitle?: string;
     noCandidates?: string;
     candidateFailed?: string;
+    history?: string;
+    nowPlaying?: string;
+    upNext?: string;
   };
   classes?: {
     root?: string;
@@ -44,6 +47,21 @@ export const QueuePanel: FC<QueuePanelProps> = ({
   labels,
   classes,
 }) => {
+  const itemLabels = useMemo(
+    () => ({
+      removeButton: labels.removeButton,
+      playbackError: labels.playbackError,
+      noCandidates: labels.noCandidates,
+      candidateFailed: labels.candidateFailed,
+    }),
+    [
+      labels.candidateFailed,
+      labels.noCandidates,
+      labels.playbackError,
+      labels.removeButton,
+    ],
+  );
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over || active.id === over.id || !onReorder) {
@@ -90,6 +108,46 @@ export const QueuePanel: FC<QueuePanelProps> = ({
   }
 
   const itemIds = items.map((item) => item.id);
+  const currentIndex = items.findIndex((item) => item.id === currentItemId);
+  const historyItems = currentIndex > 0 ? items.slice(0, currentIndex) : [];
+  const currentItems = currentIndex >= 0 ? [items[currentIndex]] : [];
+  const nextItems = currentIndex >= 0 ? items.slice(currentIndex + 1) : items;
+
+  const renderSection = (
+    section: 'history' | 'current' | 'next',
+    sectionItems: QueueItemType[],
+    label: string | undefined,
+  ) => {
+    if (sectionItems.length === 0) {
+      return null;
+    }
+
+    return (
+      <section
+        className="flex flex-col gap-1"
+        data-testid={`queue-section-${section}`}
+      >
+        {!isCollapsed && label && (
+          <div className="text-muted-foreground px-2 pt-3 pb-1 text-xs font-semibold tracking-wide uppercase">
+            {label}
+          </div>
+        )}
+        {sectionItems.map((item) => (
+          <ReorderableQueueItem
+            key={item.id}
+            item={item}
+            isCurrent={item.id === currentItemId}
+            isCollapsed={isCollapsed}
+            isReorderable={reorderable && section === 'next'}
+            onSelect={onSelectItem}
+            onRemove={onRemoveItem}
+            onSelectCandidate={onSelectCandidate}
+            labels={itemLabels}
+          />
+        ))}
+      </section>
+    );
+  };
 
   return (
     <div
@@ -109,24 +167,9 @@ export const QueuePanel: FC<QueuePanelProps> = ({
               classes?.list,
             )}
           >
-            {items.map((item) => (
-              <ReorderableQueueItem
-                key={item.id}
-                item={item}
-                isCurrent={item.id === currentItemId}
-                isCollapsed={isCollapsed}
-                isReorderable={reorderable}
-                onSelect={onSelectItem}
-                onRemove={onRemoveItem}
-                onSelectCandidate={onSelectCandidate}
-                labels={{
-                  removeButton: labels?.removeButton,
-                  playbackError: labels?.playbackError,
-                  noCandidates: labels?.noCandidates,
-                  candidateFailed: labels?.candidateFailed,
-                }}
-              />
-            ))}
+            {renderSection('history', historyItems, labels.history)}
+            {renderSection('current', currentItems, labels.nowPlaying)}
+            {renderSection('next', nextItems, labels.upNext)}
           </div>
         </QueueReorderLayer>
       </ScrollableArea>

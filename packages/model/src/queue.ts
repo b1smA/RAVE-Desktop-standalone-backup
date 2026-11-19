@@ -6,6 +6,7 @@ export type QueueItem = {
   status: 'idle' | 'loading' | 'success' | 'error';
   error?: string;
   addedAtIso: string;
+  selectionReason?: 'autoradio' | 'taste-match' | 'variety';
 };
 
 export type RepeatMode = 'off' | 'all' | 'one';

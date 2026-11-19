@@ -38,6 +38,16 @@ export type ArtistRef = {
 
 export type AlbumRef = {
   title: string;
+  releaseType?: 'album' | 'single' | 'ep' | 'compilation' | 'live';
+  releaseDate?: {
+    precision: 'year' | 'month' | 'day';
+    dateIso: string;
+  };
+  trackCount?: number;
+  totalDurationMs?: number;
+  longestTrackDurationMs?: number;
+  trackReleaseYears?: number[];
+  identifiers?: Record<string, string>;
   artists?: ArtistRef[];
   artwork?: ArtworkSet;
   source: ProviderRef;

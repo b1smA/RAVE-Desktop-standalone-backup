@@ -52,6 +52,79 @@ describe('Search view', () => {
     expect(SearchWrapper.emptyState).not.toBeInTheDocument();
   });
 
+  it('merges providers and ranks exact matches first', async () => {
+    providersHost.register(
+      new MetadataProviderBuilder()
+        .withId('first-provider')
+        .withSearchCapabilities(['unified'])
+        .withSearch(async () => ({
+          artists: [
+            {
+              name: 'Massive Attack Tribute',
+              artwork: { items: [] },
+              source: { provider: 'first-provider', id: 'tribute' },
+            },
+          ],
+        }))
+        .build(),
+    );
+    providersHost.register(
+      new MetadataProviderBuilder()
+        .withId('second-provider')
+        .withSearchCapabilities(['unified'])
+        .withSearch(async () => ({
+          artists: [
+            {
+              name: 'Massive Attack',
+              artwork: { items: [] },
+              source: { provider: 'second-provider', id: 'exact' },
+            },
+          ],
+        }))
+        .build(),
+    );
+
+    await SearchWrapper.mount('Massive Attack');
+    await SearchWrapper.findUnifiedResults();
+
+    expect(SearchWrapper.resultHeadings).toEqual([
+      'Massive Attack',
+      'Massive Attack Tribute',
+    ]);
+  });
+
+  it('keeps results when one provider fails', async () => {
+    providersHost.register(
+      new MetadataProviderBuilder()
+        .withId('failed-provider')
+        .withSearchCapabilities(['unified'])
+        .withSearch(async () => {
+          throw new Error('Provider unavailable');
+        })
+        .build(),
+    );
+    providersHost.register(
+      new MetadataProviderBuilder()
+        .withId('working-provider')
+        .withSearchCapabilities(['unified'])
+        .withSearch(async () => ({
+          artists: [
+            {
+              name: 'Portishead',
+              artwork: { items: [] },
+              source: { provider: 'working-provider', id: 'portishead' },
+            },
+          ],
+        }))
+        .build(),
+    );
+
+    await SearchWrapper.mount('Portishead');
+    await SearchWrapper.findUnifiedResults();
+
+    expect(SearchWrapper.resultHeadings).toEqual(['Portishead']);
+  });
+
   it('opens the plugin store when clicking the search empty state action', async () => {
     await SearchWrapper.mount('test');
     await SearchWrapper.emptyStateAction.click();

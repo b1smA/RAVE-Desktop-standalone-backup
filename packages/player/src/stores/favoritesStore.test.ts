@@ -1,3 +1,4 @@
+import { LazyStore } from '@tauri-apps/plugin-store';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
@@ -298,6 +299,28 @@ describe('useFavoritesStore', () => {
       expect(state.albums[0].ref.title).toBe('Album album-1');
       expect(state.artists).toHaveLength(1);
       expect(state.artists[0].ref.name).toBe('Artist artist-1');
+      expect(state.loaded).toBe(true);
+    });
+
+    it('loads valid favorites when one stored collection is malformed', async () => {
+      const store = new LazyStore('favorites.json');
+      const trackRef = createTrack('spotify', 'track-1');
+      const artistRef = createArtistRef('spotify', 'artist-1');
+
+      await store.set('favorites.tracks', [
+        { ref: trackRef, addedAtIso: MOCK_ISO_DATE },
+      ]);
+      await store.set('favorites.albums', { invalid: true });
+      await store.set('favorites.artists', [
+        { ref: artistRef, addedAtIso: MOCK_ISO_DATE },
+      ]);
+
+      await initializeFavoritesStore();
+
+      const state = useFavoritesStore.getState();
+      expect(state.tracks).toHaveLength(1);
+      expect(state.albums).toEqual([]);
+      expect(state.artists).toHaveLength(1);
       expect(state.loaded).toBe(true);
     });
 

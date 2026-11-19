@@ -81,7 +81,6 @@ pub struct MpdError {
 
 pub const ACK_ERROR_ARG: u32 = 2;
 pub const ACK_ERROR_UNKNOWN: u32 = 5;
-pub const ACK_ERROR_NO_EXIST: u32 = 50;
 pub const ACK_ERROR_SYSTEM: u32 = 52;
 
 fn tokenize_args(input: &str) -> Vec<String> {
@@ -143,7 +142,8 @@ pub fn parse_command(line: &str) -> Command {
 
     match name {
         "ping" => Command::Ping,
-        "password" | "tagtypes" | "outputs" | "binarylimit" => Command::Noop,
+        "password" => Command::Password,
+        "tagtypes" | "outputs" | "binarylimit" => Command::Noop,
         "commands" => Command::Commands,
         "idle" => Command::Idle(args),
         "noidle" => Command::NoIdle,
@@ -278,6 +278,14 @@ mod tests {
     #[test]
     fn commands_is_recognized() {
         assert!(matches!(parse_command("commands"), Command::Commands));
+    }
+
+    #[test]
+    fn password_is_accepted() {
+        assert!(matches!(
+            parse_command("password secret"),
+            Command::Password
+        ));
     }
 
     #[test]

@@ -4,6 +4,8 @@ import { type Mock } from 'vitest';
 
 import type { Playlist } from '@nuclearplayer/model';
 
+import { useFavoritesStore } from '../../stores/favoritesStore';
+import { usePinnedPlaylistsStore } from '../../stores/pinnedPlaylistsStore';
 import { usePlaylistStore } from '../../stores/playlistStore';
 import { PlaylistBuilder } from '../../test/builders/PlaylistBuilder';
 import { resetInMemoryTauriStore } from '../../test/utils/inMemoryTauriStore';
@@ -17,6 +19,7 @@ vi.mock('@tauri-apps/plugin-dialog', () => ({
 const toastError = vi.fn();
 const toastSuccess = vi.fn();
 vi.mock('sonner', () => ({
+  Toaster: () => null,
   toast: {
     error: (...args: unknown[]) => toastError(...args),
     success: (...args: unknown[]) => toastSuccess(...args),
@@ -39,6 +42,7 @@ describe('Playlists view', () => {
       playlists: new Map(),
       loaded: true,
     });
+    usePinnedPlaylistsStore.setState({ pinnedIds: [], loaded: true });
   });
 
   it('shows empty state when no playlists', async () => {
@@ -74,6 +78,29 @@ describe('Playlists view', () => {
     expect(PlaylistsWrapper.createDialog.isOpen()).toBe(false);
     expect(usePlaylistStore.getState().index).toHaveLength(1);
     expect(usePlaylistStore.getState().index[0]?.name).toBe('My New Playlist');
+  });
+
+  it('creates a prompted playlist from visible local rules', async () => {
+    const offlineTrack = {
+      title: 'Offline Energy',
+      artists: [{ name: 'Artist', roles: ['primary'] }],
+      source: { provider: 'test', id: 'offline-energy' },
+      localFile: { fileUri: 'file:///offline-energy.flac' },
+    };
+    useFavoritesStore.setState({
+      tracks: [{ ref: offlineTrack, addedAtIso: '2026-11-01T00:00:00.000Z' }],
+      loaded: true,
+    });
+
+    await PlaylistsWrapper.mount();
+    await PlaylistsWrapper.prompted.open();
+    await PlaylistsWrapper.prompted.typePrompt('offline');
+
+    expect(PlaylistsWrapper.prompted.rules).toHaveTextContent('Offline only');
+    expect(PlaylistsWrapper.prompted.createButton).toBeEnabled();
+    await PlaylistsWrapper.prompted.create();
+
+    expect(usePlaylistStore.getState().index[0]?.name).toBe('RAVE Prompt');
   });
 
   it('shows mosaic artwork on playlist card when 4+ tracks have art', async () => {
@@ -135,7 +162,29 @@ describe('Playlists view', () => {
     await PlaylistsWrapper.mount();
     await PlaylistsWrapper.card(0).click();
 
-    expect(PlaylistsWrapper.detailView).toBeInTheDocument();
+    expect(await PlaylistsWrapper.waitForDetailView()).toBeInTheDocument();
+  });
+
+  it('keeps pinned playlists before the selected sort order', async () => {
+    PlaylistsWrapper.createPlaylists(
+      new PlaylistBuilder()
+        .withId('older')
+        .withName('Older')
+        .withCreatedAt('2025-01-01T00:00:00.000Z'),
+      new PlaylistBuilder()
+        .withId('newer')
+        .withName('Newer')
+        .withCreatedAt('2026-01-01T00:00:00.000Z'),
+    );
+
+    await PlaylistsWrapper.mount();
+    await PlaylistsWrapper.card(1).togglePin();
+
+    expect(PlaylistsWrapper.cardNames).toEqual(['Newer', 'Older']);
+    expect(PlaylistsWrapper.card(0).pinButton).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
   });
 
   it('hides the filter input when there are no playlists', async () => {

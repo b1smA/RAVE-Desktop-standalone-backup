@@ -45,6 +45,11 @@ export const COMMANDS: Record<string, ShortcutCommand> = {
     defaultShortcut: 'mod+m',
     section: 'playback',
   },
+  'playback.dislike': {
+    id: 'playback.dislike',
+    defaultShortcut: 'mod+shift+d',
+    section: 'playback',
+  },
   'general.toggleSettings': {
     id: 'general.toggleSettings',
     defaultShortcut: 'mod+comma',

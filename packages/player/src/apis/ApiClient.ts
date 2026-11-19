@@ -7,7 +7,6 @@ export class ApiClient {
 
   protected async fetch<T>(path: string, schema: z.ZodType<T>): Promise<T> {
     const url = `${this.baseUrl}${path}?t=${Date.now()}`;
-    Logger.http.debug(`GET ${url}`);
 
     const response = await fetch(url);
 
@@ -16,7 +15,7 @@ export class ApiClient {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
 
-    Logger.http.debug(`GET ${url} -> ${response.status}`);
+    Logger.http.trace(`GET ${url} -> ${response.status}`);
 
     const json = await response.json();
 

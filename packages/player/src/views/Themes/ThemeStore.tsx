@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 
 import { useTranslation } from '@nuclearplayer/i18n';
 import { Input, ThemeStoreItem } from '@nuclearplayer/ui';
@@ -16,7 +17,12 @@ export const ThemeStore: FC = () => {
     useFilteredMarketplaceThemes();
   const { mutate: installTheme, isPending, variables } = useInstallTheme();
   const { mutate: uninstallTheme } = useUninstallTheme();
-  const { marketplaceThemes, isMarketplaceThemeActive } = useThemeStore();
+  const { marketplaceThemes, activeTheme } = useThemeStore(
+    useShallow((state) => ({
+      marketplaceThemes: state.marketplaceThemes,
+      activeTheme: state.activeTheme,
+    })),
+  );
 
   const isInstalled = (themeId: string) =>
     marketplaceThemes.some((theme) => theme.id === themeId);
@@ -55,7 +61,9 @@ export const ThemeStore: FC = () => {
           }
           isInstalled={isInstalled(theme.id)}
           isInstalling={isPending && variables?.theme.id === theme.id}
-          isActive={isMarketplaceThemeActive(theme.id)}
+          isActive={
+            activeTheme.type === 'marketplace' && activeTheme.id === theme.id
+          }
           labels={{
             install: t('store.install'),
             installing: t('store.installing'),

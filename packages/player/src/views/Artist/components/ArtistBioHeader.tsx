@@ -1,5 +1,5 @@
 import isEmpty from 'lodash-es/isEmpty';
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 
 import { useTranslation } from '@nuclearplayer/i18n';
 import { pickArtwork } from '@nuclearplayer/model';
@@ -13,6 +13,23 @@ type ArtistBioHeaderProps = {
   artistId: string;
 };
 
+const MAX_BIOGRAPHY_DECODE_PASSES = 2;
+
+const biographyToPlainText = (biography: string): string => {
+  let plainText = biography;
+
+  for (let pass = 0; pass < MAX_BIOGRAPHY_DECODE_PASSES; pass++) {
+    const document = new DOMParser().parseFromString(plainText, 'text/html');
+    const decodedText = document.body.textContent ?? '';
+    if (decodedText === plainText) {
+      break;
+    }
+    plainText = decodedText;
+  }
+
+  return plainText.replace(/\s+/g, ' ').trim();
+};
+
 export const ArtistBioHeader: FC<ArtistBioHeaderProps> = ({
   providerId,
   artistId,
@@ -23,6 +40,10 @@ export const ArtistBioHeader: FC<ArtistBioHeaderProps> = ({
     isLoading,
     isError,
   } = useArtistBio(providerId, artistId);
+  const biography = useMemo(
+    () => (artist?.bio ? biographyToPlainText(artist.bio) : ''),
+    [artist?.bio],
+  );
 
   if (isLoading) {
     return <ArtistBioHeaderSkeleton />;
@@ -90,9 +111,12 @@ export const ArtistBioHeader: FC<ArtistBioHeaderProps> = ({
               {t('onTour')}
             </span>
           )}
-          {artist.bio && (
-            <p className="text-card-foreground/60 line-clamp-5 text-sm leading-relaxed">
-              {artist.bio}
+          {biography && (
+            <p
+              className="text-card-foreground/60 line-clamp-5 text-sm leading-relaxed"
+              data-testid="artist-biography"
+            >
+              {biography}
             </p>
           )}
         </div>

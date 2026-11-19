@@ -6,6 +6,7 @@ import type {
 } from '@nuclearplayer/model';
 
 import { useRemoteStore } from './remoteStore';
+import { sessionFetch } from './sessions/sessionClient';
 
 const nextRepeatMode: Record<RepeatMode, RepeatMode> = {
   off: 'all',
@@ -25,7 +26,7 @@ const toRequestInit = (body?: unknown): RequestInit => {
 };
 
 const post = async <Result>(path: string, body?: unknown): Promise<Result> => {
-  const response = await fetch(path, toRequestInit(body));
+  const response = await sessionFetch(path, toRequestInit(body));
   if (!response.ok) {
     throw new Error(`POST ${path} failed with status ${response.status}`);
   }

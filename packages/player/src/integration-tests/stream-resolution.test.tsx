@@ -32,9 +32,6 @@ describe('Stream Resolution Integration', () => {
     useSoundStore.setState({
       src: null,
       status: 'stopped',
-      crossfadeMs: 0,
-      preload: 'auto',
-      crossOrigin: '',
     });
 
     useSettingsStore.getState().setValue('playback.streamExpiryMs', 3600000);
@@ -79,6 +76,38 @@ describe('Stream Resolution Integration', () => {
       const currentItem = StreamResolutionWrapper.getCurrentQueueItem();
       expect(currentItem?.status).toBe('success');
       expect(currentItem?.track.streamCandidates).toHaveLength(1);
+    });
+
+    it('prepares two ranked reserve sources for fast failover', async () => {
+      setupMetadataProvider();
+      useSettingsStore
+        .getState()
+        .setValue('playback.preloadBackupStream', true);
+      useSettingsStore.getState().setValue('playback.reservedSourceCount', 3);
+      providersHost.register(
+        new StreamingProviderBuilder()
+          .withSearchForTrack(async () =>
+            ['primary', 'backup-one', 'backup-two', 'unused'].map((id) =>
+              createMockCandidate(id, id),
+            ),
+          )
+          .withGetStreamUrl(async (candidateId) =>
+            createMockStream(candidateId),
+          )
+          .build(),
+      );
+
+      await AlbumWrapper.mountDirectly();
+      await AlbumWrapper.addTrackToQueueByTitle('Countdown');
+      await StreamResolutionWrapper.waitForPlayback();
+
+      await waitFor(() => {
+        const resolved =
+          StreamResolutionWrapper.getCurrentQueueItem()?.track.streamCandidates?.filter(
+            (candidate) => candidate.stream,
+          );
+        expect(resolved).toHaveLength(3);
+      });
     });
 
     it('shows loading state while resolving stream', async () => {
@@ -253,6 +282,110 @@ describe('Stream Resolution Integration', () => {
       expect(currentItem?.track.streamCandidates?.[0].failed).toBe(false);
 
       expect(callCount).toEqual(2);
+    });
+
+    it('falls back to a candidate from another streaming provider', async () => {
+      setupMetadataProvider();
+
+      providersHost.register(
+        new StreamingProviderBuilder()
+          .withId('primary-streaming-provider')
+          .withName('Primary')
+          .withSearchForTrack(async () => [
+            createMockCandidate('shared-candidate', 'Unavailable', {
+              source: {
+                provider: 'primary-streaming-provider',
+                id: 'shared-candidate',
+              },
+            }),
+          ])
+          .withGetStreamUrl(async () => {
+            throw new Error('Primary stream unavailable');
+          })
+          .build(),
+      );
+      providersHost.register(
+        new StreamingProviderBuilder()
+          .withId('backup-streaming-provider')
+          .withName('Backup')
+          .withSearchForTrack(async () => [
+            createMockCandidate('shared-candidate', 'Available', {
+              source: {
+                provider: 'backup-streaming-provider',
+                id: 'shared-candidate',
+              },
+            }),
+          ])
+          .withGetStreamUrl(async (candidateId) =>
+            createMockStream(candidateId, {
+              source: {
+                provider: 'backup-streaming-provider',
+                id: candidateId,
+              },
+            }),
+          )
+          .build(),
+      );
+
+      await AlbumWrapper.mountDirectly();
+      await AlbumWrapper.addTrackToQueueByTitle('Countdown');
+
+      await StreamResolutionWrapper.waitForPlayback();
+
+      expect(StreamResolutionWrapper.getSoundState().src).toEqual({
+        url: 'http://127.0.0.1:9100/stream/aHR0cHM6Ly9leGFtcGxlLmNvbS9zaGFyZWQtY2FuZGlkYXRlLm1wMw',
+        protocol: 'https',
+      });
+      expect(
+        StreamResolutionWrapper.getCurrentQueueItem()?.track
+          .streamCandidates?.[0].source.provider,
+      ).toBe('backup-streaming-provider');
+    });
+
+    it('continues searching when the active streaming provider fails', async () => {
+      setupMetadataProvider();
+
+      providersHost.register(
+        new StreamingProviderBuilder()
+          .withId('failing-streaming-provider')
+          .withName('Failing')
+          .withSearchForTrack(async () => {
+            throw new Error('Search unavailable');
+          })
+          .build(),
+      );
+      providersHost.register(
+        new StreamingProviderBuilder()
+          .withId('working-streaming-provider')
+          .withName('Working')
+          .withSearchForTrack(async () => [
+            createMockCandidate('working-candidate', 'Available', {
+              source: {
+                provider: 'working-streaming-provider',
+                id: 'working-candidate',
+              },
+            }),
+          ])
+          .withGetStreamUrl(async (candidateId) =>
+            createMockStream(candidateId, {
+              source: {
+                provider: 'working-streaming-provider',
+                id: candidateId,
+              },
+            }),
+          )
+          .build(),
+      );
+
+      await AlbumWrapper.mountDirectly();
+      await AlbumWrapper.addTrackToQueueByTitle('Countdown');
+
+      await StreamResolutionWrapper.waitForPlayback();
+
+      expect(
+        StreamResolutionWrapper.getCurrentQueueItem()?.track
+          .streamCandidates?.[0].source.provider,
+      ).toBe('working-streaming-provider');
     });
   });
 

@@ -4,8 +4,8 @@ set -euo pipefail
 FLATPAK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${FLATPAK_DIR}/.." && pwd)"
 
-FLATHUB_REPO="flathub/com.nuclearplayer.Nuclear"
-MANIFEST="com.nuclearplayer.Nuclear.yml"
+FLATHUB_REPO="flathub/com.raveplayer.Rave"
+MANIFEST="com.raveplayer.Rave.yml"
 PNPM_EXE_REGISTRY="https://registry.npmjs.org/@pnpm"
 
 VERSION="$1"
@@ -44,8 +44,8 @@ envsubst '$TAG $COMMIT $PNPM_VERSION $PNPM_SHA256_X64 $PNPM_SHA256_ARM64' \
   < "${FLATPAK_DIR}/${MANIFEST}.template" \
   > "${WORKDIR}/${MANIFEST}"
 
-git -C "${WORKDIR}" config user.name nukeop
-git -C "${WORKDIR}" config user.email 12746779+nukeop@users.noreply.github.com
+git -C "${WORKDIR}" config user.name "RAVE release bot"
+git -C "${WORKDIR}" config user.email "github-actions[bot]@users.noreply.github.com"
 git -C "${WORKDIR}" add -A
 git -C "${WORKDIR}" commit -m "Update to ${VERSION}"
 git -C "${WORKDIR}" push origin "${BRANCH}"

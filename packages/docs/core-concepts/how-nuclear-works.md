@@ -1,14 +1,14 @@
 ---
-description: The big picture of how Nuclear is structured and why it works differently from other music players
+description: The provider architecture behind RAVE playback
 ---
 
-# How Nuclear works
+# How RAVE works
 
-Nuclear is a player framework that lets you listen to music from multiple sources, and where plugins provide all the content. The player itself handles the interface, playback engine, queue, playlists, and favorites. Everything else comes from plugins you choose to install.
+RAVE is a multi-source music player built as a fork of Nuclear. The application handles the interface, playback engine, queue, playlists, favorites, and local personalization. Plugins provide searchable catalogs, playable streams, lyrics, discovery, and dashboard content.
 
 ## The plugin model
 
-A fresh Nuclear install comes without any plugins installed. To start playing music, you need to choose your music sources by installing plugins from the store. When you install plugins, they register **providers** that give Nuclear specific capabilities:
+RAVE includes a curated provider set and supports additional compatible plugins from the store. Plugins register **providers** that give RAVE specific capabilities:
 
 - A **metadata provider** lets you search for artists, albums, and tracks, and browse their details
 - A **streaming provider** finds and delivers the actual audio when you play a track
@@ -32,7 +32,7 @@ When you add a track to the queue and press play, two providers work together:
 The player handles everything from there: buffering, seeking, volume, and moving through the queue.
 
 {% hint style="info" %}
-Some metadata providers are paired with a specific streaming provider. When you select one of these, Nuclear automatically switches to the matching streaming provider and locks the selection. This happens because the metadata and audio come from the same source and can't be mixed with other providers.
+Some metadata providers are paired with a specific streaming provider. When you select one of these, RAVE prioritizes the matching streaming provider because its metadata and audio identifiers cannot always be mixed with other sources.
 {% endhint %}
 
 ## What the player manages
@@ -43,5 +43,5 @@ While plugins handle content, the player itself owns:
 - **Favorites**: save tracks, albums, and artists to your favorites.
 - **Playlists**: create and manage playlists. Import and export them as JSON files, or from other services via plugins.
 - **Settings**: audio configuration, appearance, key shortcuts, update preferences.
-- **Themes**: change how Nuclear looks without affecting functionality. Choose from built-in themes, create yours, or install community themes from the theme store.
-- **Plugins**: install, update, and manage plugins that provide sources and expand Nuclear's functionalities.
+- **Themes**: adjust RAVE's appearance without affecting functionality.
+- **Plugins**: install, update, and manage compatible providers that expand RAVE.

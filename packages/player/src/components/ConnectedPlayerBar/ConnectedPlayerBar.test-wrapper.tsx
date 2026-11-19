@@ -213,5 +213,11 @@ export const ConnectedPlayerBarWrapper = {
     async changeValue(value: number) {
       fireEvent.change(this.rangeInput, { target: { value: String(value) } });
     },
+    async openOutputs() {
+      await user.click(screen.getByTestId('audio-output-button'));
+    },
+    async selectOutput(label: string) {
+      await user.click(screen.getByText(label));
+    },
   },
 };

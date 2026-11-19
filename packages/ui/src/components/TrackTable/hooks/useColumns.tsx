@@ -16,9 +16,11 @@ import { TextHeader } from '../Headers/TextHeader';
 import { TrackTableProps } from '../types';
 
 export function useColumns<T extends Track = Track>(
-  props: Pick<TrackTableProps<T>, 'display' | 'labels' | 'actions'>,
+  props: Pick<TrackTableProps<T>, 'display' | 'labels' | 'actions'> & {
+    selectable: boolean;
+  },
 ): ColumnDef<T>[] {
-  const { display, labels, actions } = props;
+  const { display, labels, actions, selectable } = props;
   const columnHelper = createColumnHelper<T>();
 
   const showFavorite =
@@ -27,6 +29,33 @@ export function useColumns<T extends Track = Track>(
 
   const columns: ColumnDef<T>[] = useMemo(
     () => [
+      selectable &&
+        columnHelper.display({
+          id: 'select',
+          header: ({ table }) => (
+            <th className="w-10 p-2 text-center">
+              <input
+                type="checkbox"
+                aria-label={labels.selectAll}
+                checked={table.getIsAllRowsSelected()}
+                onChange={table.getToggleAllRowsSelectedHandler()}
+                className="accent-primary size-4"
+              />
+            </th>
+          ),
+          cell: ({ row }) => (
+            <td className="w-10 p-2 text-center">
+              <input
+                type="checkbox"
+                aria-label={`${labels.selectTrack}: ${row.original.title}`}
+                checked={row.getIsSelected()}
+                onChange={row.getToggleSelectedHandler()}
+                className="accent-primary size-4"
+              />
+            </td>
+          ),
+          enableSorting: false,
+        }),
       showFavorite &&
         columnHelper.display({
           id: 'favorite',
@@ -52,14 +81,17 @@ export function useColumns<T extends Track = Track>(
             enableSorting: false,
           },
         ),
-      columnHelper.accessor((track) => track.artists[0].name, {
-        id: 'artist',
-        enableSorting: true,
-        header: (context) => (
-          <TextHeader context={context}>{labels.headers.artist}</TextHeader>
-        ),
-        cell: TextCell,
-      }),
+      columnHelper.accessor(
+        (track) => track.artists.map((artist) => artist.name).join(', '),
+        {
+          id: 'artist',
+          enableSorting: true,
+          header: (context) => (
+            <TextHeader context={context}>{labels.headers.artist}</TextHeader>
+          ),
+          cell: TextCell,
+        },
+      ),
       columnHelper.accessor((track) => track.title, {
         id: 'title',
         enableSorting: true,
@@ -93,7 +125,7 @@ export function useColumns<T extends Track = Track>(
           cell: RemoveCell,
         }),
     ],
-    [labels, display, showFavorite, showDelete],
+    [labels, display, selectable, showFavorite, showDelete],
   ).filter(Boolean) as ColumnDef<T>[];
 
   return columns;

@@ -9,7 +9,7 @@ import {
 import userEvent from '@testing-library/user-event';
 
 import type { QueueItem } from '@nuclearplayer/model';
-import { DialogWrapper } from '@nuclearplayer/ui';
+import { DialogWrapper } from '@nuclearplayer/ui/test';
 
 import App from '../App';
 import { routeTree } from '../routeTree.gen';
@@ -53,6 +53,10 @@ export const QueueWrapper = {
 
   get emptyState() {
     return screen.queryByTestId('queue-empty-state');
+  },
+
+  get selectionReason() {
+    return screen.queryByTestId('queue-selection-reason');
   },
 
   get streamVerification() {

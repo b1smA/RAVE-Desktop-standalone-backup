@@ -69,6 +69,9 @@ export const SOCIAL_STATS_DEADMAU5: ArtistSocialStats = {
 export const ALBUMS_BEATLES: AlbumRef[] = [
   {
     title: 'Hello World LP',
+    releaseType: 'album',
+    trackCount: 7,
+    releaseDate: { precision: 'year', dateIso: '2020' },
     artists: [{ name: 'Test Artist', source: testSource(TEST_ARTIST_ID) }],
     artwork: {
       items: [
@@ -77,9 +80,69 @@ export const ALBUMS_BEATLES: AlbumRef[] = [
     },
     source: testSource('album-1'),
   },
+  {
+    title: 'Hello World LP',
+    releaseType: 'album',
+    trackCount: 7,
+    releaseDate: { precision: 'year', dateIso: '2020' },
+    artists: [{ name: 'Test Artist', source: testSource(TEST_ARTIST_ID) }],
+    artwork: {
+      items: [
+        {
+          url: 'https://img/debut-alternative.jpg',
+          purpose: 'cover' as const,
+          width: 1200,
+        },
+      ],
+    },
+    source: testSource('album-1-alternative'),
+  },
+  {
+    title: 'Hello Goodbye',
+    releaseDate: { precision: 'year', dateIso: '2024' },
+    artists: [{ name: 'Test Artist', source: testSource(TEST_ARTIST_ID) }],
+    artwork: {
+      items: [
+        {
+          url: 'https://img/single.jpg',
+          purpose: 'cover' as const,
+          width: 300,
+        },
+      ],
+    },
+    source: testSource('single-1'),
+  },
+  {
+    title: 'Collected Works',
+    releaseType: 'compilation',
+    releaseDate: { precision: 'year', dateIso: '2022' },
+    artists: [{ name: 'Test Artist', source: testSource(TEST_ARTIST_ID) }],
+    source: testSource('compilation-1'),
+  },
+  {
+    title: 'Live at Test Hall',
+    releaseType: 'live',
+    releaseDate: { precision: 'year', dateIso: '2023' },
+    artists: [{ name: 'Test Artist', source: testSource(TEST_ARTIST_ID) }],
+    source: testSource('live-1'),
+  },
 ];
 
 export const TOP_TRACKS_BEATLES: TrackRef[] = [
+  {
+    title: 'Hello Goodbye',
+    artists: [{ name: 'Test Artist', source: testSource(TEST_ARTIST_ID) }],
+    artwork: {
+      items: [
+        {
+          url: 'https://img/single.jpg',
+          purpose: 'thumbnail' as const,
+          width: 64,
+        },
+      ],
+    },
+    source: testSource('single-track'),
+  },
   {
     title: 'Smells Like Cheap Spirit',
     artists: [{ name: 'Test Artist', source: testSource(TEST_ARTIST_ID) }],

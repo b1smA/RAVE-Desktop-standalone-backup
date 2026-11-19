@@ -5,8 +5,8 @@ import type { Playlist } from '@nuclearplayer/model';
 import { detectPlaylistFormat, importPlaylistFromJson } from './playlistImport';
 
 let uuidCounter = 0;
-vi.mock('uuid', () => ({
-  v4: () => {
+vi.mock('../utils/randomId', () => ({
+  createRandomId: () => {
     uuidCounter++;
     return `test-uuid-${uuidCounter}`;
   },

@@ -7,7 +7,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef, useState } from 'react';
 
 import { Track } from '@nuclearplayer/model';
 
@@ -53,6 +53,7 @@ function TrackTableBase<T extends Track = Track>({
   };
 
   const { sorting, setSorting, isSorted } = useSorting();
+  const [rowSelection, setRowSelection] = useState({});
   const itemIds = useMemo(
     () => tracks.map((t, i) => getItemId(t, i)),
     [tracks, getItemId],
@@ -68,12 +69,16 @@ function TrackTableBase<T extends Track = Track>({
     display: resolvedDisplay,
     labels,
     actions,
+    selectable: Boolean(resolvedFeatures.selectable),
   });
 
   const table = useReactTable({
     columns,
     data: tracks,
-    state: { sorting, globalFilter },
+    state: { sorting, globalFilter, rowSelection },
+    enableRowSelection: resolvedFeatures.selectable,
+    onRowSelectionChange: setRowSelection,
+    getRowId: (track, index) => getItemId(track, index),
     enableSortingRemoval: true,
     onSortingChange: setSorting,
     onGlobalFilterChange: setGlobalFilter,
@@ -92,6 +97,9 @@ function TrackTableBase<T extends Track = Track>({
   });
 
   const { rows } = table.getRowModel();
+  const selectedTracks = table
+    .getSelectedRowModel()
+    .rows.map((row) => row.original);
   const colCount = table.getVisibleFlatColumns().length;
 
   const scrollParentRef = useRef<HTMLDivElement | null>(null);
@@ -124,6 +132,7 @@ function TrackTableBase<T extends Track = Track>({
           filterValue={globalFilter}
           onFilterChange={setGlobalFilter}
           className="mb-2 shrink-0"
+          selectedTracks={selectedTracks}
         />
         <ScrollableArea
           viewportRef={scrollParentRef}

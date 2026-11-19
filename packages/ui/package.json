@@ -11,14 +11,14 @@
       "import": "./src/index.ts",
       "types": "./dist/index.d.ts"
     },
+    "./test": "./src/test/index.ts",
     "./assets/*": "./src/assets/*"
   },
   "files": [
     "src"
   ],
   "sideEffects": [
-    "*.css",
-    "./src/index.ts"
+    "*.css"
   ],
   "scripts": {
     "dev": "vite build --watch",
@@ -36,9 +36,9 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@floating-ui/react-dom": "^2.1.7",
-    "@fontsource/bricolage-grotesque": "^5.2.8",
-    "@fontsource/dm-sans": "^5.2.6",
+    "@fontsource/manrope": "5.2.8",
     "@fontsource/space-mono": "^5.2.9",
+    "@fontsource/unbounded": "5.2.8",
     "@headlessui/react": "^2.2.7",
     "@nuclearplayer/eslint-config": "workspace:*",
     "@nuclearplayer/model": "workspace:*",

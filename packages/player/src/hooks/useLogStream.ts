@@ -1,8 +1,8 @@
 import { invoke } from '@tauri-apps/api/core';
 import { attachLogger } from '@tauri-apps/plugin-log';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { v4 as uuid } from 'uuid';
 
+import { createRandomId } from '../utils/randomId';
 import { RingBuffer } from '../utils/RingBuffer';
 
 const FLUSH_INTERVAL_MS = 100;
@@ -59,7 +59,7 @@ const createLogEntry = (
   const isPlugin = scopeRaw.startsWith('plugin:');
 
   return {
-    id: uuid(),
+    id: createRandomId(),
     timestamp,
     level,
     target,

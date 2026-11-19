@@ -15,7 +15,6 @@ import { useFramelessWindow } from '../hooks/useFramelessWindow';
 import { ConnectedThemeController } from './ConnectedThemeController';
 import { JamQrCodeButton } from './JamQrCodeButton';
 import { SearchBox } from './SearchBox';
-import { UpdateBadge } from './UpdateBadge';
 
 export const ConnectedTopBar: FC = () => {
   const router = useRouter();
@@ -32,7 +31,7 @@ export const ConnectedTopBar: FC = () => {
       <div className="flex flex-row items-center gap-4">
         {!isTitleBarEnabled && (
           <Tooltip
-            content={`Nuclear ${version}`}
+            content={`RAVE ${version}`}
             side="bottom"
             wrapperClassName="flex items-center"
           >
@@ -45,7 +44,6 @@ export const ConnectedTopBar: FC = () => {
           canGoBack={canGoBack}
           canGoForward={canGoForward}
         />
-        <UpdateBadge />
       </div>
       <SearchBox />
       <div className="flex flex-row items-center justify-end gap-2">

@@ -51,9 +51,6 @@ describe('Queue candidate selection', () => {
     useSoundStore.setState({
       src: null,
       status: 'stopped',
-      crossfadeMs: 0,
-      preload: 'auto',
-      crossOrigin: '',
     });
 
     useSettingsStore.getState().setValue('playback.streamExpiryMs', 3600000);

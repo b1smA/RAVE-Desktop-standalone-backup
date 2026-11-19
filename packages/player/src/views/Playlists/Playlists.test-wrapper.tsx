@@ -3,7 +3,7 @@ import { render, RenderResult, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import type { PlaylistProvider } from '@nuclearplayer/plugin-sdk';
-import { createSelectWrapper, DialogWrapper } from '@nuclearplayer/ui';
+import { createSelectWrapper, DialogWrapper } from '@nuclearplayer/ui/test';
 
 import App from '../../App';
 import { routeTree } from '../../routeTree.gen';
@@ -81,10 +81,21 @@ export const PlaylistsWrapper = {
       async click() {
         await user.click(this.element);
       },
+      get pinButton() {
+        return within(this.element.parentElement as HTMLElement).getByTestId(
+          'pin-playlist-button',
+        );
+      },
+      async togglePin() {
+        await user.click(this.pinButton);
+      },
     };
   },
   get detailView() {
     return screen.queryByTestId('playlist-detail-view');
+  },
+  async waitForDetailView() {
+    return screen.findByTestId('playlist-detail-view');
   },
   get importView() {
     return screen.queryByTestId('playlist-import-view');
@@ -96,6 +107,24 @@ export const PlaylistsWrapper = {
     },
     async click() {
       await user.click(this.element);
+    },
+  },
+
+  prompted: {
+    async open() {
+      await user.click(screen.getByTestId('open-prompted-playlist'));
+    },
+    async typePrompt(prompt: string) {
+      await user.type(screen.getByTestId('prompted-playlist-input'), prompt);
+    },
+    get rules() {
+      return screen.getByTestId('prompted-playlist-rules');
+    },
+    get createButton() {
+      return screen.getByTestId('create-prompted-playlist');
+    },
+    async create() {
+      await user.click(this.createButton);
     },
   },
 

@@ -1,11 +1,11 @@
-import { v4 as uuidv4 } from 'uuid';
-
 import type { LegacyTrack, Playlist, PlaylistItem } from '@nuclearplayer/model';
 import {
   legacyConfigSchema,
   legacyPlaylistSchema,
   playlistExportSchema,
 } from '@nuclearplayer/model';
+
+import { createRandomId } from '../utils/randomId';
 
 export type PlaylistFormat =
   'nuclear' | 'nuclear-legacy' | 'nuclear-legacy-config' | 'unknown';
@@ -27,7 +27,7 @@ export const detectPlaylistFormat = (json: unknown): PlaylistFormat => {
 };
 
 const convertLegacyTrack = (track: LegacyTrack): PlaylistItem => {
-  const itemId = uuidv4();
+  const itemId = createRandomId();
   const nowIso = new Date().toISOString();
 
   return {
@@ -49,7 +49,7 @@ const convertLegacyTrack = (track: LegacyTrack): PlaylistItem => {
         : undefined,
       source: {
         provider: 'nuclear-legacy',
-        id: track.uuid ?? uuidv4(),
+        id: track.uuid ?? createRandomId(),
       },
     },
   };
@@ -60,7 +60,7 @@ const convertLegacyPlaylist = (json: unknown): Playlist => {
   const nowIso = new Date().toISOString();
 
   return {
-    id: uuidv4(),
+    id: createRandomId(),
     name: legacy.name,
     createdAtIso: nowIso,
     lastModifiedIso: nowIso,

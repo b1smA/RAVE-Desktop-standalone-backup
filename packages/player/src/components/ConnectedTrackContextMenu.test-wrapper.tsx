@@ -60,12 +60,43 @@ export const ConnectedTrackContextMenuWrapper = {
     };
   },
 
+  radioAction: {
+    get query() {
+      return screen.queryByTestId('start-track-radio-action');
+    },
+    get element() {
+      return screen.getByTestId('start-track-radio-action');
+    },
+    async click() {
+      await user.click(this.element);
+    },
+  },
+
+  blockedArtistAction: {
+    get element() {
+      return screen.getByTestId('toggle-artist-blocked-action');
+    },
+    async click() {
+      await user.click(this.element);
+    },
+  },
+
+  wrongVersion: {
+    async open() {
+      await user.click(screen.getByText('Wrong version'));
+    },
+    async select(reason: string) {
+      const reasonId = reason === 'Live instead of studio' ? 'live' : reason;
+      await user.click(screen.getByTestId(`source-feedback-${reasonId}`));
+    },
+  },
+
   submenu: {
     get trigger() {
-      return screen.queryByTestId('submenu-trigger');
+      return screen.queryByText('Add to playlist');
     },
     async open() {
-      await user.click(screen.getByTestId('submenu-trigger'));
+      await user.click(screen.getByText('Add to playlist'));
     },
     get panel() {
       return screen.getByTestId('submenu-content');

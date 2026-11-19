@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.raveplayer.Rave</id>
+  <metadata_license>FSFAP</metadata_license>
+  <project_license>AGPL-3.0-only</project_license>
+  <name>RAVE</name>
+  <summary>Open music player with replaceable sources</summary>
+
+  <developer id="com.raveplayer">
+    <name>RAVE contributors</name>
+  </developer>
+
+  <description>
+    <p>
+      RAVE is an open-source desktop music player built on Nuclear. It keeps
+      Nuclear's plugin and theme ecosystem while developing an independent
+      interface and source-aware listening experience.
+    </p>
+    <ul>
+      <li>Search for music across multiple sources</li>
+      <li>Choose and inspect playback sources</li>
+      <li>Extend the player with Nuclear-compatible plugins</li>
+      <li>Customize the interface with built-in and community themes</li>
+    </ul>
+  </description>
+
+  <launchable type="desktop-id">com.raveplayer.Rave.desktop</launchable>
+
+  <branding>
+    <color type="primary" scheme_preference="light">#08E8DE</color>
+    <color type="primary" scheme_preference="dark">#071218</color>
+  </branding>
+
+  <content_rating type="oars-1.1" />
+
+  <keywords>
+    <keyword>music</keyword>
+    <keyword>player</keyword>
+    <keyword>audio</keyword>
+    <keyword>streaming</keyword>
+    <keyword>plugins</keyword>
+  </keywords>
+
+  <supports>
+    <control>keyboard</control>
+    <control>pointing</control>
+  </supports>
+
+  <requires>
+    <display_length compare="ge">768</display_length>
+  </requires>
+
+  <releases>
+    <release version="1.49.2" date="2026-10-08">
+      <description>
+        <p>Introduces the independent RAVE identity and default visual theme.</p>
+      </description>
+    </release>
+  </releases>
+</component>

@@ -29,6 +29,7 @@ export const SearchWrapper = {
       routeTree,
       history: createMemoryHistory({ initialEntries: ['/'] }),
     });
+    await router.load();
     const component = render(
       <App queryClientProp={queryClient} routerProp={router} />,
     );
@@ -163,6 +164,16 @@ export const SearchWrapper = {
 
   async findSkeleton() {
     return screen.findByTestId('search-skeleton');
+  },
+
+  async findUnifiedResults() {
+    return screen.findByTestId('search-unified-results');
+  },
+
+  get resultHeadings() {
+    return screen
+      .queryAllByTestId('search-result-heading')
+      .map((item) => item.textContent);
   },
 
   emptyStateAction: {

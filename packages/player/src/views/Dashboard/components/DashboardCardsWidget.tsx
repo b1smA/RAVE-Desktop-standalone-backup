@@ -31,9 +31,9 @@ export const DashboardCardsWidget = <T,>({
 
   return (
     <div data-testid={testId} className="flex flex-col gap-4">
-      {results?.map((result) => (
+      {results?.map((result, resultIndex) => (
         <DashboardCardsProviderRow
-          key={result.providerId}
+          key={`${result.providerId}-${resultIndex}`}
           result={result}
           title={title}
           labels={labels}
@@ -57,10 +57,18 @@ const DashboardCardsProviderRow = <T,>({
   labels,
   mapItem,
 }: DashboardCardsProviderRowProps<T>) => {
-  const items: CardsRowItem[] = useMemo(
-    () => result.items.map((item) => mapItem(item, result)),
-    [result, mapItem],
-  );
+  const items: CardsRowItem[] = useMemo(() => {
+    const seenIds = new Set<string>();
+    return result.items
+      .map((item) => mapItem(item, result))
+      .filter((item) => {
+        if (seenIds.has(item.id)) {
+          return false;
+        }
+        seenIds.add(item.id);
+        return true;
+      });
+  }, [result, mapItem]);
 
   return (
     <CardsRow

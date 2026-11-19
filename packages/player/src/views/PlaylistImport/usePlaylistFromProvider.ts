@@ -4,9 +4,8 @@ import { toast } from 'sonner';
 
 import { useTranslation } from '@nuclearplayer/i18n';
 import type { Playlist, PlaylistItem } from '@nuclearplayer/model';
-import type { PlaylistProvider } from '@nuclearplayer/plugin-sdk';
 
-import { providersHost } from '../../services/providersHost';
+import { getPlaylistProvidersForUrl } from '../../services/playlistsHost';
 import { reportError } from '../../utils/logging';
 
 const EMPTY_ITEMS: PlaylistItem[] = [];
@@ -16,28 +15,38 @@ export const usePlaylistFromProvider = (
   encodedUrl: string,
 ) => {
   const { t } = useTranslation('playlists');
-  const provider = providersHost.get<PlaylistProvider>(providerId, 'playlists');
   const decodedUrl = decodeURIComponent(encodedUrl);
+  const providers = getPlaylistProvidersForUrl(decodedUrl, providerId);
+  const providerIds = providers.map((provider) => provider.id);
 
   const query = useQuery<Playlist>({
-    queryKey: ['playlist-import', providerId, decodedUrl],
+    queryKey: ['playlist-import', providerIds, decodedUrl],
     queryFn: async () => {
-      if (!provider) {
+      if (providers.length === 0) {
         throw new Error('Provider not found');
       }
 
-      const fetched = await provider.fetchPlaylistByUrl(decodedUrl);
-      return {
-        ...fetched,
-        isReadOnly: true,
-        origin: {
-          provider: provider.name,
-          id: provider.id,
-          url: decodedUrl,
-        },
-      };
+      let lastError: unknown;
+      for (const provider of providers) {
+        try {
+          const fetched = await provider.fetchPlaylistByUrl(decodedUrl);
+          return {
+            ...fetched,
+            isReadOnly: true,
+            origin: {
+              provider: provider.name,
+              id: provider.id,
+              url: decodedUrl,
+            },
+          };
+        } catch (error) {
+          lastError = error;
+        }
+      }
+
+      throw lastError ?? new Error('Playlist import failed');
     },
-    enabled: Boolean(provider),
+    enabled: providers.length > 0,
     retry: false,
   });
 

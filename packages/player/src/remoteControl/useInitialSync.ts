@@ -5,9 +5,10 @@ import type { ConnectionStatus } from '@nuclearplayer/ui';
 
 import type { PlaybackState, SettingsState } from './remoteStore';
 import { useRemoteStore } from './remoteStore';
+import { sessionFetch } from './sessions/sessionClient';
 
 const fetchJSON = async <T>(path: string): Promise<T> => {
-  const response = await fetch(path);
+  const response = await sessionFetch(path);
 
   if (!response.ok) {
     throw new Error(`${path} returned ${response.status}`);

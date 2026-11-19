@@ -26,21 +26,51 @@ exports[`Artist view > with bio provider > (Snapshot) renders the artist view 1`
             >
               <svg
                 class="h-6 w-6"
+                fill="none"
                 height="100"
-                id="svg2"
-                viewBox="0 0 99.999998 100"
+                viewBox="0 0 100 100"
                 width="100"
                 xmlns="http://www.w3.org/2000/svg"
-                xmlns:svg="http://www.w3.org/2000/svg"
               >
-                <defs
-                  id="defs2"
-                />
-                <path
-                  d="M 49.999997,5.5078125e-6 C 10.000227,5.5078125e-6 -2.8686701e-6,10.000046 -2.8686701e-6,50.000006 -2.8686701e-6,89.999966 10.000227,100.00001 49.999997,100.00001 c 39.99977,0 50,-10.000044 50,-50.000004 0,-39.99996 -10.00023,-50.0000004921875 -50,-50.0000004921875 z M 29.999997,23.599616 h 40 l -20,26.40039 h 40 l -20,26.40039 -20,-26.40039 -20,26.40039 L 9.9999971,50.000006 H 49.999997 Z"
-                  id="path1"
-                  style="fill: currentColor; stroke-width: 0.999999;"
-                />
+                <g
+                  fill="currentColor"
+                >
+                  <rect
+                    height="24"
+                    rx="4"
+                    width="8"
+                    x="18"
+                    y="38"
+                  />
+                  <rect
+                    height="46"
+                    rx="4"
+                    width="8"
+                    x="32"
+                    y="27"
+                  />
+                  <rect
+                    height="70"
+                    rx="4"
+                    width="8"
+                    x="46"
+                    y="15"
+                  />
+                  <rect
+                    height="46"
+                    rx="4"
+                    width="8"
+                    x="60"
+                    y="27"
+                  />
+                  <rect
+                    height="24"
+                    rx="4"
+                    width="8"
+                    x="74"
+                    y="38"
+                  />
+                </g>
               </svg>
             </span>
           </div>
@@ -1053,7 +1083,7 @@ exports[`Artist view > with bio provider > (Snapshot) renders the artist view 1`
                                           data-headlessui-state=""
                                           data-state="closed"
                                           data-testid="track-context-menu-button"
-                                          id="radix-:re:"
+                                          id="radix-:r16:"
                                           type="button"
                                         >
                                           <svg
@@ -1150,87 +1180,194 @@ exports[`Artist view > with bio provider > (Snapshot) renders the artist view 1`
                   </div>
                 </div>
                 <div
-                  class="grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] gap-4 pr-2 pb-4 mx-4"
-                  role="grid"
+                  class="flex flex-col gap-6"
                 >
-                  <button
-                    class="cursor-pointer rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-auto surface-card flex w-42 flex-col items-stretch gap-2 p-2 text-left"
-                    data-headlessui-state=""
-                    data-testid="card"
-                    type="button"
+                  <section
+                    class="mx-4 flex flex-col gap-3"
+                    data-testid="artist-albums"
                   >
-                    <div
-                      class="border-border flex h-full rounded-md border-(length:--border-width) shadow-none surface-card relative aspect-square w-full items-center justify-center overflow-hidden p-0"
+                    <h2
+                      class="text-xl font-black"
                     >
-                      <div
-                        class="overflow-hidden absolute inset-0"
+                      Albums
+                    </h2>
+                    <div
+                      class="grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] gap-4 pr-2 pb-4"
+                      role="grid"
+                    >
+                      <button
+                        class="cursor-pointer rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-auto surface-card flex w-42 flex-col items-stretch gap-2 p-2 text-left"
+                        data-headlessui-state=""
+                        data-testid="card"
+                        type="button"
                       >
-                        <img
-                          alt="Hello World LP"
-                          class="h-full w-full object-cover"
-                          decoding="async"
-                          loading="lazy"
-                          src="https://img/debut.jpg"
-                        />
                         <div
-                          class="pointer-events-none absolute inset-0 flex items-center justify-center"
+                          class="border-border flex h-full rounded-md border-(length:--border-width) shadow-none surface-card relative aspect-square w-full items-center justify-center overflow-hidden p-0"
                         >
-                          <svg
-                            aria-hidden="true"
-                            class="lucide lucide-cassette-tape opacity-20"
-                            fill="none"
-                            height="96"
-                            stroke="currentColor"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="0.5"
-                            viewBox="0 0 24 24"
-                            width="96"
-                            xmlns="http://www.w3.org/2000/svg"
+                          <div
+                            class="overflow-hidden absolute inset-0"
                           >
-                            <rect
-                              height="16"
-                              rx="2"
-                              width="20"
-                              x="2"
-                              y="4"
+                            <img
+                              alt="Hello World LP"
+                              class="h-full w-full object-cover"
+                              decoding="async"
+                              loading="lazy"
+                              src="https://img/debut.jpg"
                             />
-                            <circle
-                              cx="8"
-                              cy="10"
-                              r="2"
-                            />
-                            <path
-                              d="M8 12h8"
-                            />
-                            <circle
-                              cx="16"
-                              cy="10"
-                              r="2"
-                            />
-                            <path
-                              d="m6 20 .7-2.9A1.4 1.4 0 0 1 8.1 16h7.8a1.4 1.4 0 0 1 1.4 1l.7 3"
-                            />
-                          </svg>
+                            <div
+                              class="pointer-events-none absolute inset-0 flex items-center justify-center"
+                            >
+                              <svg
+                                aria-hidden="true"
+                                class="lucide lucide-cassette-tape opacity-20"
+                                fill="none"
+                                height="96"
+                                stroke="currentColor"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="0.5"
+                                viewBox="0 0 24 24"
+                                width="96"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <rect
+                                  height="16"
+                                  rx="2"
+                                  width="20"
+                                  x="2"
+                                  y="4"
+                                />
+                                <circle
+                                  cx="8"
+                                  cy="10"
+                                  r="2"
+                                />
+                                <path
+                                  d="M8 12h8"
+                                />
+                                <circle
+                                  cx="16"
+                                  cy="10"
+                                  r="2"
+                                />
+                                <path
+                                  d="m6 20 .7-2.9A1.4 1.4 0 0 1 8.1 16h7.8a1.4 1.4 0 0 1 1.4 1l.7 3"
+                                />
+                              </svg>
+                            </div>
+                          </div>
                         </div>
-                      </div>
+                        <div
+                          class="min-w-0"
+                        >
+                          <div
+                            class="text-card-foreground truncate text-sm font-bold"
+                            data-testid="card-title"
+                          >
+                            Hello World LP
+                          </div>
+                          <div
+                            class="text-card-foreground truncate text-xs opacity-60"
+                          >
+                            Test Artist
+                          </div>
+                        </div>
+                      </button>
                     </div>
-                    <div
-                      class="min-w-0"
+                  </section>
+                  <section
+                    class="mx-4 flex flex-col gap-3"
+                    data-testid="artist-singles"
+                  >
+                    <h2
+                      class="text-xl font-black"
                     >
-                      <div
-                        class="text-card-foreground truncate text-sm font-bold"
-                        data-testid="card-title"
+                      Singles & EPs
+                    </h2>
+                    <div
+                      class="grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] gap-4 pr-2 pb-4"
+                      role="grid"
+                    >
+                      <button
+                        class="cursor-pointer rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-auto surface-card flex w-42 flex-col items-stretch gap-2 p-2 text-left"
+                        data-headlessui-state=""
+                        data-testid="card"
+                        type="button"
                       >
-                        Hello World LP
-                      </div>
-                      <div
-                        class="text-card-foreground truncate text-xs opacity-60"
-                      >
-                        Test Artist
-                      </div>
+                        <div
+                          class="border-border flex h-full rounded-md border-(length:--border-width) shadow-none surface-card relative aspect-square w-full items-center justify-center overflow-hidden p-0"
+                        >
+                          <div
+                            class="overflow-hidden absolute inset-0"
+                          >
+                            <img
+                              alt="Hello Goodbye"
+                              class="h-full w-full object-cover"
+                              decoding="async"
+                              loading="lazy"
+                              src="https://img/single.jpg"
+                            />
+                            <div
+                              class="pointer-events-none absolute inset-0 flex items-center justify-center"
+                            >
+                              <svg
+                                aria-hidden="true"
+                                class="lucide lucide-cassette-tape opacity-20"
+                                fill="none"
+                                height="96"
+                                stroke="currentColor"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="0.5"
+                                viewBox="0 0 24 24"
+                                width="96"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <rect
+                                  height="16"
+                                  rx="2"
+                                  width="20"
+                                  x="2"
+                                  y="4"
+                                />
+                                <circle
+                                  cx="8"
+                                  cy="10"
+                                  r="2"
+                                />
+                                <path
+                                  d="M8 12h8"
+                                />
+                                <circle
+                                  cx="16"
+                                  cy="10"
+                                  r="2"
+                                />
+                                <path
+                                  d="m6 20 .7-2.9A1.4 1.4 0 0 1 8.1 16h7.8a1.4 1.4 0 0 1 1.4 1l.7 3"
+                                />
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          class="min-w-0"
+                        >
+                          <div
+                            class="text-card-foreground truncate text-sm font-bold"
+                            data-testid="card-title"
+                          >
+                            Hello Goodbye
+                          </div>
+                          <div
+                            class="text-card-foreground truncate text-xs opacity-60"
+                          >
+                            Test Artist
+                          </div>
+                        </div>
+                      </button>
                     </div>
-                  </button>
+                  </section>
                 </div>
               </div>
             </div>
@@ -1589,75 +1726,79 @@ exports[`Artist view > with bio provider > (Snapshot) renders the artist view 1`
           <div
             class="flex items-center gap-2"
           >
-            <button
-              class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 size-10 justify-center"
-              data-headlessui-state=""
-              type="button"
-            >
-              <svg
-                aria-hidden="true"
-                class="lucide lucide-volume2 lucide-volume-2"
-                fill="none"
-                height="16"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-                width="16"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"
-                />
-                <path
-                  d="M16 9a5 5 0 0 1 0 6"
-                />
-                <path
-                  d="M19.364 18.364a9 9 0 0 0 0-12.728"
-                />
-              </svg>
-            </button>
             <div
-              class="w-24"
-              data-testid="player-volume-slider"
+              class="flex items-center gap-2"
             >
+              <button
+                class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 size-10 justify-center"
+                data-headlessui-state=""
+                type="button"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-volume2 lucide-volume-2"
+                  fill="none"
+                  height="16"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="16"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"
+                  />
+                  <path
+                    d="M16 9a5 5 0 0 1 0 6"
+                  />
+                  <path
+                    d="M19.364 18.364a9 9 0 0 0 0-12.728"
+                  />
+                </svg>
+              </button>
               <div
-                class="flex w-full flex-col gap-2"
+                class="w-24"
+                data-testid="player-volume-slider"
               >
                 <div
-                  class="relative h-6 w-full overscroll-contain"
+                  class="flex w-full flex-col gap-2"
                 >
                   <div
-                    class="pointer-events-none absolute inset-x-0 top-1/2 -translate-y-1/2"
+                    class="relative h-6 w-full overscroll-contain"
                   >
                     <div
-                      class="border-border surface-input relative h-3 w-full rounded-md border-(length:--border-width)"
+                      class="pointer-events-none absolute inset-x-0 top-1/2 -translate-y-1/2"
                     >
                       <div
-                        class="bg-primary absolute top-0 left-0 h-full rounded-l"
-                        style="width: 100%;"
-                      />
-                      <div
-                        class="border-border bg-input absolute top-1/2 -ml-2 h-5 w-5 -translate-y-1/2 rounded-full border-(length:--border-width)"
-                        style="left: 100%;"
-                      />
+                        class="border-border surface-input relative h-3 w-full rounded-md border-(length:--border-width)"
+                      >
+                        <div
+                          class="bg-primary absolute top-0 left-0 h-full rounded-l"
+                          style="width: 100%;"
+                        />
+                        <div
+                          class="border-border bg-input absolute top-1/2 -ml-2 h-5 w-5 -translate-y-1/2 rounded-full border-(length:--border-width)"
+                          style="left: 100%;"
+                        />
+                      </div>
                     </div>
+                    <input
+                      aria-labelledby=":r3:-label"
+                      aria-valuemax="100"
+                      aria-valuemin="0"
+                      aria-valuenow="100"
+                      aria-valuetext="100"
+                      class="absolute inset-0 z-[1] h-6 w-full appearance-none opacity-0 cursor-pointer"
+                      id=":r3:"
+                      max="100"
+                      min="0"
+                      step="1"
+                      type="range"
+                      value="100"
+                    />
                   </div>
-                  <input
-                    aria-labelledby=":r3:-label"
-                    aria-valuemax="100"
-                    aria-valuemin="0"
-                    aria-valuenow="100"
-                    aria-valuetext="100"
-                    class="absolute inset-0 z-[1] h-6 w-full appearance-none opacity-0 cursor-pointer"
-                    id=":r3:"
-                    max="100"
-                    min="0"
-                    step="1"
-                    type="range"
-                    value="100"
-                  />
                 </div>
               </div>
             </div>
@@ -1732,21 +1873,51 @@ exports[`Artist view > with social stats provider > (Snapshot) renders the artis
             >
               <svg
                 class="h-6 w-6"
+                fill="none"
                 height="100"
-                id="svg2"
-                viewBox="0 0 99.999998 100"
+                viewBox="0 0 100 100"
                 width="100"
                 xmlns="http://www.w3.org/2000/svg"
-                xmlns:svg="http://www.w3.org/2000/svg"
               >
-                <defs
-                  id="defs2"
-                />
-                <path
-                  d="M 49.999997,5.5078125e-6 C 10.000227,5.5078125e-6 -2.8686701e-6,10.000046 -2.8686701e-6,50.000006 -2.8686701e-6,89.999966 10.000227,100.00001 49.999997,100.00001 c 39.99977,0 50,-10.000044 50,-50.000004 0,-39.99996 -10.00023,-50.0000004921875 -50,-50.0000004921875 z M 29.999997,23.599616 h 40 l -20,26.40039 h 40 l -20,26.40039 -20,-26.40039 -20,26.40039 L 9.9999971,50.000006 H 49.999997 Z"
-                  id="path1"
-                  style="fill: currentColor; stroke-width: 0.999999;"
-                />
+                <g
+                  fill="currentColor"
+                >
+                  <rect
+                    height="24"
+                    rx="4"
+                    width="8"
+                    x="18"
+                    y="38"
+                  />
+                  <rect
+                    height="46"
+                    rx="4"
+                    width="8"
+                    x="32"
+                    y="27"
+                  />
+                  <rect
+                    height="70"
+                    rx="4"
+                    width="8"
+                    x="46"
+                    y="15"
+                  />
+                  <rect
+                    height="46"
+                    rx="4"
+                    width="8"
+                    x="60"
+                    y="27"
+                  />
+                  <rect
+                    height="24"
+                    rx="4"
+                    width="8"
+                    x="74"
+                    y="38"
+                  />
+                </g>
               </svg>
             </span>
           </div>
@@ -1835,7 +2006,7 @@ exports[`Artist view > with social stats provider > (Snapshot) renders the artis
               class="border-border focus-visible:ring-ring focus-visible:ring-offset-muted w-full transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none surface-background text-foreground placeholder:text-foreground/60 rounded-md border-(length:--border-width) h-8 px-8"
               data-headlessui-state=""
               data-testid="search-box"
-              id="input-:r2e:"
+              id="input-:r7e:"
               placeholder="Search"
               type="text"
               value="test artist"
@@ -1877,7 +2048,7 @@ exports[`Artist view > with social stats provider > (Snapshot) renders the artis
             aria-label="Toggle theme"
             class="border-border focus:ring-ring focus:ring-offset-muted relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full border-(length:--border-width) transition-all focus:ring-2 focus:ring-offset-2 focus:outline-none data-checked:surface-primary surface-input data-disabled:cursor-not-allowed data-disabled:opacity-50 group justify-self-end"
             data-headlessui-state=""
-            id="headlessui-switch-:r2g:"
+            id="headlessui-switch-:r7g:"
             role="switch"
             tabindex="0"
             type="button"
@@ -2935,7 +3106,7 @@ exports[`Artist view > with social stats provider > (Snapshot) renders the artis
                                           data-headlessui-state=""
                                           data-state="closed"
                                           data-testid="track-context-menu-button"
-                                          id="radix-:r2s:"
+                                          id="radix-:r8k:"
                                           type="button"
                                         >
                                           <svg
@@ -3449,75 +3620,79 @@ exports[`Artist view > with social stats provider > (Snapshot) renders the artis
           <div
             class="flex items-center gap-2"
           >
-            <button
-              class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 size-10 justify-center"
-              data-headlessui-state=""
-              type="button"
-            >
-              <svg
-                aria-hidden="true"
-                class="lucide lucide-volume2 lucide-volume-2"
-                fill="none"
-                height="16"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-                width="16"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"
-                />
-                <path
-                  d="M16 9a5 5 0 0 1 0 6"
-                />
-                <path
-                  d="M19.364 18.364a9 9 0 0 0 0-12.728"
-                />
-              </svg>
-            </button>
             <div
-              class="w-24"
-              data-testid="player-volume-slider"
+              class="flex items-center gap-2"
             >
+              <button
+                class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 size-10 justify-center"
+                data-headlessui-state=""
+                type="button"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-volume2 lucide-volume-2"
+                  fill="none"
+                  height="16"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="16"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"
+                  />
+                  <path
+                    d="M16 9a5 5 0 0 1 0 6"
+                  />
+                  <path
+                    d="M19.364 18.364a9 9 0 0 0 0-12.728"
+                  />
+                </svg>
+              </button>
               <div
-                class="flex w-full flex-col gap-2"
+                class="w-24"
+                data-testid="player-volume-slider"
               >
                 <div
-                  class="relative h-6 w-full overscroll-contain"
+                  class="flex w-full flex-col gap-2"
                 >
                   <div
-                    class="pointer-events-none absolute inset-x-0 top-1/2 -translate-y-1/2"
+                    class="relative h-6 w-full overscroll-contain"
                   >
                     <div
-                      class="border-border surface-input relative h-3 w-full rounded-md border-(length:--border-width)"
+                      class="pointer-events-none absolute inset-x-0 top-1/2 -translate-y-1/2"
                     >
                       <div
-                        class="bg-primary absolute top-0 left-0 h-full rounded-l"
-                        style="width: 100%;"
-                      />
-                      <div
-                        class="border-border bg-input absolute top-1/2 -ml-2 h-5 w-5 -translate-y-1/2 rounded-full border-(length:--border-width)"
-                        style="left: 100%;"
-                      />
+                        class="border-border surface-input relative h-3 w-full rounded-md border-(length:--border-width)"
+                      >
+                        <div
+                          class="bg-primary absolute top-0 left-0 h-full rounded-l"
+                          style="width: 100%;"
+                        />
+                        <div
+                          class="border-border bg-input absolute top-1/2 -ml-2 h-5 w-5 -translate-y-1/2 rounded-full border-(length:--border-width)"
+                          style="left: 100%;"
+                        />
+                      </div>
                     </div>
+                    <input
+                      aria-labelledby=":r7h:-label"
+                      aria-valuemax="100"
+                      aria-valuemin="0"
+                      aria-valuenow="100"
+                      aria-valuetext="100"
+                      class="absolute inset-0 z-[1] h-6 w-full appearance-none opacity-0 cursor-pointer"
+                      id=":r7h:"
+                      max="100"
+                      min="0"
+                      step="1"
+                      type="range"
+                      value="100"
+                    />
                   </div>
-                  <input
-                    aria-labelledby=":r2h:-label"
-                    aria-valuemax="100"
-                    aria-valuemin="0"
-                    aria-valuenow="100"
-                    aria-valuetext="100"
-                    class="absolute inset-0 z-[1] h-6 w-full appearance-none opacity-0 cursor-pointer"
-                    id=":r2h:"
-                    max="100"
-                    min="0"
-                    step="1"
-                    type="range"
-                    value="100"
-                  />
                 </div>
               </div>
             </div>

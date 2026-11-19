@@ -172,6 +172,28 @@ describe('ConnectedControls', () => {
 });
 
 describe('ConnectedVolume', () => {
+  it('lists audio outputs and remembers the selected device', async () => {
+    Object.defineProperty(navigator, 'mediaDevices', {
+      configurable: true,
+      value: {
+        enumerateDevices: vi.fn().mockResolvedValue([
+          { deviceId: 'default', kind: 'audiooutput', label: 'Default' },
+          { deviceId: 'hdmi', kind: 'audiooutput', label: 'HDMI Display' },
+        ]),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+      },
+    });
+
+    await Wrapper.mount();
+    await Wrapper.volume.openOutputs();
+    await Wrapper.volume.selectOutput('HDMI Display');
+
+    expect(
+      useSettingsStore.getState().values['core.playback.audioOutputDeviceId'],
+    ).toBe('hdmi');
+  });
+
   it('volume slider reflects the current volume from settings store', async () => {
     Wrapper.seedVolume(0.6);
     await Wrapper.mount();

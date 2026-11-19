@@ -1,5 +1,11 @@
+import { providersHost } from '../services/providersHost';
 import { usePlaylistStore } from '../stores/playlistStore';
+import { useQueueStore } from '../stores/queueStore';
+import { useSettingsStore } from '../stores/settingsStore';
+import { useSourceFeedbackStore } from '../stores/sourceFeedbackStore';
+import { DiscoveryProviderBuilder } from '../test/builders/DiscoveryProviderBuilder';
 import { PlaylistBuilder } from '../test/builders/PlaylistBuilder';
+import { createMockTrack } from '../test/utils/mockTrack';
 import { ConnectedTrackContextMenuWrapper as Wrapper } from './ConnectedTrackContextMenu.test-wrapper';
 
 vi.mock(
@@ -10,10 +16,123 @@ vi.mock(
 
 describe('ConnectedTrackContextMenu', () => {
   beforeEach(() => {
+    providersHost.clear();
     usePlaylistStore.setState({
       index: [],
       playlists: new Map(),
       loaded: true,
+    });
+    useQueueStore.setState({ items: [], currentIndex: 0 });
+    useSettingsStore.setState({ values: {} });
+    useSourceFeedbackStore.setState({ feedbackByTrack: {}, loaded: true });
+  });
+
+  describe('source feedback', () => {
+    it('remembers a rejected version and requests another source', async () => {
+      const report = vi.spyOn(useSourceFeedbackStore.getState(), 'report');
+      const track = createMockTrack('Test Track');
+      track.streamCandidates = [
+        {
+          id: 'live-version',
+          title: 'Test Track Live',
+          failed: false,
+          source: { provider: 'youtube', id: 'live-version' },
+        },
+        {
+          id: 'studio-version',
+          title: 'Test Track',
+          failed: false,
+          source: { provider: 'youtube', id: 'studio-version' },
+        },
+      ];
+
+      Wrapper.mount(track);
+      await Wrapper.open();
+      await Wrapper.wrongVersion.open();
+      await Wrapper.wrongVersion.select('Live instead of studio');
+
+      expect(report).toHaveBeenCalled();
+
+      await vi.waitFor(() => {
+        expect(
+          Object.values(
+            useSourceFeedbackStore.getState().feedbackByTrack,
+          ).flat(),
+        ).toEqual([
+          expect.objectContaining({
+            candidateId: 'live-version',
+            reason: 'live',
+          }),
+        ]);
+      });
+      await vi.waitFor(() => {
+        expect(useQueueStore.getState().items[0]?.track.title).toBe(
+          'Test Track',
+        );
+      });
+    });
+  });
+
+  describe('track radio', () => {
+    it('does not show the action without a discovery provider', async () => {
+      Wrapper.mount();
+      await Wrapper.open();
+
+      expect(Wrapper.radioAction.query).not.toBeInTheDocument();
+    });
+
+    it('starts a persistent discovery queue from the selected track', async () => {
+      const recommendation = createMockTrack('Recommended Track');
+      const getRecommendations = vi.fn().mockResolvedValue([recommendation]);
+      providersHost.register(
+        new DiscoveryProviderBuilder()
+          .withGetRecommendations(getRecommendations)
+          .build(),
+      );
+
+      Wrapper.mount();
+      await Wrapper.open();
+      await Wrapper.radioAction.click();
+
+      await vi.waitFor(() => {
+        expect(useQueueStore.getState().items).toHaveLength(2);
+      });
+      expect(getRecommendations).toHaveBeenCalledWith(
+        [expect.objectContaining({ title: 'Test Track' })],
+        { variety: 0.5, limit: 10 },
+      );
+      expect(
+        useQueueStore.getState().items.map((item) => item.track.title),
+      ).toEqual(['Test Track', 'Recommended Track']);
+      expect(
+        useSettingsStore.getState().values['core.playback.discovery'],
+      ).toBe(true);
+    });
+  });
+
+  describe('artist recommendations', () => {
+    it('blocks and restores recommendations for the track artist', async () => {
+      Wrapper.mount();
+      await Wrapper.open();
+
+      expect(Wrapper.blockedArtistAction.element).toHaveTextContent(
+        "Don't recommend this artist",
+      );
+      await Wrapper.blockedArtistAction.click();
+
+      expect(
+        useSettingsStore.getState().values['core.playback.blockedArtists'],
+      ).toEqual(['test artist']);
+
+      await Wrapper.open();
+      expect(Wrapper.blockedArtistAction.element).toHaveTextContent(
+        'Recommend this artist again',
+      );
+      await Wrapper.blockedArtistAction.click();
+
+      expect(
+        useSettingsStore.getState().values['core.playback.blockedArtists'],
+      ).toEqual([]);
     });
   });
 

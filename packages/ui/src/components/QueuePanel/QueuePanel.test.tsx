@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import type { QueueItem as QueueItemType } from '@nuclearplayer/model';
@@ -47,6 +47,37 @@ const mockLabels = {
 };
 
 describe('QueuePanel', () => {
+  it('groups tracks into history, current, and up next sections', () => {
+    render(
+      <QueuePanel
+        items={mockItems}
+        currentItemId="2"
+        labels={{
+          ...mockLabels,
+          history: 'History',
+          nowPlaying: 'Now playing',
+          upNext: 'Up next',
+        }}
+      />,
+    );
+
+    expect(
+      within(screen.getByTestId('queue-section-history')).getByText(
+        'Bohemian Rhapsody',
+      ),
+    ).toBeInTheDocument();
+    expect(
+      within(screen.getByTestId('queue-section-current')).getByText(
+        'Stairway to Heaven',
+      ),
+    ).toBeInTheDocument();
+    expect(
+      within(screen.getByTestId('queue-section-next')).getByText(
+        'Hotel California',
+      ),
+    ).toBeInTheDocument();
+  });
+
   it('(Snapshot) renders default state', () => {
     const { container } = render(
       <QueuePanel

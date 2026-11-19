@@ -2,6 +2,7 @@ import { FC } from 'react';
 
 import { playbackManager } from '../services/playback';
 import { useQueueStore } from '../stores/queueStore';
+import { useRaveLibraryStore } from '../stores/raveLibraryStore';
 import { useSettingsModalStore } from '../stores/settingsModalStore';
 import { getSetting, setSetting } from '../stores/settingsStore';
 import { useSoundStore } from '../stores/soundStore';
@@ -47,6 +48,18 @@ export const GlobalShortcuts: FC = () => {
   useShortcut('playback.mute', () => {
     const muted = getSetting('core.playback.muted') as boolean;
     void setSetting('core.playback.muted', !muted);
+  });
+
+  useShortcut('playback.dislike', () => {
+    const queue = useQueueStore.getState();
+    const currentItem = queue.getCurrentItem();
+    if (!currentItem) {
+      return;
+    }
+    void useRaveLibraryStore
+      .getState()
+      .updateTrackProfile(currentItem.track, { blocked: true });
+    queue.goToNext();
   });
 
   useShortcut('general.toggleSettings', () => {

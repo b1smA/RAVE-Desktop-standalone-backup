@@ -3,7 +3,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMockCandidate } from '../test/builders/StreamingProviderBuilder';
 import { resetInMemoryTauriStore } from '../test/utils/inMemoryTauriStore';
 import { createMockTrack } from '../test/utils/mockTrack';
-import { initializeQueueStore, useQueueStore } from './queueStore';
+import {
+  initializeQueueStore,
+  resetQueueUndoHistory,
+  useQueueStore,
+} from './queueStore';
 import { useSettingsStore } from './settingsStore';
 import { useSoundStore } from './soundStore';
 
@@ -12,11 +16,13 @@ describe('useQueueStore', () => {
     const date = new Date(2025, 1, 1);
     vi.setSystemTime(date);
     resetInMemoryTauriStore();
+    resetQueueUndoHistory();
     useQueueStore.setState({
       items: [],
       currentIndex: 0,
       isReady: false,
       isLoading: false,
+      restoredPosition: null,
     });
     useSettingsStore.setState({ values: {} });
   });
@@ -46,6 +52,18 @@ describe('useQueueStore', () => {
 
       const state = useQueueStore.getState();
       expect(state.items).toMatchSnapshot();
+    });
+
+    it('skips duplicates only when the RAVE queue policy is enabled', () => {
+      useSettingsStore.setState({
+        values: { 'core.playback.preventQueueDuplicates': true },
+      });
+      const track = createMockTrack('Unique');
+
+      useQueueStore.getState().addToQueue([track, track]);
+      useQueueStore.getState().addToQueue([track]);
+
+      expect(useQueueStore.getState().items).toHaveLength(1);
     });
   });
 
@@ -199,6 +217,37 @@ describe('useQueueStore', () => {
       useQueueStore.getState().reorder(0, 2);
 
       expect(useQueueStore.getState().currentIndex).toBe(0);
+    });
+  });
+
+  describe('undoLastChange', () => {
+    it('restores queue items and current position', () => {
+      useQueueStore
+        .getState()
+        .addToQueue([createMockTrack('A'), createMockTrack('B')]);
+      useQueueStore.setState({ currentIndex: 1 });
+      useQueueStore.getState().clearQueue();
+
+      useQueueStore.getState().undoLastChange();
+
+      expect(
+        useQueueStore.getState().items.map((item) => item.track.title),
+      ).toEqual(['A', 'B']);
+      expect(useQueueStore.getState().currentIndex).toBe(1);
+    });
+  });
+
+  describe('playback restoration', () => {
+    it('persists the position for the current queue item', () => {
+      useQueueStore.getState().addToQueue([createMockTrack('Long Track')]);
+      const itemId = useQueueStore.getState().items[0].id;
+
+      useQueueStore.getState().savePlaybackPosition(itemId, 125);
+
+      expect(useQueueStore.getState().restoredPosition).toEqual({
+        itemId,
+        seconds: 125,
+      });
     });
   });
 

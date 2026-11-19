@@ -4,13 +4,23 @@ import path from 'node:path';
 import { Settings } from 'luxon';
 import { vi } from 'vitest';
 
-import { setupDomMocks } from '@nuclearplayer/ui';
+import { setupDomMocks } from '@nuclearplayer/ui/test';
 
 process.env.NODE_ENV = 'test';
 process.env.TZ = 'UTC';
 Settings.defaultLocale = 'en-US';
 
 setupDomMocks();
+
+Object.defineProperty(window, 'scrollTo', {
+  writable: true,
+  value: vi.fn(),
+});
+
+Object.defineProperty(Element.prototype, 'getAnimations', {
+  configurable: true,
+  value: vi.fn(() => []),
+});
 
 // Silences react's pointless warning spam
 // give it a rest already
@@ -34,8 +44,8 @@ vi.mock('@tauri-apps/api/path', () => ({
 }));
 
 vi.mock('esbuild-wasm', () => ({
-  initialize: () => Promise.resolve(),
-  build: () =>
+  initialize: vi.fn(() => Promise.resolve()),
+  build: vi.fn(() =>
     Promise.resolve({
       outputFiles: [
         {
@@ -43,6 +53,7 @@ vi.mock('esbuild-wasm', () => ({
         },
       ],
     }),
+  ),
 }));
 
 vi.mock('esbuild-wasm/esbuild.wasm?url', () => ({
@@ -84,9 +95,9 @@ vi.mock('@tauri-apps/plugin-store', async () => {
   return { LazyStore: mod.LazyStore };
 });
 
-vi.mock('uuid', async () => {
+vi.mock('../utils/randomId', async () => {
   const { mockUuid } = await import('./utils/mockUuid');
-  return { v4: mockUuid.v4 };
+  return { createRandomId: mockUuid.v4 };
 });
 
 vi.mock('motion/react', async (importOriginal) => {

@@ -11,7 +11,7 @@ export type CategoryGroup = {
 };
 
 export const useSettingsGroups = (): CategoryGroup[] => {
-  const { definitions } = useSettingsStore();
+  const definitions = useSettingsStore((state) => state.definitions);
 
   return useMemo(() => {
     const visibleSettings = Object.values(definitions).filter((d) => !d.hidden);

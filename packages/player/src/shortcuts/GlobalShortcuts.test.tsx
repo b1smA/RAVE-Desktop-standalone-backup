@@ -1,16 +1,18 @@
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import App from '../App';
 import { registerBuiltInCoreSettings } from '../services/coreSettings';
 import { playbackManager } from '../services/playback';
 import { useQueueStore } from '../stores/queueStore';
+import { useRaveLibraryStore } from '../stores/raveLibraryStore';
 import { useSettingsModalStore } from '../stores/settingsModalStore';
 import {
   getSetting,
   initializeSettingsStore,
   setSetting,
 } from '../stores/settingsStore';
+import { useShortcutsStore } from '../stores/shortcutsStore';
 import { useSoundStore } from '../stores/soundStore';
 import { resetInMemoryTauriStore } from '../test/utils/inMemoryTauriStore';
 import { createMockTrack } from '../test/utils/mockTrack';
@@ -30,7 +32,14 @@ describe('Global keyboard shortcuts', () => {
     useSettingsModalStore.setState({
       isOpen: false,
     });
+    useShortcutsStore.setState({ overrides: {}, isRecording: false });
+    useRaveLibraryStore.setState({
+      trackProfiles: {},
+      taste: { artists: {}, moods: {} },
+      loaded: true,
+    });
     render(<App />);
+    await screen.findByTestId('sidebar-navigation');
   });
 
   it('toggles playback when pressing Space', async () => {
@@ -154,5 +163,33 @@ describe('Global keyboard shortcuts', () => {
     await user.keyboard('{Control>}[Comma]{/Control}');
 
     expect(useSettingsModalStore.getState().isOpen).toBe(false);
+  });
+
+  it('dislikes the current track and skips it when pressing Ctrl+Shift+D', async () => {
+    const dislikedTrack = createMockTrack('Disliked Track');
+    useQueueStore.setState({
+      items: [
+        {
+          id: 'disliked',
+          track: dislikedTrack,
+          status: 'idle',
+          addedAtIso: '',
+        },
+        {
+          id: 'next',
+          track: createMockTrack('Next Track'),
+          status: 'idle',
+          addedAtIso: '',
+        },
+      ],
+      currentIndex: 0,
+    });
+
+    await user.keyboard('{Control>}{Shift>}d{/Shift}{/Control}');
+
+    expect(
+      useRaveLibraryStore.getState().getTrackProfile(dislikedTrack).blocked,
+    ).toBe(true);
+    expect(useQueueStore.getState().currentIndex).toBe(1);
   });
 });

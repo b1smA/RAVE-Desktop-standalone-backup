@@ -12,6 +12,7 @@ import { AudioSource } from '@nuclearplayer/hifi';
 import App from '../App';
 import { playbackManager } from '../services/playback';
 import { useQueueStore } from '../stores/queueStore';
+import { useSettingsStore } from '../stores/settingsStore';
 import { useSoundStore } from '../stores/soundStore';
 import { createQueueItem } from '../test/fixtures/queue';
 
@@ -92,7 +93,9 @@ export const SoundWrapper = {
     useSoundStore.getState().seekTo(seconds);
   },
   setCrossfadeMs(ms: number) {
-    useSoundStore.getState().setCrossfadeMs(ms);
+    useSettingsStore.setState((state) => ({
+      values: { ...state.values, 'core.playback.crossfadeMs': ms },
+    }));
   },
   getAudios(): NodeListOf<HTMLAudioElement> {
     return document.querySelectorAll('audio');

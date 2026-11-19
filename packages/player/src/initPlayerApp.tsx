@@ -3,10 +3,7 @@ import React from 'react';
 import App from './App';
 import { initLogStream } from './hooks/useLogStream';
 import { applyThemeFromSettingsIfAny } from './services/advancedThemeService';
-import { startAdvancedThemeWatcher } from './services/advancedThemeWatcher';
-import { initBridgeHandler } from './services/bridge/bridgeHandler';
 import { registerBuiltInCoreSettings } from './services/coreSettings';
-import { initDiscordHandler } from './services/discordHandler';
 import { initDiscoveryService } from './services/discoveryService';
 import { initHistoryService } from './services/history';
 import { initHttpApiHandler } from './services/httpApi';
@@ -14,48 +11,134 @@ import {
   applyLanguageFromSettings,
   initLanguageWatcher,
 } from './services/languageService';
+import { Logger } from './services/logger';
+import { initializeLoudnessAnalysis } from './services/loudnessAnalysis';
 import { loadMarketplaceThemes } from './services/marketplaceThemeDirService';
-import { initMcpHandler } from './services/mcp';
-import { initMpdHandler } from './services/mpd';
 import { initPlaybackEventBridge } from './services/playbackEventBridge';
-import { hydratePluginsFromRegistry } from './services/plugins/pluginBootstrap';
-import { ytdlpEnsureInstalled } from './services/tauri/commands';
+import { registerYoutubePlaylistProvider } from './services/youtubePlaylistProvider';
 import { initializeFavoritesStore } from './stores/favoritesStore';
+import { initializePinnedPlaylistsStore } from './stores/pinnedPlaylistsStore';
 import { initializePlaylistStore } from './stores/playlistStore';
 import { initializeQueueStore } from './stores/queueStore';
+import { initializeRaveLibraryStore } from './stores/raveLibraryStore';
 import { initializeSettingsStore } from './stores/settingsStore';
 import { initializeShortcutsStore } from './stores/shortcutsStore';
+import { initializeSourceFeedbackStore } from './stores/sourceFeedbackStore';
 import { initializeStreamVerificationStore } from './stores/streamVerificationStore';
-import { hydrateThemeStore } from './stores/themeStore';
-import { useUpdaterStore } from './stores/updaterStore';
+import { hydrateThemeStore, useThemeStore } from './stores/themeStore';
+import { errorMessage } from './utils/errorMessage';
 
-const initializeStores = () =>
-  initializeSettingsStore()
-    .then(() => initializeShortcutsStore())
-    .then(() => initializeQueueStore())
-    .then(() => initializeFavoritesStore())
-    .then(() => initializeStreamVerificationStore())
-    .then(() => initializePlaylistStore());
+const BACKGROUND_TASK_TIMEOUT_MS = 1_000;
 
-const initRemoteControl = () =>
-  initMcpHandler()
-    .then(() => initMpdHandler())
-    .then(() => initHttpApiHandler())
-    .then(() => initBridgeHandler());
+type BackgroundTask = {
+  name: string;
+  run: () => Promise<unknown> | unknown;
+};
 
-const initLanguage = () =>
-  applyLanguageFromSettings().then(() => initLanguageWatcher());
+const initializeStores = async (): Promise<void> => {
+  await initializeSettingsStore();
+  registerBuiltInCoreSettings();
 
-const initThemes = () =>
-  startAdvancedThemeWatcher()
-    .then(() => loadMarketplaceThemes())
-    .then(() => hydrateThemeStore())
-    .then(() => applyThemeFromSettingsIfAny());
+  await Promise.all([
+    initializeShortcutsStore(),
+    initializeSourceFeedbackStore(),
+    initializeQueueStore(),
+    initializeRaveLibraryStore(),
+    initializeFavoritesStore(),
+    initializeStreamVerificationStore(),
+    initializePlaylistStore(),
+    initializePinnedPlaylistsStore(),
+    initializeLoudnessAnalysis(),
+  ]);
+};
 
-const startBackgroundTasks = () => {
-  void hydratePluginsFromRegistry();
-  void useUpdaterStore.getState().checkForUpdate();
-  void ytdlpEnsureInstalled();
+const initializeLanguage = async (): Promise<void> => {
+  await applyLanguageFromSettings();
+  initLanguageWatcher();
+};
+
+const initializeTheme = async (): Promise<void> => {
+  hydrateThemeStore();
+  const { activeTheme } = useThemeStore.getState();
+
+  if (activeTheme.type === 'marketplace') {
+    await loadMarketplaceThemes();
+  }
+
+  await applyThemeFromSettingsIfAny();
+};
+
+const backgroundTasks: BackgroundTask[] = [
+  {
+    name: 'advanced theme watcher',
+    run: async () =>
+      (
+        await import('./services/advancedThemeWatcher')
+      ).startAdvancedThemeWatcher(),
+  },
+  {
+    name: 'marketplace themes',
+    run: () =>
+      useThemeStore.getState().activeTheme.type === 'marketplace'
+        ? undefined
+        : loadMarketplaceThemes(),
+  },
+  {
+    name: 'plugin registry',
+    run: async () =>
+      (
+        await import('./services/plugins/pluginBootstrap')
+      ).hydratePluginsFromRegistry(),
+  },
+  {
+    name: 'yt-dlp setup',
+    run: async () =>
+      (await import('./services/tauri/commands')).ytdlpEnsureInstalled(),
+  },
+  {
+    name: 'MCP server',
+    run: async () => (await import('./services/mcp')).initMcpHandler(),
+  },
+  {
+    name: 'MPD server',
+    run: async () => (await import('./services/mpd')).initMpdHandler(),
+  },
+  {
+    name: 'bridge server',
+    run: async () =>
+      (await import('./services/bridge/bridgeHandler')).initBridgeHandler(),
+  },
+  {
+    name: 'Discord integration',
+    run: async () =>
+      (await import('./services/discordHandler')).initDiscordHandler(),
+  },
+  {
+    name: 'Libre.fm integration',
+    run: async () =>
+      (await import('./services/libreFmScrobbler')).initLibreFmScrobbler(),
+  },
+];
+
+const startBackgroundTasks = (): void => {
+  const start = () => {
+    backgroundTasks.forEach(({ name, run }) => {
+      void Promise.resolve()
+        .then(run)
+        .catch((error) =>
+          Logger.app.error(
+            `Startup task "${name}" failed: ${errorMessage(error)}`,
+          ),
+        );
+    });
+  };
+
+  if ('requestIdleCallback' in window) {
+    window.requestIdleCallback(start, { timeout: BACKGROUND_TASK_TIMEOUT_MS });
+    return;
+  }
+
+  globalThis.setTimeout(start, BACKGROUND_TASK_TIMEOUT_MS);
 };
 
 export const initPlayerApp = async (
@@ -63,20 +146,22 @@ export const initPlayerApp = async (
 ) => {
   initLogStream();
 
-  await initializeStores()
-    .then(() => registerBuiltInCoreSettings())
-    .then(() => initDiscoveryService())
-    .then(() => initRemoteControl())
-    .then(() => initDiscordHandler())
-    .then(() => initPlaybackEventBridge())
-    .then(() => initHistoryService())
-    .then(() => initLanguage())
-    .then(() => initThemes())
-    .then(() => startBackgroundTasks());
+  await initializeStores();
+  registerYoutubePlaylistProvider();
+  initDiscoveryService();
+  initPlaybackEventBridge();
+  initHistoryService();
+  await Promise.all([
+    initializeLanguage(),
+    initializeTheme(),
+    initHttpApiHandler(),
+  ]);
 
   root.render(
     <React.StrictMode>
       <App />
     </React.StrictMode>,
   );
+
+  startBackgroundTasks();
 };

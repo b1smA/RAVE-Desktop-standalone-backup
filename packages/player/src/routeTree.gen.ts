@@ -32,64 +32,80 @@ const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any).lazy(() => import('./routes/dashboard.lazy').then((d) => d.Route))
 const HistoryRoute = HistoryRouteImport.update({
   id: '/history',
   path: '/history',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any).lazy(() => import('./routes/history.lazy').then((d) => d.Route))
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any).lazy(() => import('./routes/search.lazy').then((d) => d.Route))
 const SourcesRoute = SourcesRouteImport.update({
   id: '/sources',
   path: '/sources',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any).lazy(() => import('./routes/sources.lazy').then((d) => d.Route))
 const FavoritesAlbumsRoute = FavoritesAlbumsRouteImport.update({
   id: '/favorites/albums',
   path: '/favorites/albums',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any).lazy(() =>
+  import('./routes/favorites/albums.lazy').then((d) => d.Route),
+)
 const FavoritesArtistsRoute = FavoritesArtistsRouteImport.update({
   id: '/favorites/artists',
   path: '/favorites/artists',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any).lazy(() =>
+  import('./routes/favorites/artists.lazy').then((d) => d.Route),
+)
 const FavoritesTracksRoute = FavoritesTracksRouteImport.update({
   id: '/favorites/tracks',
   path: '/favorites/tracks',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any).lazy(() =>
+  import('./routes/favorites/tracks.lazy').then((d) => d.Route),
+)
 const PlaylistsIndexRoute = PlaylistsIndexRouteImport.update({
   id: '/playlists/',
   path: '/playlists/',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any).lazy(() =>
+  import('./routes/playlists/index.lazy').then((d) => d.Route),
+)
 const PlaylistsPlaylistIdRoute = PlaylistsPlaylistIdRouteImport.update({
   id: '/playlists/$playlistId',
   path: '/playlists/$playlistId',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any).lazy(() =>
+  import('./routes/playlists/$playlistId.lazy').then((d) => d.Route),
+)
 const AlbumProviderIdAlbumIdRoute = AlbumProviderIdAlbumIdRouteImport.update({
   id: '/album/$providerId/$albumId',
   path: '/album/$providerId/$albumId',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any).lazy(() =>
+  import('./routes/album/$providerId/$albumId.lazy').then((d) => d.Route),
+)
 const ArtistProviderIdArtistIdRoute =
   ArtistProviderIdArtistIdRouteImport.update({
     id: '/artist/$providerId/$artistId',
     path: '/artist/$providerId/$artistId',
     getParentRoute: () => rootRouteImport,
-  } as any)
+  } as any).lazy(() =>
+    import('./routes/artist/$providerId/$artistId.lazy').then((d) => d.Route),
+  )
 const PlaylistsImportProviderIdRoute =
   PlaylistsImportProviderIdRouteImport.update({
     id: '/playlists/import/$providerId',
     path: '/playlists/import/$providerId',
     getParentRoute: () => rootRouteImport,
-  } as any)
+  } as any).lazy(() =>
+    import('./routes/playlists/import.$providerId.lazy').then((d) => d.Route),
+  )
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute

@@ -25,8 +25,28 @@ for (const file of versionFiles) {
   writeFileSync(path, JSON.stringify(parsed, null, 2) + '\n');
 }
 
+const cargoTomlFile = 'packages/player/src-tauri/Cargo.toml';
+const cargoTomlPath = resolve(rootDir, cargoTomlFile);
+writeFileSync(
+  cargoTomlPath,
+  readFileSync(cargoTomlPath, 'utf-8').replace(
+    /(\[package\][\s\S]*?\nversion = ")[^"]+("\s*\n)/,
+    `$1${version}$2`,
+  ),
+);
+
+const cargoLockFile = 'packages/player/src-tauri/Cargo.lock';
+const cargoLockPath = resolve(rootDir, cargoLockFile);
+writeFileSync(
+  cargoLockPath,
+  readFileSync(cargoLockPath, 'utf-8').replace(
+    /(name = "player"\s*\nversion = ")[^"]+("\s*\n)/,
+    `$1${version}$2`,
+  ),
+);
+
 const metainfoFile =
-  'packages/player/src-tauri/resources/com.nuclearplayer.Nuclear.metainfo.xml';
+  'packages/player/src-tauri/resources/com.raveplayer.Rave.metainfo.xml';
 const metainfoPath = resolve(rootDir, metainfoFile);
 writeFileSync(
   metainfoPath,
@@ -36,7 +56,7 @@ writeFileSync(
   ),
 );
 
-git('add', ...versionFiles, metainfoFile);
+git('add', ...versionFiles, cargoTomlFile, cargoLockFile, metainfoFile);
 git('commit', '-m', `player@${version}`);
 git('tag', `player@${version}`);
 console.log(`Created player@${version}`);

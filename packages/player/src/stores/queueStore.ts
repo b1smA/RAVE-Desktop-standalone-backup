@@ -1,7 +1,6 @@
 import { LazyStore } from '@tauri-apps/plugin-store';
 import { produce } from 'immer';
 import partition from 'lodash-es/partition';
-import { v4 as uuidv4 } from 'uuid';
 import { create } from 'zustand';
 
 import type {
@@ -14,7 +13,9 @@ import { stripResolutionState } from '@nuclearplayer/model';
 
 import { eventBus } from '../services/eventBus';
 import { Logger } from '../services/logger';
+import { trackIdentity } from '../services/rave/trackIdentity';
 import { errorMessage } from '../utils/errorMessage';
+import { createRandomId } from '../utils/randomId';
 import { secondsToMs } from '../utils/time';
 import { getSetting } from './settingsStore';
 import { useSoundStore } from './soundStore';
@@ -27,15 +28,25 @@ type QueueStore = Queue & {
   isReady: boolean;
   loadFromDisk: () => Promise<void>;
   addToQueue: (tracks: Track[]) => void;
+  addToQueueWithReason: (
+    tracks: Track[],
+    selectionReason: QueueItem['selectionReason'],
+  ) => void;
   addNext: (tracks: Track[]) => void;
   addAt: (tracks: Track[], index: number) => void;
   removeByIds: (ids: string[]) => void;
   removeByIndices: (indices: number[]) => void;
   clearQueue: () => void;
   reorder: (fromIndex: number, toIndex: number) => void;
+  undoDepth: number;
+  undoLastChange: () => void;
   updateItemState: (id: string, updates: Partial<QueueItem>) => void;
   updateCandidate: (itemId: string, candidate: StreamCandidate) => void;
-  removeCandidate: (itemId: string, candidateId: string) => void;
+  removeCandidate: (
+    itemId: string,
+    candidateId: string,
+    providerId?: string,
+  ) => void;
   selectCandidate: (itemId: string, candidateId: string) => void;
   goToNext: () => void;
   goToPrevious: () => void;
@@ -43,13 +54,37 @@ type QueueStore = Queue & {
   goToId: (id: string) => void;
   getCurrentItem: () => QueueItem | undefined;
   getItemById: (id: string) => QueueItem | undefined;
+  restoredPosition: { itemId: string; seconds: number } | null;
+  savePlaybackPosition: (itemId: string, seconds: number) => void;
 };
 
-const createQueueItem = (track: Track): QueueItem => ({
-  id: uuidv4(),
+type QueueSnapshot = Pick<Queue, 'items' | 'currentIndex'>;
+
+const MAX_UNDO_STEPS = 20;
+const undoStack: QueueSnapshot[] = [];
+
+export const resetQueueUndoHistory = () => {
+  undoStack.length = 0;
+  useQueueStore.setState({ undoDepth: 0 });
+};
+
+const rememberQueue = () => {
+  const { items, currentIndex } = useQueueStore.getState();
+  undoStack.push({ items: structuredClone(items), currentIndex });
+  if (undoStack.length > MAX_UNDO_STEPS) {
+    undoStack.shift();
+  }
+};
+
+const createQueueItem = (
+  track: Track,
+  selectionReason?: QueueItem['selectionReason'],
+): QueueItem => ({
+  id: createRandomId(),
   track: stripResolutionState(track),
   status: 'idle',
   addedAtIso: new Date().toISOString(),
+  selectionReason,
 });
 
 const getDirectionalIndex = (
@@ -107,9 +142,23 @@ const saveToDisk = async (): Promise<void> => {
     const state = useQueueStore.getState();
     await store.set('queue.items', state.items);
     await store.set('queue.currentIndex', state.currentIndex);
+    await store.set('playback.position', state.restoredPosition);
     await store.save();
   } catch (error) {
     Logger.queue.error(`Failed to save queue: ${errorMessage(error)}`);
+  }
+};
+
+const savePlaybackPositionToDisk = async (
+  position: QueueStore['restoredPosition'],
+): Promise<void> => {
+  try {
+    await store.set('playback.position', position);
+    await store.save();
+  } catch (error) {
+    Logger.queue.error(
+      `Failed to save playback position: ${errorMessage(error)}`,
+    );
   }
 };
 
@@ -127,11 +176,18 @@ export const useQueueStore = create<QueueStore>((set, get) => ({
   currentIndex: 0,
   isReady: false,
   isLoading: false,
+  undoDepth: 0,
+  restoredPosition: null,
 
   loadFromDisk: async () => {
+    resetQueueUndoHistory();
     set({ isLoading: true });
     const items = (await store.get<QueueItem[]>('queue.items')) ?? [];
     const currentIndex = (await store.get<number>('queue.currentIndex')) ?? 0;
+    const restoredPosition =
+      (await store.get<{ itemId: string; seconds: number }>(
+        'playback.position',
+      )) ?? null;
 
     const sanitizedIndex =
       currentIndex >= 0 && currentIndex < items.length ? currentIndex : 0;
@@ -147,20 +203,69 @@ export const useQueueStore = create<QueueStore>((set, get) => ({
       currentIndex: sanitizedIndex,
       isReady: true,
       isLoading: false,
+      restoredPosition,
     });
 
     Logger.queue.info(`Loaded ${resetItems.length} items from disk`);
   },
 
   addToQueue: withPersistence((tracks: Track[]) => {
+    rememberQueue();
+    const preventDuplicates =
+      getSetting('core.playback.preventQueueDuplicates') === true;
+    const existing = new Set(
+      get().items.map((item) => trackIdentity(item.track)),
+    );
+    const tracksToAdd = preventDuplicates
+      ? tracks.filter((track) => {
+          const key = trackIdentity(track);
+          if (existing.has(key)) {
+            return false;
+          }
+          existing.add(key);
+          return true;
+        })
+      : tracks;
     set(
       produce((state: QueueStore) => {
-        const newItems = tracks.map(createQueueItem);
+        const newItems = tracksToAdd.map((track) => createQueueItem(track));
         state.items.push(...newItems);
       }),
     );
-    Logger.queue.debug(`Added ${tracks.length} tracks to queue`);
+    Logger.queue.debug(`Added ${tracksToAdd.length} tracks to queue`);
+    set({ undoDepth: undoStack.length });
   }),
+
+  addToQueueWithReason: withPersistence(
+    (tracks: Track[], selectionReason: QueueItem['selectionReason']) => {
+      rememberQueue();
+      const preventDuplicates =
+        getSetting('core.playback.preventQueueDuplicates') === true;
+      const existing = new Set(
+        get().items.map((item) => trackIdentity(item.track)),
+      );
+      const tracksToAdd = preventDuplicates
+        ? tracks.filter((track) => {
+            const key = trackIdentity(track);
+            if (existing.has(key)) {
+              return false;
+            }
+            existing.add(key);
+            return true;
+          })
+        : tracks;
+      set(
+        produce((state: QueueStore) => {
+          state.items.push(
+            ...tracksToAdd.map((track) =>
+              createQueueItem(track, selectionReason),
+            ),
+          );
+        }),
+      );
+      set({ undoDepth: undoStack.length });
+    },
+  ),
 
   addNext: (tracks: Track[]) => {
     const { currentIndex } = get();
@@ -168,18 +273,21 @@ export const useQueueStore = create<QueueStore>((set, get) => ({
   },
 
   addAt: withPersistence((tracks: Track[], index: number) => {
+    rememberQueue();
     set(
       produce((state: QueueStore) => {
-        const newItems = tracks.map(createQueueItem);
+        const newItems = tracks.map((track) => createQueueItem(track));
         state.items.splice(index, 0, ...newItems);
         if (index <= state.currentIndex) {
           state.currentIndex += newItems.length;
         }
       }),
     );
+    set({ undoDepth: undoStack.length });
   }),
 
   removeByIds: withPersistence((ids: string[]) => {
+    rememberQueue();
     const currentItem = get().getCurrentItem();
     const currentItemRemoved = currentItem && ids.includes(currentItem.id);
 
@@ -205,9 +313,11 @@ export const useQueueStore = create<QueueStore>((set, get) => ({
     if (currentItemRemoved || get().items.length === 0) {
       useSoundStore.getState().stop();
     }
+    set({ undoDepth: undoStack.length });
   }),
 
   removeByIndices: withPersistence((indices: number[]) => {
+    rememberQueue();
     const currentIndex = get().currentIndex;
     const currentIndexRemoved = indices.includes(currentIndex);
 
@@ -233,16 +343,20 @@ export const useQueueStore = create<QueueStore>((set, get) => ({
     if (currentIndexRemoved || get().items.length === 0) {
       useSoundStore.getState().stop();
     }
+    set({ undoDepth: undoStack.length });
   }),
 
   clearQueue: withPersistence(() => {
+    rememberQueue();
     const itemCount = get().items.length;
     set({ items: [], currentIndex: 0 });
     useSoundStore.getState().stop();
     Logger.queue.info(`Cleared queue (${itemCount} items removed)`);
+    set({ undoDepth: undoStack.length });
   }),
 
   reorder: withPersistence((fromIndex: number, toIndex: number) => {
+    rememberQueue();
     set(
       produce((state: QueueStore) => {
         const [movedItem] = state.items.splice(fromIndex, 1);
@@ -263,6 +377,19 @@ export const useQueueStore = create<QueueStore>((set, get) => ({
         }
       }),
     );
+    set({ undoDepth: undoStack.length });
+  }),
+
+  undoLastChange: withPersistence(() => {
+    const snapshot = undoStack.pop();
+    if (!snapshot) {
+      return;
+    }
+    set({
+      items: snapshot.items,
+      currentIndex: snapshot.currentIndex,
+      undoDepth: undoStack.length,
+    });
   }),
 
   updateItemState: withPersistence(
@@ -288,7 +415,10 @@ export const useQueueStore = create<QueueStore>((set, get) => ({
       track: {
         ...track,
         streamCandidates: track.streamCandidates?.map((current) => {
-          if (current.id === candidate.id) {
+          if (
+            current.id === candidate.id &&
+            current.source.provider === candidate.source.provider
+          ) {
             return candidate;
           }
           return current;
@@ -297,7 +427,11 @@ export const useQueueStore = create<QueueStore>((set, get) => ({
     });
   },
 
-  removeCandidate: (itemId: string, candidateId: string) => {
+  removeCandidate: (
+    itemId: string,
+    candidateId: string,
+    providerId?: string,
+  ) => {
     const item = get().getItemById(itemId);
     if (!item) {
       return;
@@ -307,7 +441,10 @@ export const useQueueStore = create<QueueStore>((set, get) => ({
       track: {
         ...track,
         streamCandidates: track.streamCandidates?.filter(
-          (current) => current.id !== candidateId,
+          (current) =>
+            current.id !== candidateId ||
+            (providerId !== undefined &&
+              current.source.provider !== providerId),
         ),
       },
     });
@@ -339,6 +476,19 @@ export const useQueueStore = create<QueueStore>((set, get) => ({
       emitSkip();
       useSoundStore.getState().stop();
       set({ currentIndex: nextIndex });
+      if (getSetting('core.playback.autoCleanQueue') === true) {
+        const historyLimit = Math.max(
+          0,
+          Number(getSetting('core.playback.queueHistoryLimit') ?? 20),
+        );
+        const removeCount = Math.max(0, nextIndex - historyLimit);
+        if (removeCount > 0) {
+          set((current) => ({
+            items: current.items.slice(removeCount),
+            currentIndex: current.currentIndex - removeCount,
+          }));
+        }
+      }
       Logger.queue.debug(`Moved to next track (index ${nextIndex})`);
     }
   }),
@@ -380,6 +530,12 @@ export const useQueueStore = create<QueueStore>((set, get) => ({
 
   getItemById: (id: string) => {
     return get().items.find((item) => item.id === id);
+  },
+
+  savePlaybackPosition: (itemId, seconds) => {
+    const restoredPosition = { itemId, seconds };
+    set({ restoredPosition });
+    void savePlaybackPositionToDisk(restoredPosition);
   },
 }));
 

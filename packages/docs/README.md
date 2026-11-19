@@ -1,74 +1,43 @@
 ---
-description: Nuclear - Music streaming app for your desktop
+description: RAVE music player documentation for users and contributors
 ---
 
-# Nuclear Documentation
+# RAVE Documentation
 
-Nuclear is a free, open-source music player without ads or tracking. Search for any song or artist, build playlists, and start listening. This documentation is for both users and developers.
+RAVE is an independent open-source fork of Nuclear. It keeps compatibility with Nuclear plugins while adding source-aware playback, local personalization, collaborative sessions, a redesigned interface, and its own release path.
 
-## Quick links
+{% hint style="info" %}
+RAVE is not an official Nuclear distribution and is not endorsed by the Nuclear maintainers. Compatibility identifiers such as the `@nuclearplayer/*` package scope are retained intentionally.
+{% endhint %}
 
-| Site     | Website                                                                    |
-| -------- | -------------------------------------------------------------------------- |
-| Website  | [https://nuclearplayer.com/](https://nuclearplayer.com/)                   |
-| Github   | [https://github.com/nukeop/nuclear](https://github.com/nukeop/nuclear)     |
-| Discord  | [https://discord.gg/JqPjKxE](https://discord.gg/JqPjKxE)                   |
-| Mastodon | [https://fosstodon.org/@nuclearplayer](https://fosstodon.org/@nuclearplayer) |
-| Gitbook  | [https://docs.nuclearplayer.com](https://docs.nuclearplayer.com)   |
+## Start here
 
-## For users
+- [Getting started](user-manual/getting-started.md) explains the first launch and playback setup.
+- [Installation](user-manual/installation.md) lists supported source-build and package formats.
+- [RAVE features](user-manual/rave-features.md) summarizes the functionality that distinguishes the fork.
+- [Known limitations](user-manual/known-limitations.md) records current release constraints and provider-dependent behavior.
 
-New to Nuclear? Start here:
+## Current release
 
-- [Getting started](user-manual/getting-started.md) - install Nuclear and play your first song
-- [How Nuclear works](core-concepts/how-nuclear-works.md) - understand the plugin model and how playback works
-- [Plugins and providers](core-concepts/plugins-and-providers.md) - what plugins do and how to manage your sources
-- [Installation](user-manual/installation.md) - platform-specific download and install instructions
-- [Themes](themes/themes.md) - customize Nuclear's appearance with built-in, custom, or community themes
+The desktop application version is **1.50.0**. Source and binary releases are distributed through the RAVE-owned repository and remain independent from Nuclear's release channel.
 
-## What is in this repo?
+## Architecture
 
-This is a pnpm/turbo monorepo with these major packages:
+RAVE is a pnpm monorepo. The desktop application uses Tauri, Rust, React, TypeScript, Tailwind CSS, TanStack Router, TanStack Query, Zustand, and Vitest.
 
-- @nuclearplayer/player - Main Tauri app (React + Rust)
-- @nuclearplayer/ui - Shared UI components
-- @nuclearplayer/themes - Theming system and utilities
-- @nuclearplayer/plugin-sdk - Plugin framework and helpers
-- @nuclearplayer/model - Shared data model
-- @nuclearplayer/hifi - Advanced HTML5 audio engine
-- @nuclearplayer/i18n - Internationalization
-- @nuclearplayer/storybook - Component demos
-- @nuclearplayer/tailwind-config - Shared Tailwind v4 CSS config
-- @nuclearplayer/eslint-config - Shared linting rules
-- @nuclearplayer/tools - Build and maintenance utilities
-- @nuclearplayer/docs - This documentation
-- @nuclearplayer/website - Project website
+Internal packages retain their Nuclear-compatible names so existing plugins do not need to be rewritten.
 
-## For developers
+## Development commands
 
-### Tech highlights
-
-- TypeScript everywhere
-- Tauri (desktop shell)
-- React 18
-- Tailwind v4 configured via CSS (@theme/@layer), no tailwind.config.js
-- TanStack Router (routing)
-- TanStack Query v5 (HTTP and client‑side server state; no backend server)
-- Vitest + React Testing Library (tests)
-- Coverage via V8 with CI reporting
-
-### Common workspace tasks
-
-Run these from the repo root:
+Run these commands from the repository root:
 
 ```bash
-pnpm dev            # Run player (and UI) in dev mode
-pnpm dev:remote     # Same, but binds Vite to 0.0.0.0 so the remote control UI is reachable from other devices
-pnpm build          # Build all packages
-pnpm lint           # Lint all packages
-pnpm test           # Run all tests
-pnpm test:coverage  # Run tests with coverage
-pnpm type-check     # TypeScript checks
-pnpm tauri          # Tauri CLI for the player
-pnpm storybook      # Run Storybook
+pnpm install
+pnpm dev
+pnpm build
+pnpm lint
+pnpm test
+pnpm type-check
 ```
+
+See the repository-level `FORK.md`, `NOTICE.md`, and `CONTRIBUTING.md` files for provenance, attribution, and contribution rules.

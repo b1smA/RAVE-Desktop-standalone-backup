@@ -8,10 +8,15 @@ import { useSoundStore } from '../stores/soundStore';
 
 export const useStreamRecovery = (maxAttemptsPerItem = 2): void => {
   const recoveringItemIdRef = useRef<string | null>(null);
+  const recoveryInFlightRef = useRef(false);
   const attemptsRef = useRef(0);
 
   useEffect(() => {
     return eventBus.on('streamSourceInvalid', async () => {
+      if (recoveryInFlightRef.current) {
+        return;
+      }
+
       const item = useQueueStore.getState().getCurrentItem();
       if (!item) {
         return;
@@ -37,10 +42,15 @@ export const useStreamRecovery = (maxAttemptsPerItem = 2): void => {
         `Stream for '${item.track.title}' became invalid; resolving a fresh URL (attempt ${attemptsRef.current})`,
       );
 
-      await streamResolution.resolveWithFreshStreams(item, {
-        autoPlay: true,
-        startPositionSeconds: useSoundStore.getState().seek,
-      });
+      recoveryInFlightRef.current = true;
+      try {
+        await streamResolution.resolveWithFreshStreams(item, {
+          autoPlay: true,
+          startPositionSeconds: useSoundStore.getState().seek,
+        });
+      } finally {
+        recoveryInFlightRef.current = false;
+      }
     });
   }, [maxAttemptsPerItem]);
 };

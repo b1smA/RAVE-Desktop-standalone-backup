@@ -110,17 +110,33 @@ pub async fn download_file(url: String, dest_path: PathBuf) -> Result<(), String
             .connect_timeout(Duration::from_secs(30))
             .build()?;
 
-        let response = client.get(url).send().await?;
+        if let Some(parent) = dest_path.parent() {
+            fs::create_dir_all(parent)?;
+        }
+
+        let existing_length = tokio::fs::metadata(dest_path)
+            .await
+            .map(|metadata| metadata.len())
+            .unwrap_or(0);
+        let mut request = client.get(url);
+        if existing_length > 0 {
+            request = request.header(reqwest::header::RANGE, format!("bytes={existing_length}-"));
+        }
+        let response = request.send().await?;
 
         if !response.status().is_success() {
             return Err(format!("HTTP error: {}", response.status()).into());
         }
 
-        if let Some(parent) = dest_path.parent() {
-            fs::create_dir_all(parent)?;
-        }
-
-        let mut file = tokio::fs::File::create(dest_path).await?;
+        let can_resume =
+            existing_length > 0 && response.status() == reqwest::StatusCode::PARTIAL_CONTENT;
+        let mut file = tokio::fs::OpenOptions::new()
+            .create(true)
+            .write(true)
+            .append(can_resume)
+            .truncate(!can_resume)
+            .open(dest_path)
+            .await?;
         let mut stream = response.bytes_stream();
 
         use futures::StreamExt;

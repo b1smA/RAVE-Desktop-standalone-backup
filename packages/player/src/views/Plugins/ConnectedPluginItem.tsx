@@ -15,23 +15,24 @@ export const ConnectedPluginItem: FC<ConnectedPluginItemProps> = ({
   plugin,
 }) => {
   const { t } = useTranslation('plugins');
-  const store = usePluginStore();
-  const startupStore = useStartupStore();
+  const loadTimeMs = useStartupStore(
+    (state) => state.pluginDurations[plugin.metadata.id],
+  );
 
   const handleReload = async () => {
     if (plugin.installationMethod === 'dev') {
-      await store.reloadPlugin(plugin.metadata.id);
+      await usePluginStore.getState().reloadPlugin(plugin.metadata.id);
     }
   };
 
   const handleRemove = async () => {
-    await store.removePlugin(plugin.metadata.id);
+    await usePluginStore.getState().removePlugin(plugin.metadata.id);
   };
 
   const handleToggle = (checked: boolean) =>
     checked
-      ? store.enablePlugin(plugin.metadata.id)
-      : store.disablePlugin(plugin.metadata.id);
+      ? usePluginStore.getState().enablePlugin(plugin.metadata.id)
+      : usePluginStore.getState().disablePlugin(plugin.metadata.id);
 
   return (
     <PluginItem
@@ -55,7 +56,7 @@ export const ConnectedPluginItem: FC<ConnectedPluginItemProps> = ({
           aria-label={`Toggle ${plugin.metadata.displayName}`}
         />
       }
-      loadTimeMs={startupStore.pluginDurations[plugin.metadata.id]}
+      loadTimeMs={loadTimeMs}
       labels={{
         by: t('installed.by'),
         updateAvailable: t('installed.update-available'),

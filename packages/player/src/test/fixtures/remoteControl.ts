@@ -36,5 +36,5 @@ export const REMOTE_SETTINGS: SettingsState = {
   discovery: false,
   language: 'en_US',
   dark: false,
-  themeId: 'nuclear:default',
+  themeId: 'rave:default',
 };

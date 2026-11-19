@@ -1,0 +1,83 @@
+# Flatpak manifest for RAVE Music Player (from-source build)
+#
+# Generate vendored dependency sources:
+#   flatpak-node-generator pnpm --pnpm-store-version v11 -o flatpak/pnpm-sources.json pnpm-lock.yaml
+#   python3 flatpak-cargo-generator.py packages/player/src-tauri/Cargo.lock -o flatpak/cargo-sources.json
+#
+# Build locally:
+#   flatpak-builder --user --install --force-clean build-dir flatpak/com.raveplayer.Rave.yml
+#
+# Run:
+#   flatpak run com.raveplayer.Rave
+
+id: com.raveplayer.Rave
+
+runtime: org.gnome.Platform
+runtime-version: "50"
+sdk: org.gnome.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.rust-stable
+  - org.freedesktop.Sdk.Extension.node22
+
+command: rave-music-player
+
+finish-args:
+  - --share=network
+  - --share=ipc
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --device=dri
+  - --socket=pulseaudio
+
+build-options:
+  append-path: /usr/lib/sdk/node22/bin:/usr/lib/sdk/rust-stable/bin
+  env:
+    CARGO_HOME: /run/build/rave-music-player/cargo
+    npm_config_nodedir: /usr/lib/sdk/node22
+    npm_config_prefix: /run/build/rave-music-player/.npm-global
+    PATH: /run/build/rave-music-player/.npm-global/bin:/usr/lib/sdk/rust-stable/bin:/usr/lib/sdk/node22/bin:/usr/bin:/bin
+
+modules:
+  - name: rave-music-player
+    buildsystem: simple
+    sources:
+      - type: dir
+        path: ..
+      - type: archive
+        url: https://registry.npmjs.org/@pnpm/exe.linux-x64/-/exe.linux-x64-12.0.0.tgz
+        sha256: d0c64efab39d560ef3ae4dc8be5dd08951e5409ed2d53cb6b8317b7713c26333
+        dest: pnpm-exe
+        only-arches: [x86_64]
+      - type: archive
+        url: https://registry.npmjs.org/@pnpm/exe.linux-arm64/-/exe.linux-arm64-12.0.0.tgz
+        sha256: e227252e352b8023fd1151fbe36eeb934a26eef2e0c327b8d1a1aad7b4bfbd90
+        dest: pnpm-exe
+        only-arches: [aarch64]
+      - pnpm-sources.json
+      - cargo-sources.json
+    build-options:
+      env:
+        XDG_CACHE_HOME: /run/build/rave-music-player/cache
+    build-commands:
+      - install -Dm755 pnpm-exe/pnpm /run/build/rave-music-player/.npm-global/bin/pnpm
+
+      - pnpm install --offline --frozen-lockfile --trust-lockfile
+      - pnpm --filter @nuclearplayer/player build:frontend
+      - pnpm --filter @nuclearplayer/player tauri build --no-bundle
+        -c '{"build":{"beforeBuildCommand":""}}'
+
+      - install -Dm755 packages/player/src-tauri/target/release/rave-music-player
+        /app/bin/rave-music-player
+
+      - install -Dm644 packages/player/src-tauri/resources/com.raveplayer.Rave.desktop
+        /app/share/applications/com.raveplayer.Rave.desktop
+      - install -Dm644 packages/player/src-tauri/resources/com.raveplayer.Rave.metainfo.xml
+        /app/share/metainfo/com.raveplayer.Rave.metainfo.xml
+
+      - install -Dm644 flatpak/icons/512x512.png /app/share/icons/hicolor/512x512/apps/com.raveplayer.Rave.png
+      - install -Dm644 flatpak/icons/256x256.png /app/share/icons/hicolor/256x256/apps/com.raveplayer.Rave.png
+      - install -Dm644 flatpak/icons/128x128.png /app/share/icons/hicolor/128x128/apps/com.raveplayer.Rave.png
+      - install -Dm644 flatpak/icons/64x64.png /app/share/icons/hicolor/64x64/apps/com.raveplayer.Rave.png
+      - install -Dm644 flatpak/icons/32x32.png /app/share/icons/hicolor/32x32/apps/com.raveplayer.Rave.png
+
+      - install -Dm644 LICENSE /app/share/licenses/com.raveplayer.Rave/LICENSE

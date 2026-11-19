@@ -16,10 +16,12 @@ import { Logger } from '../logger';
 const JAM_ENABLED_SETTING = 'core.integrations.jam.enabled';
 const JAM_REMOTE_URL_SETTING = 'core.integrations.jam.remoteUrl';
 const JAM_API_URL_SETTING = 'core.integrations.jam.apiUrl';
+const JAM_PAIRING_CODE_SETTING = 'core.integrations.jam.pairingCode';
 
 type HttpApiStartResult = {
   port: number;
   lan_address: string | null;
+  pairing_code: string | null;
 };
 
 type Unsubscribe = () => void;
@@ -75,14 +77,30 @@ let activeUnsubscribers: Unsubscribe[] = [];
 const DEV_VITE_PORT = 5173;
 
 const startServer = async () => {
-  const result = await invoke<HttpApiStartResult>('http_api_start');
+  const sessionsEnabled =
+    getSetting('core.integrations.jam.sessionsEnabled') === true;
+  const result = await invoke<HttpApiStartResult>('http_api_start', {
+    config: {
+      enabled: sessionsEnabled,
+      permissions: {
+        canAddTracks:
+          getSetting('core.integrations.jam.guestCanAddTracks') === true,
+        canVote: getSetting('core.integrations.jam.guestCanVote') === true,
+        canControlPlayback:
+          getSetting('core.integrations.jam.guestCanControlPlayback') === true,
+        canManageQueue:
+          getSetting('core.integrations.jam.guestCanManageQueue') === true,
+      },
+    },
+  });
   const host = result.lan_address ?? '127.0.0.1';
   const apiBaseUrl = `http://${host}:${result.port}`;
   const remotePort = import.meta.env.DEV ? DEV_VITE_PORT : result.port;
-  const remoteUrl = `http://${host}:${remotePort}`;
+  const remoteUrl = `http://${host}:${remotePort}${sessionsEnabled ? '?session=1' : ''}`;
 
   await setSetting(JAM_REMOTE_URL_SETTING, remoteUrl);
   await setSetting(JAM_API_URL_SETTING, `${apiBaseUrl}/api`);
+  await setSetting(JAM_PAIRING_CODE_SETTING, result.pairing_code ?? '');
 
   Logger['http-api'].info(`HTTP API server started on ${apiBaseUrl}`);
   activeUnsubscribers = [

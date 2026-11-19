@@ -111,7 +111,7 @@ impl NuclearMcpServer {
 
     #[tool(
         name = "describe_type",
-        description = "Get the JSON shape of a Nuclear data type. Use when a method parameter or return type references a complex type like Track, Queue, QueueItem, etc."
+        description = "Get the JSON shape of a RAVE data type. Use when a method parameter or return type references a complex type like Track, Queue, QueueItem, etc."
     )]
     async fn describe_type(
         &self,
@@ -122,7 +122,7 @@ impl NuclearMcpServer {
 
     #[tool(
         name = "call",
-        description = "Call a Nuclear music player API method. Use Domain.method format for the method name and pass parameters as a JSON object with named fields."
+        description = "Call a RAVE music player API method. Use Domain.method format for the method name and pass parameters as a JSON object with named fields."
     )]
     async fn call(
         &self,

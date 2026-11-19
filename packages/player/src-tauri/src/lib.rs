@@ -31,6 +31,7 @@ fn maximize_for_gamescope(app: &tauri::App) {
     }
 }
 
+#[cfg(debug_assertions)]
 fn typescript_export_config() -> specta_typescript::Typescript {
     specta_typescript::Typescript::default().header("/* eslint-disable */")
 }
@@ -118,9 +119,7 @@ pub fn run() {
         .plugin(setup::log_plugin());
 
     if !is_flatpak {
-        builder = builder
-            .plugin(tauri_plugin_updater::Builder::new().build())
-            .plugin(tauri_plugin_process::init());
+        builder = builder.plugin(tauri_plugin_process::init());
     }
 
     builder

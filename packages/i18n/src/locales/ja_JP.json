@@ -1,7 +1,7 @@
 {
   "common": {
     "app": {
-      "name": "Nuclear",
+      "name": "RAVE",
       "description": "デスクトップ用の音楽ストリーミングアプリ"
     },
     "actions": {
@@ -244,7 +244,7 @@
   },
   "dashboard": {
     "title": "ダッシュボード",
-    "empty-state": "Nuclear へようこそ",
+    "empty-state": "RAVE へようこそ",
     "empty-state-description": "プラグインをインストールすると、トップトラック、新着リリース、おすすめがここに表示されます。",
     "empty-state-action": "プラグインを探す",
     "top-tracks": "トップトラック",
@@ -311,7 +311,7 @@
     "clickToRestart": "クリックして再起動"
   },
   "flatpak": {
-    "sandboxWarning": "Nuclear は Flatpak サンドボックス内で実行されています。一部の機能が正常に動作しない可能性があります。問題が発生した場合は、.deb または AppImage を試してください。",
+    "sandboxWarning": "RAVE は Flatpak サンドボックス内で実行されています。一部の機能が正常に動作しない可能性があります。問題が発生した場合は、.deb または AppImage を試してください。",
     "dismiss": "了解"
   },
   "preferences": {
@@ -406,11 +406,11 @@
       },
       "streamVerification": {
         "title": "ストリームの検証",
-        "description": "Nuclearは、検証済みのストリームを再生し、検証バーを表示します。この設定がオフの場合、Nuclearはすべての検証を無視します。"
+        "description": "RAVEは、検証済みのストリームを再生し、検証バーを表示します。この設定がオフの場合、RAVEはすべての検証を無視します。"
       },
       "streamVerificationService": {
         "title": "オンライン検証",
-        "description": "Nuclearは、あなたの検証データを検証サービスに送信し、他のユーザーが検証したストリームを取得します。ストリームの検証機能が無効になっている場合、この設定は適用されません。"
+        "description": "RAVEは、あなたの検証データを検証サービスに送信し、他のユーザーが検証したストリームを取得します。ストリームの検証機能が無効になっている場合、この設定は適用されません。"
       }
     },
     "history": {
@@ -438,12 +438,12 @@
       "title": "連携",
       "jam": {
         "enabled": {
-          "title": "Nuclear Jam",
-          "description": "ネットワーク上の他のデバイスから Nuclear を操作できるローカル Web サーバーを起動します。"
+          "title": "RAVE Jam",
+          "description": "ネットワーク上の他のデバイスから RAVE を操作できるローカル Web サーバーを起動します。"
         },
         "remoteUrl": {
           "title": "リモートURL",
-          "description": "別のデバイスでこの URL を開くと Nuclear を操作できます。"
+          "description": "別のデバイスでこの URL を開くと RAVE を操作できます。"
         },
         "apiUrl": {
           "title": "API URL",
@@ -453,21 +453,21 @@
       "mcp": {
         "enabled": {
           "title": "MCP サーバーを有効化",
-          "description": "AI ツールが Nuclear を操作できるローカル MCP サーバーを起動します。"
+          "description": "AI ツールが RAVE を操作できるローカル MCP サーバーを起動します。"
         },
         "serverUrl": {
           "title": "MCP サーバー URL",
-          "description": "AI ツールをこの URL に向けて Nuclear に接続します。"
+          "description": "AI ツールをこの URL に向けて RAVE に接続します。"
         }
       },
       "mpd": {
         "enabled": {
           "title": "MPD サーバーを有効化",
-          "description": "MPD クライアントが Nuclear を操作できるローカル MPD 互換サーバーを起動します。"
+          "description": "MPD クライアントが RAVE を操作できるローカル MPD 互換サーバーを起動します。"
         },
         "serverUrl": {
           "title": "MPD サーバー URL",
-          "description": "MPD クライアントをこのアドレスに向けて Nuclear に接続します。"
+          "description": "MPD クライアントをこのアドレスに向けて RAVE に接続します。"
         }
       },
       "discord": {
@@ -504,9 +504,9 @@
       "verify": "検証",
       "unverify": "検証解除",
       "failed": "ストリームの検証に失敗しました",
-      "notShared": "ストリームはローカルで検証されましたが、Nuclear は検証サービスに接続できませんでした。",
+      "notShared": "ストリームはローカルで検証されましたが、RAVE は検証サービスに接続できませんでした。",
       "help": "ストリーム検証の仕組み",
-      "explanation": "Nuclear は、時に楽曲の誤ったバージョンを再生することがあります。これを修正するには、キュー内の項目を右クリックして正しいストリームを選択し、「検証」をクリックしてください。Nuclear は検証結果をコンピュータに保存し、そのトラックについては常にそのストリームを再生するようになります。\n\n「オンライン検証」が有効になっている場合、検証結果は他のユーザーとも共有され、彼らもそのストリームを優先的に利用できるようになります。未検証のトラックについては、Nuclear は検証サービスに対して、最も多くの票を集めたストリームを問い合わせます。その際、アーティスト名、曲名、およびランダムな ID が送信されます。",
+      "explanation": "RAVE は、時に楽曲の誤ったバージョンを再生することがあります。これを修正するには、キュー内の項目を右クリックして正しいストリームを選択し、「検証」をクリックしてください。RAVE は検証結果をコンピュータに保存し、そのトラックについては常にそのストリームを再生するようになります。\n\n「オンライン検証」が有効になっている場合、検証結果は他のユーザーとも共有され、彼らもそのストリームを優先的に利用できるようになります。未検証のトラックについては、RAVE は検証サービスに対して、最も多くの票を集めたストリームを問い合わせます。その際、アーティスト名、曲名、およびランダムな ID が送信されます。",
       "learnMore": "詳細はこちら"
     }
   },
@@ -516,7 +516,9 @@
       "playNext": "次に再生",
       "addToQueue": "キューに追加",
       "addToFavorites": "お気に入りに追加",
-      "removeFromFavorites": "お気に入りから削除"
+      "removeFromFavorites": "お気に入りから削除",
+      "blockArtistRecommendations": "このアーティストをおすすめしない",
+      "allowArtistRecommendations": "このアーティストを再びおすすめする"
     }
   },
   "trackTable": {
@@ -582,12 +584,12 @@
   },
   "remote": {
     "connecting": {
-      "title": "Nuclear に接続中...",
-      "subtitle": "Nuclear が起動しており、Nuclear Jam が有効になっていることを確認してください"
+      "title": "RAVE に接続中...",
+      "subtitle": "RAVE が起動しており、RAVE Jam が有効になっていることを確認してください"
     },
     "error": {
-      "title": "Nuclear に接続できませんでした",
-      "subtitle": "Nuclear が起動しており、設定で Nuclear Jam が有効になっていることを確認してください"
+      "title": "RAVE に接続できませんでした",
+      "subtitle": "RAVE が起動しており、設定で RAVE Jam が有効になっていることを確認してください"
     },
     "connection": {
       "connecting": "接続中",
@@ -598,22 +600,22 @@
     "queue": {
       "upNext": "次の再生",
       "emptyTitle": "キューは空です",
-      "emptySubtitle": "Nuclear でトラックを追加するとここに表示されます"
+      "emptySubtitle": "RAVE でトラックを追加するとここに表示されます"
     },
     "search": {
       "placeholder": "音楽を検索",
       "emptyTitle": "結果なし",
       "emptyDescription": "検索条件に一致するものが見つかりませんでした",
       "errorTitle": "検索に失敗しました",
-      "errorDescription": "Nuclear への接続を確認して再試行してください"
+      "errorDescription": "RAVE への接続を確認して再試行してください"
     },
     "qrCode": {
-      "tooltip": "Nuclear Jam リモートコントロール",
-      "instructions": "QR コードをスキャンするか、以下のアドレスをコピーして Nuclear Jam に接続してください"
+      "tooltip": "RAVE Jam リモートコントロール",
+      "instructions": "QR コードをスキャンするか、以下のアドレスをコピーして RAVE Jam に接続してください"
     }
   },
   "titleBar": {
-    "title": "Nuclear Music Player",
+    "title": "RAVE Music Player",
     "minimize": "最小化",
     "maximize": "最大化",
     "close": "閉じる"

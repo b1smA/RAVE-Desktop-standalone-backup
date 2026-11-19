@@ -1,10 +1,12 @@
 import { useNavigate } from '@tanstack/react-router';
 import { FC } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 
 import { useTranslation } from '@nuclearplayer/i18n';
 import { pickArtwork } from '@nuclearplayer/model';
 import { FavoriteButton, PlayerBar } from '@nuclearplayer/ui';
 
+import { useCoreSetting } from '../../hooks/useCoreSetting';
 import { useFavoritesStore } from '../../stores/favoritesStore';
 import { useQueueStore } from '../../stores/queueStore';
 
@@ -12,13 +14,22 @@ export const ConnectedNowPlaying: FC = () => {
   const { t } = useTranslation('playerBar');
   const { t: tTrack } = useTranslation('track');
   const navigate = useNavigate();
+  const [dataSaver] = useCoreSetting<boolean>('playback.dataSaver');
   const currentItem = useQueueStore((s) => s.getCurrentItem());
-  const { isTrackFavorite, addTrack, removeTrack } = useFavoritesStore();
+  const { isTrackFavorite, addTrack, removeTrack } = useFavoritesStore(
+    useShallow((state) => ({
+      isTrackFavorite: state.isTrackFavorite,
+      addTrack: state.addTrack,
+      removeTrack: state.removeTrack,
+    })),
+  );
 
   const track = currentItem?.track;
   const isFavorite = track ? isTrackFavorite(track.source) : false;
 
-  const artwork = pickArtwork(track?.artwork, 'thumbnail', 64);
+  const artwork = dataSaver
+    ? undefined
+    : pickArtwork(track?.artwork, 'thumbnail', 64);
   const title = track?.title ?? t('noTrackPlaying');
   const artist = track?.artists[0]?.name ?? '';
   const artistSource = track?.artists[0]?.source;

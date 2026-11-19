@@ -29,6 +29,7 @@ export const ConnectedSettingsModalWrapper = {
     await user.click(
       await component.findByRole('button', { name: 'Preferences' }),
     );
+    await component.findByTestId('settings-navigation-section-general');
     return component;
   },
 

@@ -9,6 +9,9 @@ import type {
 } from '@nuclearplayer/model';
 import type { FavoriteEntry, FavoritesData } from '@nuclearplayer/plugin-sdk';
 
+import { Logger } from '../services/logger';
+import { errorMessage } from '../utils/errorMessage';
+
 export type { FavoriteEntry, FavoritesData };
 
 const FAVORITES_FILE = 'favorites.json';
@@ -46,6 +49,53 @@ const saveToDisk = async (): Promise<void> => {
 };
 
 type FavoritesKey = 'tracks' | 'albums' | 'artists';
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null;
+
+const isFavoriteEntry = <T extends RefWithSource>(
+  value: unknown,
+): value is FavoriteEntry<T> => {
+  if (!isRecord(value) || typeof value.addedAtIso !== 'string') {
+    return false;
+  }
+
+  const ref = value.ref;
+  if (!isRecord(ref) || !isRecord(ref.source)) {
+    return false;
+  }
+
+  return (
+    typeof ref.source.provider === 'string' &&
+    typeof ref.source.id === 'string'
+  );
+};
+
+const loadFavoriteList = async <T extends RefWithSource>(
+  key: FavoritesKey,
+): Promise<FavoriteEntry<T>[]> => {
+  try {
+    const stored = await store.get<unknown>(`favorites.${key}`);
+    if (stored === null || stored === undefined) {
+      return [];
+    }
+    if (!Array.isArray(stored)) {
+      void Logger.app.warn(`Ignored malformed favorites collection: ${key}`);
+      return [];
+    }
+
+    const validEntries = stored.filter(isFavoriteEntry<T>);
+    if (validEntries.length !== stored.length) {
+      void Logger.app.warn(`Ignored malformed favorites entries: ${key}`);
+    }
+    return validEntries;
+  } catch (error) {
+    void Logger.app.error(
+      `Failed to load favorites collection ${key}: ${errorMessage(error)}`,
+    );
+    return [];
+  }
+};
 
 const getList = <T extends RefWithSource>(key: FavoritesKey) =>
   useFavoritesStore.getState()[key] as unknown as FavoriteEntry<T>[];
@@ -87,12 +137,11 @@ export const useFavoritesStore = create<FavoritesState>(() => ({
   loaded: false,
 
   loadFromDisk: async () => {
-    const tracks =
-      (await store.get<FavoriteEntry<Track>[]>('favorites.tracks')) ?? [];
-    const albums =
-      (await store.get<FavoriteEntry<AlbumRef>[]>('favorites.albums')) ?? [];
-    const artists =
-      (await store.get<FavoriteEntry<ArtistRef>[]>('favorites.artists')) ?? [];
+    const [tracks, albums, artists] = await Promise.all([
+      loadFavoriteList<Track>('tracks'),
+      loadFavoriteList<AlbumRef>('albums'),
+      loadFavoriteList<ArtistRef>('artists'),
+    ]);
 
     useFavoritesStore.setState({ tracks, albums, artists, loaded: true });
   },
