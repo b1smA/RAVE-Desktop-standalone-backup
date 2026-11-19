@@ -1,6 +1,6 @@
 [package]
 name = "player"
-version = "1.49.2"
+version = "1.50.0"
 description = "RAVE Music Player"
 authors = ["RAVE contributors", "nukeop and Nuclear contributors"]
 license = "AGPL-3.0-only"

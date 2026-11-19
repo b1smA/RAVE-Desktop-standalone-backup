@@ -51,6 +51,75 @@
   </requires>
 
   <releases>
+    <release version="1.50.0" date="2026-11-19">
+      <description>
+        <ul>
+          <li>Release metadata now consistently identifies version 1.50.0, production-only warnings are removed, and the RAVE documentation records installation, distinguishing features, and known limitations.</li>
+          <li>The mini-player progress bar is now a three-pixel bottom edge with a hover-only thumb, while its content is vertically centered with balanced spacing.</li>
+          <li>The mini-player window now ends directly below its horizontal control bar, removing the unused strip beneath the progress line.</li>
+          <li>The mini player has been redesigned as a narrow Spotify-style horizontal control bar with drag handle, compact artwork, inline playback controls, volume, and bottom-edge progress.</li>
+          <li>The mini player now fills the RAVE window without a transparent outer frame, follows the active application theme, and adds an inline volume control beside Next.</li>
+          <li>The mini player now uses a frameless Liquid Glass layout with artwork-tinted translucency, a refractive rim, hover-only window controls, a glowing seek bar, and focused playback controls.</li>
+          <li>The mini player is now genuinely compact, uses space more efficiently, and has complete Russian translations for its queue, controls, lyrics, and audio output.</li>
+          <li>Added complete Russian translations for Library Loudness and LAN Sync, including navigation, forms, statuses, and notifications.</li>
+          <li>Corrected the Russian dashboard heading for editorial playlists.</li>
+          <li>Artist discographies now sort chronologically by complete release dates and use locale-aware natural title ordering, with undated releases kept at the end.</li>
+          <li>Artist discographies now fetch missing track counts and durations before classifying ambiguous releases, so one-to-three-track releases no longer remain under Albums merely because a provider labelled them as albums.</li>
+          <li>Removed the pervasive offset shadows from cards, buttons, dialogs, menus, artwork, and session screens while preserving borders and focus states for a cleaner RAVE interface.</li>
+          <li>RAVE now uses Manrope for its interface and Unbounded for display headings, with complete Latin and Cyrillic subsets bundled locally for a more distinctive identity without external font requests.</li>
+          <li>Reduced the initial JavaScript payload by loading HLS playback and settings views only when needed, tree-shaking unused UI components, and keeping test utilities out of production bundles. Tailwind now scans only the source packages required by each application build.</li>
+          <li>Reduced unnecessary React renders, duplicate query refreshes, and disabled-integration wakeups through narrow Zustand subscriptions, shared query defaults, and an on-demand Discord heartbeat.</li>
+          <li>Removed unused Nuclear-only release automation and redundant runtime dependencies while keeping compatibility-critical plugin and theme identifiers intact.</li>
+          <li>Internal TanStack and Zustand developer tools are now excluded from production builds while remaining available through the development shortcut.</li>
+          <li>RAVE now loads background integrations after the first render and reuses one cached history request across personalized widgets.</li>
+          <li>Prompted Playlist turns Russian or English requests into visible local rules for mood, offline availability, years, duration, and excluded artists before creating an editable playlist.</li>
+          <li>Release Radar scans favorite artists through installed metadata providers and shows recent and upcoming releases with a six-hour query cache to protect startup and provider performance.</li>
+          <li>Favorite tracks now have smart library filters for offline availability, mood, personal tags, and tracks that still need organization.</li>
+          <li>The RAVE dashboard can now resurface forgotten favorites that have not been played for 30 days, including older saved tracks that have never been played.</li>
+          <li>RAVE Weekly adds a private rolling seven-day listening summary with minutes, unique tracks, artists, discoveries, and the week's top artist, calculated entirely from local history.</li>
+          <li>Individual tracks can now be excluded from the local taste profile, allowing background, guest, sleep, or children's listening without distorting recommendations.</li>
+          <li>RAVE can now pause recommendations for a track for 7, 30, or 90 days without permanently blocking it, with an immediate restore action in the track menu.</li>
+          <li>Smart Source can now keep a configurable reserve of two or three resolved candidates per track for faster recovery when the active stream fails, while respecting data saver mode.</li>
+          <li>The queue now explains when the next track was selected by auto-radio or taste-aware smart shuffle, making automatic choices visible instead of opaque.</li>
+          <li>RAVE can pre-analyze favorite tracks, cache clipping-safe ReplayGain values, and apply the saved adjustment on later playback without repeatedly analyzing audio in real time.</li>
+          <li>RAVE adds a data saver mode that caps preferred stream bitrate, suppresses artwork from metadata responses, disables backup-source preloading, and avoids eager audio buffering.</li>
+          <li>RAVE devices can now import playlists, listening history, and non-sensitive preferences directly over the local network using an explicit preview-and-confirm flow and optional session pairing.</li>
+          <li>RAVE adds an always-on-top mini player that keeps playback uninterrupted while showing artwork, controls, source quality, volume, seek position, and the next queue entries.</li>
+          <li>RAVE adds built-in Libre.fm scrobbling with signed Scrobbling 2.0 requests, standard qualification thresholds, now-playing updates, and a persistent retry outbox.</li>
+          <li>Smart Source can now learn rejected live, remix, and slowed versions across tracks and automatically exclude them whenever a suitable alternative is available.</li>
+          <li>RAVE adds a configurable Dislike shortcut that blocks the current track from recommendations and immediately continues playback with the next queue item.</li>
+          <li>RAVE lets listeners pin favorite playlists so they remain at the top while preserving the selected sort order for everything else.</li>
+          <li>RAVE can import YouTube and YouTube Music playlists directly from their URLs using its built-in yt-dlp integration, without requiring a separate playlist plugin.</li>
+          <li>RAVE starts faster by reusing compiled plugins from a versioned content-addressed cache and keeps diagnostic logs focused by suppressing transport internals and routine successful HTTP traffic.</li>
+          <li>RAVE is now formally documented and packaged as an independent Nuclear fork, with preserved upstream attribution, separate contribution rules, and RAVE-only release targets.</li>
+          <li>RAVE now classifies singles, EPs, albums, and compilations consistently from track count, per-track duration, total duration, artist credits, and release-year metadata.</li>
+          <li>RAVE adds a filterable and sortable artist discography, groups duplicate releases while preserving variants, learns from wrong-version feedback, and supports selecting an audio output device.</li>
+          <li>RAVE reduces startup work and unnecessary interface updates by loading screens, language packs, and developer tools on demand, narrowing state subscriptions, and reusing the backend HTTP client.</li>
+          <li>Artist pages now separate full albums from singles and EPs while remaining compatible with metadata providers that do not expose release types yet.</li>
+          <li>RAVE adds desktop-style double-click playback, bulk playlist actions, shuffle and Smart Shuffle, complete artist credits, quick source switching, resumable downloads, system media controls, and a personalized For You section.</li>
+          <li>RAVE adds a configurable start page, favorite sorting, bulk track selection, and playlist search across descriptions, tags, tracks, artists, albums, and notes.</li>
+          <li>RAVE Source Inspector explains Smart Source scoring, shows stream quality, switches between candidates, and copies a privacy-safe playback diagnostic report.</li>
+          <li>RAVE opens faster by hydrating independent data in parallel and moving optional work beyond the first render, while preventing duplicate dashboard cards and overlapping stream recovery attempts.</li>
+          <li>RAVE reduces playback-time disk writes, avoids unrelated interface rerenders, and caches taste-ranking calculations without changing playback behavior.</li>
+          <li>RAVE Personal Listening adds playback resume, Listen Later, recommendation filters, optional queue cleanup, sleep timers, moods, private tags and notes, family filtering, and a local taste profile.</li>
+          <li>RAVE now keeps one latest entry per track in listening history and lets listeners exclude artists from Radio and Mix recommendations.</li>
+          <li>RAVE is now the only bundled basic theme; legacy Nuclear theme selections migrate safely to RAVE while custom and marketplace themes remain supported.</li>
+          <li>RAVE Intelligence adds undoable queue editing, Replay playlists, filtered Mix modes, prepared backup streams, and real crossfade transitions while preserving Nuclear defaults.</li>
+          <li>RAVE Sessions adds pairing-protected local listening rooms with guest permissions, queue voting, QR invitations, participants, and an activity history.</li>
+          <li>RAVE now ranks streaming sources by title and duration match, bitrate, response time, reliability, and user preferences.</li>
+          <li>RAVE now identifies itself as a Nuclear fork, enforces a desktop content security policy, and reports failures when every streaming source is unavailable.</li>
+          <li>The RAVE Windows launcher now resolves its project folder relative to itself and discovers Git in common installation locations.</li>
+          <li>RAVE identity is now consistent in Linux launchers, AppStream metadata, MCP responses, and exported logs.</li>
+          <li>RAVE now keeps remote stream verification opt-in and no longer registers the Nuclear updater at runtime.</li>
+          <li>RAVE now safely restores local favorites even when one saved collection is malformed or unreadable.</li>
+          <li>RAVE can now start a continuous radio queue from any track through its context menu.</li>
+          <li>RAVE playlist URL import now falls back to another compatible provider when the preferred service is unavailable.</li>
+          <li>RAVE queue now separates listening history, the current track, and upcoming tracks while preserving drag-and-drop controls.</li>
+          <li>RAVE now falls back across installed streaming providers when the active source cannot find or play a track.</li>
+          <li>RAVE search now merges available metadata providers, ranks exact matches first, removes duplicates, and keeps working when one source fails.</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.49.2" date="2026-10-08">
       <description>
         <p>Introduces the independent RAVE identity and default visual theme.</p>
